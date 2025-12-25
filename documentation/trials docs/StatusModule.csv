@@ -1,0 +1,11 @@
+Champ (Piece Name),Chemin JSON,Type de Donnée,Description pour l'Extraction
+StatusVerifiedDate,...statusModule.statusVerifiedDate,DATE,Date de vérification de l'enregistrement.
+OverallStatus,...statusModule.overallStatus,TEXT (Enum),"Statut de recrutement global (ex: Recruiting, Completed). Champ clé pour le filtrage d'état."
+LastKnownStatus,...statusModule.lastKnownStatus,TEXT (Enum),Dernier statut connu (pour les études avec statut Unknown Status).
+WhyStopped,...statusModule.whyStopped,MARKUP,Raison de l'arrêt de l'étude. Potentiel de synonymes (✓).
+HasExpandedAccess,...expandedAccessInfo.hasExpandedAccess,TEXT (Bool),Indique l'accès élargi.
+StartDate,...startDateStruct.date,DATE,Date de début de l'étude (potentiellement Anticipated).
+CompletionDate,...completionDateStruct.date,DATE,Date de fin de l'étude (potentiellement Anticipated).
+StudyFirstPostDate,...studyFirstPostDateStruct.date,DATE,Date de première publication sur ClinicalTrials.gov (Générée par le système).
+LastUpdatePostDate,...lastUpdatePostDateStruct.date,DATE,Date de la dernière mise à jour publiée (Générée par le système). Champ clé pour la fraîcheur des données.
+Dates de Soumission,(Plusieurs champs),DATE,"StudyFirstSubmitDate, ResultsFirstSubmitDate, etc. Utiles pour l'historique de soumission."

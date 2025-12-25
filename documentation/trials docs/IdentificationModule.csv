@@ -1,0 +1,11 @@
+Champ (Piece Name),Chemin JSON,Type de Donnée,Description pour l'Extraction
+NCTId,...identificationModule.nctId,TEXT,Identifiant unique de l'étude (Clé primaire).
+NCTIdAlias,...nctIdAliases.nctIdAlias,TEXT[],Liste d'ID NCT obsolètes/dupliqués. Doit être géré comme un tableau.
+OrgStudyId,...orgStudyIdInfo.id,TEXT,Numéro d'ID de protocole unique de l'organisation.
+OrgStudyIdLink,...orgStudyIdInfo.link,TEXT,Lien URL associé à l'ID de l'organisation.
+SecondaryId,...secondaryIdInfos.id,TEXT[],ID secondaires (ex: numéros de subvention/financement). Doit être géré comme un tableau (champ secondaryIdInfos).
+BriefTitle,...identificationModule.briefTitle,TEXT,Titre court. Potentiel de synonymes (✓).
+OfficialTitle,...identificationModule.officialTitle,TEXT,Titre officiel. Potentiel de synonymes (✓).
+Acronym,...identificationModule.acronym,TEXT,Acronyme de l'étude. Potentiel de synonymes (✓).
+OrgFullName,...organization.fullName,TEXT,Nom complet de l'organisation.
+OrgClass,...organization.class,TEXT (Enum),"Type d'organisation (ex: industrie, académique)."

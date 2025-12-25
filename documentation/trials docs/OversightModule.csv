@@ -1,0 +1,5 @@
+Champ (Piece Name),Chemin JSON,Type de Donnée,Description pour l'Extraction
+OversightHasDMC,...oversightHasDmc,BOOLEAN,Comité de Surveillance des Données (DMC).
+IsFDARegulatedDrug,...isFdaRegulatedDrug,BOOLEAN,Étude régulée par la FDA (Médicament).
+IsFDARegulatedDevice,...isFdaRegulatedDevice,BOOLEAN,Étude régulée par la FDA (Dispositif).
+IsUnapprovedDevice,...isUnapprovedDevice,BOOLEAN,Dispositif non approuvé/autorisé par la FDA.

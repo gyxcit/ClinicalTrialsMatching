@@ -1,0 +1,6 @@
+Champ (Piece Name),Chemin JSON,Type de Donnée,Description pour l'Extraction
+ResponsiblePartyType,...responsibleParty.type,TEXT (Enum),"Type de partie responsable (ex: Principal Investigator, Sponsor)."
+ResponsiblePartyInvestigatorFullName,...responsibleParty.investigatorFullName,TEXT,Nom complet de l'investigateur responsable (si applicable). Potentiel de synonymes (✓).
+LeadSponsorName,...leadSponsor.name,TEXT,Nom du Sponsor Principal.
+LeadSponsorClass,...leadSponsor.class,TEXT (Enum),Type du Sponsor Principal.
+CollaboratorName,...collaborators.name,TEXT[],Liste des Noms des Collaborateurs. Doit être géré comme un tableau (champ collaborators).
