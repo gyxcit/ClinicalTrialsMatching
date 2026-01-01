@@ -32,5 +32,8 @@ class IllnessInfo(BaseModel):
     confidence_score: Optional[float] = Field(None, description="Confidence score of the identification")
 
 
-
-
+class EligibilityQuestions(BaseModel):
+    """Structured response for eligibility questions generation."""
+    nct_id: str = Field(description="NCT ID of the clinical trial")
+    inclusion_questions: List[str] = Field(default_factory=list, description="List of inclusion questions")
+    exclusion_questions: List[str] = Field(default_factory=list, description="List of exclusion questions")

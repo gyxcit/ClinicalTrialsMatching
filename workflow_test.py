@@ -317,6 +317,106 @@ async def filter_trials_by_information(illness_info: IllnessInfo, trials: List[D
     return filtered_studies_with_scores
 
 
+def extract_eligibility_criteria(filtered_trials: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Extract eligibility criteria from filtered trials.
+    
+    Args:
+        filtered_trials (List[Dict[str, Any]]): List of filtered trials with scores.
+    
+    Returns:
+        List of trials with extracted eligibility information.
+    """
+    logger.info("=" * 60)
+    logger.info("📋 EXTRACTING ELIGIBILITY CRITERIA")
+    logger.info("=" * 60)
+    
+    trials_eligibility = []
+    
+    for item in filtered_trials:
+        study = item["study"]
+        protocol_section = study.get('protocolSection', {})
+        
+        # Extraire l'ID du trial
+        identification_module = protocol_section.get('identificationModule', {})
+        nct_id = identification_module.get('nctId', 'N/A')
+        
+        # Extraire le titre pour référence
+        title = identification_module.get('officialTitle') or identification_module.get('briefTitle', 'N/A')
+        
+        # Extraire les critères d'éligibilité
+        eligibility_module = protocol_section.get('eligibilityModule', {})
+        eligibility_criteria = eligibility_module.get('eligibilityCriteria', 'N/A')
+        sex = eligibility_module.get('sex', 'N/A')
+        minimum_age = eligibility_module.get('minimumAge', 'N/A')
+        maximum_age = eligibility_module.get('maximumAge', 'N/A')
+        healthy_volunteers = eligibility_module.get('healthyVolunteers', 'N/A')
+        
+        trial_info = {
+            'nct_id': nct_id,
+            'title': title,
+            'relevance_score': {
+                'num_keywords': item['num_keywords'],
+                'total_occurrences': item['total_occurrences'],
+                'keywords_found': item['keywords_found']
+            },
+            'eligibility': {
+                'criteria': eligibility_criteria,
+                'sex': sex,
+                'minimum_age': minimum_age,
+                'maximum_age': maximum_age,
+                'healthy_volunteers': healthy_volunteers
+            }
+        }
+        
+        trials_eligibility.append(trial_info)
+    
+    logger.info(f"Extracted eligibility criteria for {len(trials_eligibility)} trials")
+    
+    # Afficher quelques exemples
+    logger.info("\n--- Sample eligibility criteria (Top 3) ---")
+    for i, trial in enumerate(trials_eligibility[:3]):
+        logger.info(f"\n{i+1}. NCT ID: {trial['nct_id']}")
+        logger.info(f"   Title: {trial['title'][:80]}...")
+        logger.info(f"   Relevance: {trial['relevance_score']['num_keywords']} keywords ({', '.join(trial['relevance_score']['keywords_found'])})")
+        logger.info(f"   Sex: {trial['eligibility']['sex']}")
+        logger.info(f"   Age Range: {trial['eligibility']['minimum_age']} to {trial['eligibility']['maximum_age']}")
+        logger.info(f"   Healthy Volunteers: {trial['eligibility']['healthy_volunteers']}")
+        criteria = trial['eligibility']['criteria']
+        if criteria != 'N/A':
+            logger.info(f"   Criteria (first 200 chars): {criteria[:200]}...")
+        else:
+            logger.info(f"   Criteria: {criteria}")
+    
+    # Statistiques
+    logger.info("\n--- Eligibility Statistics ---")
+    
+    sex_stats = {}
+    for trial in trials_eligibility:
+        sex = trial['eligibility']['sex']
+        sex_stats[sex] = sex_stats.get(sex, 0) + 1
+    
+    logger.info("Distribution by sex:")
+    for sex, count in sex_stats.items():
+        logger.info(f"  {sex}: {count} trials")
+    
+    healthy_vol_stats = {}
+    for trial in trials_eligibility:
+        hv = trial['eligibility']['healthy_volunteers']
+        healthy_vol_stats[hv] = healthy_vol_stats.get(hv, 0) + 1
+    
+    logger.info("\nHealthy volunteers accepted:")
+    for hv, count in healthy_vol_stats.items():
+        logger.info(f"  {hv}: {count} trials")
+    
+    with_criteria = sum(1 for t in trials_eligibility if t['eligibility']['criteria'] != 'N/A')
+    without_criteria = len(trials_eligibility) - with_criteria
+    
+    logger.info(f"\nTrials with detailed criteria: {with_criteria}")
+    logger.info(f"Trials without detailed criteria: {without_criteria}")
+    
+    return trials_eligibility
+
+
 if __name__ == "__main__":
     txt = """
     I have diabetes type 2 with complications affecting my kidneys and eyes
@@ -341,7 +441,20 @@ if __name__ == "__main__":
                     trials=trials
                 )
                 
-                print(f"\n✅ Workflow complete! Found {len(filtered_trials)} relevant trials.")
+                if filtered_trials:
+                    # Étape 4: Extraire les critères d'éligibilité
+                    print("\nStep 4: Extracting eligibility criteria...\n")
+                    trials_with_eligibility = extract_eligibility_criteria(filtered_trials)
+                    
+                    # Sauvegarder les résultats avec critères d'éligibilité
+                    output_file = f"trials_eligibility_{structured_result.illness_name.replace(' ', '_')}.json"
+                    with open(output_file, 'w', encoding='utf-8') as f:
+                        json.dump(trials_with_eligibility, f, indent=2, ensure_ascii=False)
+                    
+                    logger.info(f"\n✅ Eligibility data saved to '{output_file}'")
+                    print(f"\n✅ Workflow complete! Found {len(filtered_trials)} relevant trials with eligibility criteria.")
+                else:
+                    print("\n⚠️  No trials passed the filtering criteria.")
             else:
                 print("\n❌ No trials found.")
         else:
