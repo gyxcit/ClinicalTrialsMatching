@@ -21,6 +21,8 @@ from .logger import (
     log_error,
     log_warning
 )
+from .utils.agent_memory import AgentMemory, MemoryType
+from .utils.error_handler import ErrorHandler, ErrorSeverity, FeedbackType
 
 
 class AgentModel(Enum):
@@ -417,7 +419,11 @@ class AgentManager:
         self.agents: Dict[str, MistralAgent] = {}
         self._client: Optional[Mistral] = None
         
-        log_success("AgentManager initialized")
+        # Initialize memory and error handling
+        self.memory = AgentMemory(max_entries=200)
+        self.error_handler = ErrorHandler()
+        
+        log_success("AgentManager initialized with memory and error handling")
     
     @property
     def client(self) -> Mistral:
@@ -565,7 +571,8 @@ class AgentManager:
         message: str, 
         use_history: bool = False,
         stream: bool = False,
-        response_model: Optional[Type[T]] = None
+        response_model: Optional[Type[T]] = None,
+        save_to_memory: bool = True
     ) -> Any:
         """
         Send a message to an agent with automatic retry on failure (asynchronous).
@@ -576,6 +583,7 @@ class AgentManager:
             use_history: Whether to use conversation history
             stream: Whether to stream the response
             response_model: Optional Pydantic model for structured response
+            save_to_memory: Whether to save interaction to memory
             
         Returns:
             Agent response
@@ -588,20 +596,69 @@ class AgentManager:
         if agent is None:
             raise ValueError(f"Agent '{agent_name}' not found")
         
+        # Save user input to memory
+        if save_to_memory:
+            self.memory.add_memory(
+                MemoryType.USER_INPUT,
+                message,
+                agent_name=agent_name,
+                use_history=use_history
+            )
+        
         for attempt in range(self.max_retries):
             try:
                 if use_history:
-                    return await agent.chat_with_history_async(message, stream, response_model)
+                    response = await agent.chat_with_history_async(message, stream, response_model)
                 else:
-                    return await agent.chat_async(message, stream, response_model)
+                    response = await agent.chat_async(message, stream, response_model)
+                
+                # Save response to memory
+                if save_to_memory:
+                    response_text = self._extract_response_text(response)
+                    self.memory.add_memory(
+                        MemoryType.AGENT_RESPONSE,
+                        response_text,
+                        agent_name=agent_name,
+                        attempt=attempt + 1
+                    )
+                
+                # Add success feedback
+                self.error_handler.add_feedback(
+                    FeedbackType.SUCCESS,
+                    f"Agent '{agent_name}' responded successfully",
+                    agent_name=agent_name,
+                    attempt=attempt + 1
+                )
+                    
+                return response
                     
             except Exception as e:
+                # Handle error with context
+                error_context = self.error_handler.handle_error(
+                    e,
+                    severity=ErrorSeverity.HIGH if attempt == self.max_retries - 1 else ErrorSeverity.MEDIUM,
+                    agent_name=agent_name,
+                    operation="chat_async",
+                    attempt=attempt + 1,
+                    max_retries=self.max_retries,
+                    message_length=len(message)
+                )
+                
+                # Save error to memory
+                self.memory.add_memory(
+                    MemoryType.ERROR,
+                    f"Error: {str(e)}",
+                    agent_name=agent_name,
+                    error_type=error_context.error_type,
+                    severity=error_context.severity.value
+                )
+                
                 if attempt < self.max_retries - 1:
                     log_warning(
                         f"[ASYNC] Attempt {attempt + 1}/{self.max_retries} failed for agent '{agent_name}'. "
                         f"Retrying in {self.retry_delay}s..."
                     )
-                    await asyncio.sleep(self.retry_delay * (attempt + 1))  # Exponential backoff
+                    await asyncio.sleep(self.retry_delay * (attempt + 1))
                 else:
                     log_error(f"[ASYNC] All {self.max_retries} attempts failed for agent '{agent_name}'", e)
                     raise
@@ -660,6 +717,51 @@ class AgentManager:
     def get_all_agents_info(self) -> Dict[str, Dict[str, Any]]:
         """Get information about all agents."""
         return {name: agent.get_info() for name, agent in self.agents.items()}
+    
+    def _extract_response_text(self, response: Any) -> str:
+        """Extract text from response"""
+        if hasattr(response, 'choices') and len(response.choices) > 0:
+            return response.choices[0].message.content
+        elif hasattr(response, 'content'):
+            return response.content
+        elif isinstance(response, str):
+            return response
+        else:
+            return str(response)
+    
+    def get_agent_context(self, agent_name: str) -> Dict[str, Any]:
+        """
+        Get context and memory for specific agent
+        
+        Args:
+            agent_name: Name of the agent
+            
+        Returns:
+            Dictionary with agent context and recent memories
+        """
+        return {
+            'agent_name': agent_name,
+            'conversation_history': self.memory.get_conversation_history(agent_name=agent_name),
+            'recent_memories': [m.to_dict() for m in self.memory.get_recent_memories(agent_name=agent_name)],
+            'errors': [
+                {
+                    'timestamp': e.timestamp,
+                    'type': e.error_type,
+                    'message': e.message
+                }
+                for e in self.error_handler.error_history if e.agent_name == agent_name
+            ][-5:]
+        }
+    
+    def get_system_status(self) -> Dict[str, Any]:
+        """Get overall system status"""
+        return {
+            'total_agents': len(self.agents),
+            'agent_list': self.list_agents(),
+            'memory_summary': self.memory.get_summary(),
+            'error_summary': self.error_handler.get_error_summary(),
+            'feedback_summary': self.error_handler.get_feedback_summary()
+        }
     
     def __enter__(self):
         """Context manager entry."""
