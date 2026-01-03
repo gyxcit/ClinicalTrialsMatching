@@ -5,6 +5,7 @@ description = "A project to help patient get the best trial fitting them via AI 
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "flask>=3.1.2",
     "loguru>=0.7.3",
     "mistralai>=1.10.0",
     "pandas>=2.3.3",

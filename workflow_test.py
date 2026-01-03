@@ -103,7 +103,7 @@ async def get_trials_for_illness(illness_: str):
     
     trials = await fetch_trials_async(  # Changed to async version
         condition=illness_,
-        max_studies=100,
+        max_studies=10,
         return_status=True,
         json_output=True,
         output_name=f"trials_for_{illness_.replace(' ', '_')}.json",
@@ -476,6 +476,7 @@ async def generate_eligibility_questions(trials_with_eligibility: List[Dict[str,
                 - Do NOT include explanations, just the questions.
                 - If a criterion is vague or ambiguous, skip it.
                 - Ensure questions are relevant to the patient's perspective.
+                - Keep the specific name if a condition is mentioned (e.g., "diabetes melitus", "Malignant hypertension ").
                 - Limit to a maximum of 10 questions per category (inclusion/exclusion).
 
                 Return a JSON object:

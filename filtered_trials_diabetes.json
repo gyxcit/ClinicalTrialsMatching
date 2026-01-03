@@ -1,0 +1,1087 @@
+{
+  "studies": [
+    {
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT06330480",
+          "orgStudyIdInfo": {
+            "id": "Check@Home"
+          },
+          "organization": {
+            "fullName": "Academisch Medisch Centrum - Universiteit van Amsterdam (AMC-UvA)",
+            "class": "OTHER"
+          },
+          "briefTitle": "Check@Home: General Population Screening for Early Detection of Atrial Fibrillation and Chronic Kidney Disease",
+          "officialTitle": "Check@Home: General Population Screening for Early Detection of Atrial Fibrillation and Chronic Kidney Disease"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-05",
+          "overallStatus": "ENROLLING_BY_INVITATION",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2025-05-14",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2028-06-01",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2028-11-01",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2024-03-07",
+          "studyFirstSubmitQcDate": "2024-03-19",
+          "studyFirstPostDateStruct": {
+            "date": "2024-03-26",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-05-13",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-05-16",
+            "type": "ACTUAL"
+          }
+        },
+        "sponsorCollaboratorsModule": {
+          "responsibleParty": {
+            "type": "SPONSOR_INVESTIGATOR",
+            "investigatorFullName": "Prof. Dr. Folkert W. Asselbergs",
+            "investigatorTitle": "Prof. Dr. F. W. Asselbergs",
+            "investigatorAffiliation": "Academisch Medisch Centrum - Universiteit van Amsterdam (AMC-UvA)"
+          },
+          "leadSponsor": {
+            "name": "Prof. Dr. Folkert W. Asselbergs",
+            "class": "OTHER"
+          },
+          "collaborators": [
+            {
+              "name": "Dutch Cardiovascular Alliance",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "University Medical Center Groningen",
+              "class": "OTHER"
+            },
+            {
+              "name": "Dutch Heart Foundation",
+              "class": "OTHER"
+            },
+            {
+              "name": "Dutch Kidney Foundation",
+              "class": "OTHER"
+            },
+            {
+              "name": "Dutch Diabetes Research Foundation",
+              "class": "OTHER"
+            },
+            {
+              "name": "Maastricht University",
+              "class": "OTHER"
+            },
+            {
+              "name": "AstraZeneca",
+              "class": "INDUSTRY"
+            },
+            {
+              "name": "UMC Utrecht",
+              "class": "OTHER"
+            },
+            {
+              "name": "Radboud University Medical Center",
+              "class": "OTHER"
+            },
+            {
+              "name": "Siemens Healthineers Nederland BV",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "University of Twente",
+              "class": "OTHER"
+            },
+            {
+              "name": "Roche Diagnostics Nederland BV",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "Happitech BV",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "Stichting Radboud Universiteit",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "Stichting Netherlands Heart Institute",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "Topicus.Healthcare BV",
+              "class": "UNKNOWN"
+            },
+            {
+              "name": "Amsterdam UMC, location AMC",
+              "class": "OTHER"
+            }
+          ]
+        },
+        "oversightModule": {
+          "oversightHasDmc": true,
+          "isFdaRegulatedDrug": false,
+          "isFdaRegulatedDevice": false,
+          "isUsExport": false
+        },
+        "descriptionModule": {
+          "briefSummary": "The aim of the Check@Home consortium is to set up a roadmap and infrastructure for a program to early detect atrial fibrillation and chronic kidney disease in the general population.\n\nThis will be a population-based screening with a phased implementation and an iterative design in four regions in the Netherlands (Breda, Utrecht, Arnhem, Eindhoven). In total, a random sample of 160,000 people (aged 50-75 years) will be invited to participate in the study and another random sample of 160,000 people with the same characteristics will be included in the control group in which no screening will be offered.\n\nThe overall screening program will consist of three phases: a home-based testing phase, diagnostic screening phase, and a treatment phase:\n\n* Phase 1: Subjects will be invited for a home-based screening that includes home-based testing; urine collection for detection of elevated albuminuria, and a heart rhythm measurement using a smartphone app for detection of atrial fibrillation.\n* Phase 2: Depending on the results on these home-based tests, subjects will be invited for further screening in a diagnostic screening facility. During this visit, physical data will be collected (height, weight, waist circumference, blood pressure, heart rhythm), blood will be drawn, and urine will be collected for the assessment of parameters that are indicative of a cardiovascular disease, chronic kidney disease, type 2 diabetes or their risk factors. Participants will receive a questionnaire that include questions on demographics, educational level, disease history, medication use, health literacy, and quality of life.\n* Phase 3: Based on the results of the diagnostic screening, participants may be referred to their general practitioner for appropriate treatment (lifestyle advice/medication) according to the prevailing guidelines.\n\nThe primary study outcomes are:\n\nOverall effectiveness of population based screening on atrial fibrillation and chronic kidney disease in subjects aged 50-75 years, based on:\n\n* Participation rate of different screening strategies and phases;\n* Yield of the screening (number of subjects with (newly) diagnosed disease and risk factors);\n* Effectiveness of the atrial fibrillation screening, compared with standard care, based on the incidence of ischemic stroke);\n* Effectiveness of the albuminuria screening, compared with standard care, based on the incidence of kidney failure events and Major Adverse Cardiovascular Events (MACE).",
+          "detailedDescription": "Background:\n\nCurrently, in the Netherlands there is no structured national approach for the early detection of cardiovascular disease, kidney disease, and type 2 diabetes in the general population, despite the social and economic impact of these disorders. Detecting these chronic conditions at an early stage could allow for adequate and early treatment to prevent the progression of these conditions and their complications, thereby reducing the societal and economic burden caused by these chronic diseases.\n\nObjective of the study:\n\nTo investigate whether population-based screening of subjects aged 50-75 years can contribute to early detection and treatment of atrial fibrillation and chronic kidney disease (defined by elevated albuminuria), and thereby can contribute to prevention of the morbidity and mortality related to these diseases. This will be done by evaluating the participation rate, yield, and (cost-)effectiveness of the screening compared with standard care. Furthermore, the project aims to evaluate options for broader screening, including the early detection of heart failure, coronary artery disease, and type 2 diabetes.\n\nStudy design:\n\nThis will be a population-based screening with a phased implementation and an iterative design in four regions in the Netherlands (Breda, Utrecht, Arnhem, Eindhoven).\n\nParticipants will be invited for a home-based screening (phase 1) that includes home-based testing; urine collection for detection of elevated albuminuria as indicator of chronic kidney disease, and a heart rhythm measurement using a smartphone app for detection of atrial fibrillation. Both home-based tests will be performed with CE-marked medical devices used according to their intended use. A subset of the population will also receive a short questionnaire. Depending on the results of the home-based tests, subjects might be invited for further screening in a diagnostic screening facility (phase 2). During this visit, physical data (height, weight, waist circumference, blood pressure, heart rhythm) will be collected, blood will be drawn, and urine will be collected for the assessment of parameters that are indicative of a cardiovascular disease, chronic kidney disease, type 2 diabetes or their risk factors. Participants will receive a questionnaire that includes questions on demographics, educational level, disease history, medication use, health literacy, and quality of life. Based on the results of the diagnostic screening, participants may be referred to their general practitioner for appropriate treatment (lifestyle advice/medication) according to the prevailing guidelines. It is planned that in a future protocol amendment an alternative treatment trajectory will be added in which participants may receive further treatment in the diagnostic screening facility.\n\nStudy population:\n\nIn total, a random sample of 160,000 people (aged 50-75 years) living in one of the four selected regions in the Netherlands will be invited to participate in the study. Another random sample of 160,000 people (aged 50-75 years) living in one of the four selected regions in the Netherlands will be included in the control group in which no screening will be offered."
+        },
+        "conditionsModule": {
+          "conditions": [
+            "Atrial Fibrillation",
+            "Chronic Kidney Diseases",
+            "Diabetes Mellitus, Type 2"
+          ],
+          "keywords": [
+            "Population-based screening"
+          ]
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "interventionModelDescription": "Check@Home is a population-based screening with a phased assessment and implementation using an iterative design executed consecutively in four regions in the Netherlands.",
+            "primaryPurpose": "SCREENING",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 320000,
+            "type": "ESTIMATED"
+          }
+        },
+        "armsInterventionsModule": {
+          "armGroups": [
+            {
+              "label": "Intervention group",
+              "type": "OTHER",
+              "description": "This group will be invited for the screening",
+              "interventionNames": [
+                "Other: Intervention group"
+              ]
+            },
+            {
+              "label": "Control group",
+              "type": "NO_INTERVENTION",
+              "description": "This group will not be invited for the screening"
+            }
+          ],
+          "interventions": [
+            {
+              "type": "OTHER",
+              "name": "Intervention group",
+              "description": "Subjects will be invited for a home-based screening (phase 1) that includes home-based testing; urine collection for detection of elevated albuminuria, and a heart rhythm measurement for detection of atrial fibrillation. Both home-based tests will be performed with CE-marked medical devices used according to their intended use. A subset of the population will also receive a short questionnaire. Depending on the results of the home-based tests, subjects might be invited for further screening in a diagnostic screening facility (phase 2), that includes collection of physical data, blood, and urine for the assessment of parameters that are indicative of cardiovascular disease, chronic kidney disease, diabetes type 2 or their risk factors. Participants will also receive a questionnaire. Based on the results of the diagnostic screening, participants may be referred to their GP for appropriate treatment according to the prevailing guidelines (phase 3)",
+              "armGroupLabels": [
+                "Intervention group"
+              ]
+            }
+          ]
+        },
+        "outcomesModule": {
+          "primaryOutcomes": [
+            {
+              "measure": "Participation rate of the atrial fibrillation and albuminuria screening",
+              "description": "* Participation rate of the home-based screening phase will be defined as the number of persons who completed the home-based screening phase relative to the number of persons invited in the corresponding arm (intention-to-screen);\n* Participation rate of the diagnostic screening phase will be defined as the number of persons who completed the diagnostic screening phase relative to the number of persons invited for the diagnostic screening phase in the corresponding arm (in participants invited based on an 'abnormal' result in the home-based screening phase, i.e. either confirmed elevated albuminuria or an irregular heart rhythm);\n* Participation rate of the treatment phase will be defined as the number of persons who completed the care initiation phase (i.e., number of participants visiting their GP; or - in future phases of the screening - the diagnostic center) relative to the number of persons referred for treatment in the corresponding arm (intention-to-screen).",
+              "timeFrame": "1 year after screening period"
+            },
+            {
+              "measure": "Yield of the atrial fibrillation and albuminuria screening",
+              "description": "* Yield of home-based screening: number of participants tested positive (i.e., either confirmed positive urine test and/or abnormal heart rhythm test) relative to the number of persons participating in the corresponding arm (per-protocol analysis) and to the number of persons invited in the corresponding arm (intention-to-screen analysis);\n* Yield of diagnostic screening: number of participants with (newly) diagnosed cardiovascular or chronic kidney disease, diabetes or risk factors, relative to the number of persons participating in the corresponding arm (per-protocol analysis) and to the number of persons invited in the corresponding arm (intention-to-screen analysis);\n* Yield of treatment phase: number of participants completing the treatment phase relative to the number of persons participating in the corresponding arm (per-protocol analysis) and to the number of persons invited to the treatment phase in the corresponding arm (intention-to-screen analysis).",
+              "timeFrame": "1 year after screening period"
+            },
+            {
+              "measure": "Effectiveness of the atrial fibrillation screening",
+              "description": "Effectiveness of the atrial fibrillation screening (the home-based screening program and follow-up strategy) will be based on the incidence of (fatal and non-fatal) ischemic stroke. This will be evaluated by comparing the event rates in the intervention group (the sample of 160,000 subjects invited for screening) and the control group (the sample of 160,000 subjects not invited for screening).",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Effectiveness of the albuminuria screening",
+              "description": "Effectiveness of the albuminuria screening (the home-based screening program and follow-up strategy), based on the incidence of the composite outcome of kidney failure events (defined as start of dialysis, receiving a kidney transplant, or death due to kidney failure without having started kidney function replacement treatment) and MACE (for albuminuria screening defined as cardiovascular mortality, stroke, and myocardial infarction, including CABG and PCI).\n\nThis will be evaluated by comparing the event rates in the population screened positive for elevated albuminuria and followed-up based on this result (i.e., participants in the standard strategy and other alternative strategies) and in the population screened positive for elevated albuminuria - at a later timepoint - and not followed-up based on this result (i.e., participants in 'alternative strategy B').",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            }
+          ],
+          "secondaryOutcomes": [
+            {
+              "measure": "Effectiveness of the atrial fibrillation screening based on incidence of MACE events",
+              "description": "Effectiveness of the atrial fibrillation screening (the home-based screening program and follow-up strategy), based on the incidence of MACE (for atrial fibrillation screening defined as cardiovascular mortality, stroke, non-hemorrhagic stroke, and myocardial infarction, including CABG and PCI).\n\nThis will be evaluated by comparing the event rates in the intervention group (the sample of 160,000 subjects invited for screening) and the control group (the sample of 160,000 subjects not invited for screening).",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Effectiveness of the albuminuria screening based on incidence each individual MACE component",
+              "description": "Effectiveness of the albuminuria screening (the home-based screening program and follow-up strategy), based on each individual component defining MACE (for albuminuria screening defined as cardiovascular mortality, stroke, and myocardial infarction, including CABG and PCI).\n\nThis will be evaluated by comparing the event rates in the in the population screened positive for elevated albuminuria and followed-up based on this result (i.e., participants in the standard strategy and other alternative strategies) and in the population screened positive for elevated albuminuria - at a later timepoint - and not followed-up based on this result (i.e., participants in 'alternative strategy B').",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Safety of the atrial fibrillation screening",
+              "description": "Safety of the atrial fibrillation screening (the home-based screening program and follow-up strategy), based on the incidence of the composite outcome of (fatal and non-fatal) hemorrhagic stroke, other major bleeding events leading to hospitalization (including but not limited to intracranial bleeds, sight-threatening eye bleeds, and serious gastrointestinal bleeding), and all cause-mortality.\n\nThis will be evaluated by comparing the event rates in the intervention group (the sample of 160,000 subjects invited for screening) and the control group (the sample of 160,000 subjects not invited for screening).",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Cost-effectiveness of screening strategies compared with standard of care: treatment effectiveness based on literature.",
+              "description": "An individual level simulation model will be developed to estimate the lifetime effects of the screening strategies for the detection of atrial fibrillation and chronic kidney disease by comparing the corresponding expected incidences of cardiovascular and chronic kidney disease, diabetes and their complications and endpoints with standard care. Incremental effectiveness will be calculated, expressed in QALYs gained for the different screening strategies. Costs will be calculated by multiplying resource use with the corresponding unit costs. The ICER between screening strategies and no screening, expressed in costs per QALY gained, will be calculated over a short-time (5-10 years after screening) and a lifetime time horizon. Finally, we will assess the chance that screening is cost-effective for a range of willingness-to-pay threshold values (range €20,000-€80,000 per QALY) and at which threshold for the screening costs screening would have a chance of ≥90% to be cost-effective.",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Cost-effectiveness of screening strategies compared to standard of care: treatment effectiveness based on actual observed event rates",
+              "description": "Using registry data, we will compare event rates between the intervention group (invited for screening) and the control group (not invited for screening) 5 and 10 years after the screening. Currently foreseen is that the data on fatal and non-fatal cardiovascular disease (according to the MACE criteria; based on corresponding ICD-10 codes) and renal events (dialysis and transplantation; based on corresponding ICD-10 codes) will be obtained and compared. These data will be obtained by linkage with CBS (i.e., Dutch Hospital Data, Vektis, Zorginstituut Nederland), Zorgverzekeraars Nederland, Pharmo, National Heart Registry, and general practitioner registries. These data will be input for the health economic simulation model, replacing earlier estimates of treatment effectiveness and treatment adherence. The ICER and estimation of the likelihood of screening being cost-effective will be repeated using this new and more accurate evidence.",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            }
+          ],
+          "otherOutcomes": [
+            {
+              "measure": "False-positive rate, false-negative rate, sensitivity, specificity, positive predictive screening on atrial fibrillation and albuminuria screening.",
+              "description": "* False-positives: participants with an abnormal home-based test result, but normal test results at the diagnostic screening visit.\n* False-negatives: participants with normal home-based test results, but abnormal test results at the diagnostic screening visit.\n* Sensitivity: the ability of the home-based test to correctly identify participants with the disease.\n* Specificity: the ability of the home-based test to correctly identify participants without the disease.\n* Positive predictive value: the proportion of participants correctly diagnosed as positive (having the disease) out of all participants with a positive test result.\n* Negative predictive value: the proportion of participants correctly diagnosed as negative (not having the disease) out of all participants with a negative test result.",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Characteristics of responders and non-responders",
+              "description": "Characteristics of responders and non-responders, and differences between them, will be analyzed using descriptive statistics per screening strategy. For health literacy descriptive statistical analyses will be performed on the HLS-Q12 questionnaire (per item and/or combined). Future exploratory analyses may evaluate whether health literacy is related to participation rate, health outcomes, and or characteristics of participants and non-participants (such as age and socioeconomic indicators of the neighborhood). In addition, facilitators and barriers for participation will be studied taking into account qualitative data on experiences, considerations and enabling and constraining conditions, collected both in participants and non-participants via in-depth interviews and/or observations.",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Effectiveness of the atrial fibrillation screening based on incidence each individual MACE component",
+              "description": "Effectiveness of the atrial fibrillation screening (the home-based screening program and follow-up strategy), based on the incidence of each individual component defining MACE (for the atrial fibrillation screening defined as cardiovascular mortality, non-hemorrhagic stroke, and myocardial infarction, including CABG and PCI).\n\nThis will be evaluated by comparing the event rates in the intervention group (the sample of 160,000 subjects invited for screening) and the control group (the sample of 160,000 subjects not invited for screening).",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            },
+            {
+              "measure": "Overall effectiveness of broader population-based screening strategies applied to screening on heart failure, coronary artery disease, and type 2 diabetes.",
+              "description": "Overall effectiveness of broader population-based screening strategies, focused on the detection (and potentially treatment) of heart failure, coronary artery disease, and type 2 diabetes in subjects aged 50-75 years. This will be evaluated based on participation rate, yield, and (cost-)effectiveness of the screening strategies, similarly to what is described in the previous sections, but then applied to screening on heart failure, coronary artery disease, and type 2 diabetes.",
+              "timeFrame": "Up to 10 years follow-up after screening period"
+            }
+          ]
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* aged between 50 and 75 years\n* living in the selected regions (Breda, Utrecht, Arnhem, Eindhoven)\n\nExclusion Criteria:\n\n* age \\<50 years or \\>75 years\n* not living in the selected regions (Breda, Utrecht, Arnhem, Eindhoven)\n* being institutionalized (e.g., subjects with intellectual disabilities or subjects living in nursing homes who have a limited life expectancy)\n* participants of the previously conducted THOMAS Study (NL65228.042.18, METc 2018/687) will be excluded.",
+          "healthyVolunteers": true,
+          "sex": "ALL",
+          "minimumAge": "50 Years",
+          "maximumAge": "75 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        },
+        "contactsLocationsModule": {
+          "overallOfficials": [
+            {
+              "name": "Prof. Dr. F. W. Asselbergs",
+              "affiliation": "Amsterdam UMC",
+              "role": "PRINCIPAL_INVESTIGATOR"
+            },
+            {
+              "name": "Prof. Dr. R. T. Gansevoort",
+              "affiliation": "UMC Groningen",
+              "role": "PRINCIPAL_INVESTIGATOR"
+            }
+          ],
+          "locations": [
+            {
+              "facility": "Stichting Amsterdam UMC",
+              "city": "Amsterdam",
+              "country": "Netherlands",
+              "geoPoint": {
+                "lat": 52.37403,
+                "lon": 4.88969
+              }
+            }
+          ]
+        },
+        "referencesModule": {
+          "references": [
+            {
+              "pmid": "37597522",
+              "type": "BACKGROUND",
+              "citation": "van Mil D, Kieneker LM, Evers-Roeten B, Thelen MHM, de Vries H, Hemmelder MH, Dorgelo A, van Etten RW, Heerspink HJL, Gansevoort RT. Participation rate and yield of two home-based screening methods to detect increased albuminuria in the general population in the Netherlands (THOMAS): a prospective, randomised, open-label implementation study. Lancet. 2023 Sep 23;402(10407):1052-1064. doi: 10.1016/S0140-6736(23)00876-0. Epub 2023 Aug 16."
+            }
+          ],
+          "seeAlsoLinks": [
+            {
+              "label": "Related Info",
+              "url": "https://checkathome.nl"
+            }
+          ]
+        },
+        "ipdSharingStatementModule": {
+          "ipdSharing": "NO"
+        }
+      },
+      "derivedSection": {
+        "miscInfoModule": {
+          "versionHolder": "2026-01-02"
+        },
+        "conditionBrowseModule": {
+          "meshes": [
+            {
+              "id": "D001281",
+              "term": "Atrial Fibrillation"
+            },
+            {
+              "id": "D051436",
+              "term": "Renal Insufficiency, Chronic"
+            },
+            {
+              "id": "D003924",
+              "term": "Diabetes Mellitus, Type 2"
+            }
+          ],
+          "ancestors": [
+            {
+              "id": "D001145",
+              "term": "Arrhythmias, Cardiac"
+            },
+            {
+              "id": "D006331",
+              "term": "Heart Diseases"
+            },
+            {
+              "id": "D002318",
+              "term": "Cardiovascular Diseases"
+            },
+            {
+              "id": "D010335",
+              "term": "Pathologic Processes"
+            },
+            {
+              "id": "D013568",
+              "term": "Pathological Conditions, Signs and Symptoms"
+            },
+            {
+              "id": "D051437",
+              "term": "Renal Insufficiency"
+            },
+            {
+              "id": "D007674",
+              "term": "Kidney Diseases"
+            },
+            {
+              "id": "D014570",
+              "term": "Urologic Diseases"
+            },
+            {
+              "id": "D052776",
+              "term": "Female Urogenital Diseases"
+            },
+            {
+              "id": "D005261",
+              "term": "Female Urogenital Diseases and Pregnancy Complications"
+            },
+            {
+              "id": "D000091642",
+              "term": "Urogenital Diseases"
+            },
+            {
+              "id": "D052801",
+              "term": "Male Urogenital Diseases"
+            },
+            {
+              "id": "D002908",
+              "term": "Chronic Disease"
+            },
+            {
+              "id": "D020969",
+              "term": "Disease Attributes"
+            },
+            {
+              "id": "D003920",
+              "term": "Diabetes Mellitus"
+            },
+            {
+              "id": "D044882",
+              "term": "Glucose Metabolism Disorders"
+            },
+            {
+              "id": "D008659",
+              "term": "Metabolic Diseases"
+            },
+            {
+              "id": "D009750",
+              "term": "Nutritional and Metabolic Diseases"
+            },
+            {
+              "id": "D004700",
+              "term": "Endocrine System Diseases"
+            }
+          ]
+        }
+      },
+      "hasResults": false
+    },
+    {
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT03761446",
+          "orgStudyIdInfo": {
+            "id": "TRIMD 1330040"
+          },
+          "organization": {
+            "fullName": "AdventHealth Translational Research Institute",
+            "class": "OTHER"
+          },
+          "briefTitle": "The Role of Type 2 Diabetes on Skeletal Muscle Atrophy and Recovery Following Bed Rest in Older Adults",
+          "officialTitle": "The Role of Type 2 Diabetes on Skeletal Muscle Atrophy and Recovery Following Bed Rest in Older Adults",
+          "acronym": "REST"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-03",
+          "overallStatus": "RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2019-03-18",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2025-12",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2025-12",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2018-10-30",
+          "studyFirstSubmitQcDate": "2018-11-30",
+          "studyFirstPostDateStruct": {
+            "date": "2018-12-03",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-03-12",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-03-13",
+            "type": "ACTUAL"
+          }
+        },
+        "sponsorCollaboratorsModule": {
+          "responsibleParty": {
+            "type": "SPONSOR"
+          },
+          "leadSponsor": {
+            "name": "AdventHealth Translational Research Institute",
+            "class": "OTHER"
+          }
+        },
+        "oversightModule": {
+          "oversightHasDmc": true,
+          "isFdaRegulatedDrug": false,
+          "isFdaRegulatedDevice": false
+        },
+        "descriptionModule": {
+          "briefSummary": "The goal of this study is to determine the impact of pre-diabetes and type 2 diabetes on muscle atrophy during a period of bed rest and recovery of muscle mass, strength, and physical function following bed rest.",
+          "detailedDescription": "Older adults with type 2 diabetes experience an accelerated rate of sarcopenia, which is the deterioration in muscle mass, strength and physical performance. Periods of disuse caused by illness or hospitalization cause rapid loss of muscle mass and strength, which negatively impact physical function upon re-ambulation. The impact of type 2 diabetes on acute muscle atrophy and recovery from disuse is a critical issue that has not been investigated.\n\nThe overall objectives of this study are to employ highly innovative methods in muscle biopsy specimens in order to decipher the temporal sequence by which mitochondrial dysfunction and lipotoxicity in older adults with pre-diabetes and type 2 diabetes impact atrophy and recovery of muscle mass, strength and physical function following bed rest. Older adults with and without pre-diabetes/type 2 diabetes will complete 10 days of strict bed rest followed by 4 weeks of ambulatory recovery. During bed rest muscle biopsies will be collected to determine mitochondrial function and lipid profile. During the recovery period the recovery of muscle mass, strength and physical function will be determined."
+        },
+        "conditionsModule": {
+          "conditions": [
+            "Type 2 Diabetes",
+            "Muscle Atrophy",
+            "Aging",
+            "Sedentary Behavior",
+            "Pre-diabetes"
+          ]
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "NON_RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "primaryPurpose": "BASIC_SCIENCE",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 50,
+            "type": "ESTIMATED"
+          }
+        },
+        "armsInterventionsModule": {
+          "armGroups": [
+            {
+              "label": "Older adults with pre-diabetes or type 2 Diabetes",
+              "type": "EXPERIMENTAL",
+              "description": "Male and female older adults between the ages 60-80 with pre-diabetes or type 2 diabetes",
+              "interventionNames": [
+                "Behavioral: Bed rest"
+              ]
+            },
+            {
+              "label": "Older adults without pre-diabetes or Type 2 Diabetes",
+              "type": "EXPERIMENTAL",
+              "description": "Male and female older adults between the ages 60-80 without pre-diabetes or type 2 diabetes",
+              "interventionNames": [
+                "Behavioral: Bed rest"
+              ]
+            }
+          ],
+          "interventions": [
+            {
+              "type": "BEHAVIORAL",
+              "name": "Bed rest",
+              "description": "The participant will remain in bed rest for 10 complete days.",
+              "armGroupLabels": [
+                "Older adults with pre-diabetes or type 2 Diabetes",
+                "Older adults without pre-diabetes or Type 2 Diabetes"
+              ]
+            }
+          ]
+        },
+        "outcomesModule": {
+          "primaryOutcomes": [
+            {
+              "measure": "Leg Lean Mass",
+              "description": "Determined by DXA (dual energy x-ray absorptiometry)",
+              "timeFrame": "Pre and Post Bed Rest and following 4 weeks of ambulatory recovery"
+            },
+            {
+              "measure": "Mitochondrial Respiration",
+              "description": "Determined by high resolution respirometry in permeabilized muscle fiber bundles",
+              "timeFrame": "Pre and Post Bed Rest"
+            }
+          ],
+          "secondaryOutcomes": [
+            {
+              "measure": "Insulin Sensitivity",
+              "description": "Determined by hyperinsulinemic euglycemic glucose clamp",
+              "timeFrame": "Pre and Post Bed Rest"
+            },
+            {
+              "measure": "Physical function",
+              "description": "Determined by short physical performance battery",
+              "timeFrame": "Pre and Post Bed Rest"
+            }
+          ]
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria\n\n1. Participant must be male or female between the ages of 60 and 80 years of age.\n2. Participant has pre-diabetes or type 2 diabetes and is only taking DPP-4 inhibitors, Sulfonylureas and/or Metformin therapy (but not Insulin, injectable incretin mimeticsSGL2 inhibitors, and Thiazolidinedione's), and has an A1C \\< 8.0.\n\n   1. Pre-Diabetics are defined as having an HgbA1c of greater than or equal to 5.7% and less 6.5%, or a fasting glucose of greater than or equal to 100 mg/dl and less than 126 mg/dl or has a glucose of greater than or equal to 140 mg/dl and less than 200mg/dl at the 2 hour blood draw during OGTT\n   2. The non-diabetic control group is defined as having an HgbA1c of less than 5.7%, a fasting glucose of less than 100 mg/dl and a glucose level less than 140 mg/dl at the 2hr blood draw during the OGTT.\n3. Participant must have renal function with an estimated glomerular filtration rate (eGFR) \\> 45 ml/min/1.73m2 determined at screening.\n4. Participant's triglyceride level is \\< 350 mg/dl and LDL cholesterol is ≤ 150 mg/dl at screening.\n5. Participants must be non-smokers. Non-smokers as defined by not smoking any tobacco or using nicotine-containing products and not using vape pens or vaporizers within 3 months prior to screening.\n6. Participant states willingness to follow protocol as described, including consumption of study product per protocol, the prescribed activity level and completing any forms needed throughout the study.\n7. Participant has voluntarily signed and dated an informed consent form, approved by an Institutional Review Board/Independent Ethics Committee, and provided Health Insurance Portability and Accountability Act authorization (HIPAA) or other privacy authorization prior to any participation in study.\n\nExclusion Criteria\n\n1. Participant has type 1 Diabetes.\n2. BMI \\> 40.0 kg/m2\n3. Participant is actively pursuing weight loss and/or lifestyle changes.\n4. Participant has a history of pressure ulcers.\n5. Participant has a stated history of Deep Vein Thrombosis (DVT), pulmonary embolism, or a known hypercoagulable condition, or other clotting or bleeding disorders.\n6. History of gastrointestinal or intracranial hemorrhage.\n7. History of stroke or cerebrovascular accident.\n8. Recent history of major trauma (within 3 months).\n9. Thrombocytopenia (of any cause) or hyperkalemia (K \\> 5.0) on screening laboratory assay. May repeat lab value per PI discretion.\n10. Untreated or poorly controlled hypertension (SBP \\> 150, DBP \\> 95), or hypotension (SBP \\<100 DBP \\<60)\n11. Participant has a TSH greater than or equal to 10mIU/L.\n12. Participant has current infection (requiring prescription antimicrobial or antiviral medication, or hospitalization), or corticosteroid treatment (with the exception of inhaled or topical steroids) in the last 3 months prior to screening visit.\n13. Participant is currently taking anti-inflammatory medication or has anti-inflammatory medication in the 1 weeks prior to screening (including over the counter formulations; e.g. Aleve, Motrin, ibuprofen, naproxen).\n14. Participant has had surgery requiring \\> 2 days of hospitalization in the last 1 month prior to screening visit.\n15. Participant has an active malignancy or autoimmune disease.\n16. Participant has current significantly impaired liver function in the opinion of the study PI (mild asymptomatic fatty liver is acceptable), or hepatic enzyme tests are ≥ 2.5 times normal limit.\n17. Participant has a chronic, contagious, infectious disease, such as active tuberculosis, Hepatitis B or C, or HIV.\n18. Participant is an amputee and/or has presence of partial or full artificial limb.\n19. Participant has had a significant cardiovascular event (e.g. myocardial infarction, stroke) ≤ 6 months prior to screening visit; or stated history of congestive heart failure; or participant has evidence of cardiovascular disease assessed during the ECG at screening. In the event of a positive stress test, participants are referred to their primary care physician. If the electrocardiogram (ECG) is determined to be a false positive, participant may be allowed to participate in study after confirmatory records obtained.\n20. Participant has a history of, or currently has uncontrolled severe diarrhea, nausea or vomiting.\n21. Participant has an obstruction of the gastrointestinal tract, inflammatory bowel disease, short bowel syndrome or other forms of gastrointestinal disease such as stage III or above gastroesophageal reflux disease, gastroparesis, peptic ulcer disease, celiac disease, intestinal dysmotility, diverticulitis, ischemic colitis and bariatric surgery.\n22. Participant cannot abstain from alcohol for the pre bed rest and bed rest portion of the study. For the recovery portion of the study the participant must agree to consume no more than 1 glass of wine (4-5 oz) or bottle of beer (12 oz) /day.\n23. Participant cannot refrain from taking medications/dietary supplements/herbals or substances that could modulate glucose metabolism (other than oral hypoglycemic medications), or are considered anabolic, or reduce weight (fat mass), or that may interact with low-molecular weight heparin or induce hypo- or hyper-coagulable state, in the opinion of the PI or medical provider, starting one week prior to enrollment and over the entire course of the study. These include progestational agents (except prescribed birth control), steroids, growth hormone, dronabinol, marijuana, calcium-beta-hydroxy-betamethylbutyrate (CaHMB), free amino acid supplements and dietary supplements to aid weight loss.\n24. Participant has a mini-Mental State Examination score \\< 21.\n25. Subjects who fulfill any of the contraindications for MRI; examples include metal implants, devices, paramagnetic objects contained within the body and excessive or metal-containing tattoos.\n26. Unable to participate in MR or DEXA assessments due to physical limitations of equipment tolerances (e.g., MRI bore size and DEXA 450-pound weight limit) claustrophobia, or based on Investigator's judgment at screening.\n27. Participant has a sensitivity or allergy to lidocaine.\n28. Participant has a sensitivity or allergy to heparin, enoxaparin, or other low molecular weight heparin.\n29. History of allergy to pork products or any component of the formulation of low-molecular weight heparin for dosing.\n30. History of heparin induced thrombocytopenia.\n31. Hemoglobin \\< 10.0 g/dL for females; \\< 11.0 g/dL for males; or participant has clinically significant signs/symptoms of anemia in the opinion of the PI or medical provider.\n32. Concomitant medications with known contraindication or interaction with low-molecular weight heparin (including anti-platelet agents, anti-coagulant agents, non-steroidal anti-inflammatory drugs)\n33. Presence of any condition that, in the opinion of the Investigator, compromises participant safety or data integrity or the participant's ability to complete the study.\n34. Participant experiences symptoms of claudication. Symptoms include cramping pain in the legs and/or difficulty walking.",
+          "healthyVolunteers": true,
+          "sex": "ALL",
+          "minimumAge": "60 Years",
+          "maximumAge": "80 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        },
+        "contactsLocationsModule": {
+          "centralContacts": [
+            {
+              "name": "Recruitment Department",
+              "role": "CONTACT",
+              "phone": "407-303-7100",
+              "email": "tri@flhosp.org"
+            }
+          ],
+          "overallOfficials": [
+            {
+              "name": "Paul Coen, PhD",
+              "affiliation": "Translational Research Institute for Metabolism and Diabetes",
+              "role": "PRINCIPAL_INVESTIGATOR"
+            }
+          ],
+          "locations": [
+            {
+              "facility": "Translational Research Institute for Metabolism and Diabetes",
+              "status": "RECRUITING",
+              "city": "Orlando",
+              "state": "Florida",
+              "zip": "32804",
+              "country": "United States",
+              "contacts": [
+                {
+                  "name": "Recruitment Department",
+                  "role": "CONTACT",
+                  "phone": "407-303-7100",
+                  "email": "tri@flhosp.org"
+                }
+              ],
+              "geoPoint": {
+                "lat": 28.53834,
+                "lon": -81.37924
+              }
+            }
+          ]
+        },
+        "ipdSharingStatementModule": {
+          "ipdSharing": "NO"
+        }
+      },
+      "derivedSection": {
+        "miscInfoModule": {
+          "versionHolder": "2026-01-02"
+        },
+        "conditionBrowseModule": {
+          "meshes": [
+            {
+              "id": "D003924",
+              "term": "Diabetes Mellitus, Type 2"
+            },
+            {
+              "id": "D009133",
+              "term": "Muscular Atrophy"
+            },
+            {
+              "id": "D057185",
+              "term": "Sedentary Behavior"
+            },
+            {
+              "id": "D018149",
+              "term": "Glucose Intolerance"
+            }
+          ],
+          "ancestors": [
+            {
+              "id": "D003920",
+              "term": "Diabetes Mellitus"
+            },
+            {
+              "id": "D044882",
+              "term": "Glucose Metabolism Disorders"
+            },
+            {
+              "id": "D008659",
+              "term": "Metabolic Diseases"
+            },
+            {
+              "id": "D009750",
+              "term": "Nutritional and Metabolic Diseases"
+            },
+            {
+              "id": "D004700",
+              "term": "Endocrine System Diseases"
+            },
+            {
+              "id": "D020879",
+              "term": "Neuromuscular Manifestations"
+            },
+            {
+              "id": "D009461",
+              "term": "Neurologic Manifestations"
+            },
+            {
+              "id": "D009422",
+              "term": "Nervous System Diseases"
+            },
+            {
+              "id": "D001284",
+              "term": "Atrophy"
+            },
+            {
+              "id": "D020763",
+              "term": "Pathological Conditions, Anatomical"
+            },
+            {
+              "id": "D013568",
+              "term": "Pathological Conditions, Signs and Symptoms"
+            },
+            {
+              "id": "D012816",
+              "term": "Signs and Symptoms"
+            },
+            {
+              "id": "D001519",
+              "term": "Behavior"
+            },
+            {
+              "id": "D006943",
+              "term": "Hyperglycemia"
+            }
+          ]
+        },
+        "interventionBrowseModule": {
+          "meshes": [
+            {
+              "id": "D001510",
+              "term": "Bed Rest"
+            }
+          ],
+          "ancestors": [
+            {
+              "id": "D013812",
+              "term": "Therapeutics"
+            }
+          ]
+        }
+      },
+      "hasResults": false
+    },
+    {
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT06896799",
+          "orgStudyIdInfo": {
+            "id": "25/NI/0004"
+          },
+          "organization": {
+            "fullName": "Queen's University, Belfast",
+            "class": "OTHER"
+          },
+          "briefTitle": "Determining the Effect of Food Ordering on Blood Glucose In Gestational Diabetes Mellitus (DEFI-GDM)",
+          "officialTitle": "Determining the Effect of Food Ordering on Blood Glucose In Gestational Diabetes Mellitus (DEFI-GDM) - a Randomised Crossover Study",
+          "acronym": "DEFI-GDM"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-12",
+          "overallStatus": "RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2025-12-11",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2026-09-30",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2027-02-01",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2025-03-04",
+          "studyFirstSubmitQcDate": "2025-03-24",
+          "studyFirstPostDateStruct": {
+            "date": "2025-03-26",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-12-12",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-12-15",
+            "type": "ESTIMATED"
+          }
+        },
+        "sponsorCollaboratorsModule": {
+          "responsibleParty": {
+            "type": "PRINCIPAL_INVESTIGATOR",
+            "investigatorFullName": "Jayne Woodside, PhD",
+            "investigatorTitle": "Professor",
+            "investigatorAffiliation": "Queen's University, Belfast"
+          },
+          "leadSponsor": {
+            "name": "Queen's University, Belfast",
+            "class": "OTHER"
+          },
+          "collaborators": [
+            {
+              "name": "Imperial College London",
+              "class": "OTHER"
+            }
+          ]
+        },
+        "oversightModule": {
+          "oversightHasDmc": false,
+          "isFdaRegulatedDrug": false,
+          "isFdaRegulatedDevice": false
+        },
+        "descriptionModule": {
+          "briefSummary": "The goal of this clinical trial is to determine whether the sequence of macronutrient consumption affects post-prandial glycaemia in women with gestational diabetes mellitus.\n\nThe main questions it aims to answer are:\n\n* The difference in the magnitude of postprandial rise in blood glucose between the two test meals.\n* The difference in the magnitude of postprandial change in serum levels of gut hormones between the two test meals.\n* The difference in mean change in pre-post ingestion satiety scores between the two test meals.\n* The difference in 24 hour energy and macronutrient intake following the two test meals.\n\nParticipants will attend two study visits at the Centre for Public Health, with an interval of at least two days between the visits and complete the following, anthropometric measurements, demographic and appetite questionnaires, glucose measurements, two food diaries and fasting blood samples and the consumption of the study breakfast. Participants will be asked to eat either the protein/fat-based component of the meal (scrambled egg) before or after the carbohydrate-based component (wholemeal toast) on their first visit and on the other visit they will be asked to eat the meal in the reverse order. The order in which this occurs will be randomised and each participant will act as their own control. Researchers will compare the results from participants between the two test meals to see if the order of macronutrient consumption has any effect on post-prandial glycaemia, gut hormones, satiety scores and energy and macronutrient intake.",
+          "detailedDescription": "Gestational diabetes mellitus (GDM) is glucose intolerance with onset or first diagnosis during pregnancy, affecting around 1 in 10 pregnancies in the United Kingdom (UK). Women with GDM are 10 times more likely to develop type 2 DM and twice as likely to develop cardiovascular disease in later life than women without GDM. Dietary modification is recommended as first line management to optimise blood glucose control. However, this often fails, necessitating the use of medication such as metformin and insulin. There is a pressing need to find safe and effective dietary approaches to optimise glycaemic control in GDM which can be easily adhered to in order to improve longer-term outcomes. The impact of the sequence of macronutrients on glycaemic control is an emerging area of interest. Recent evidence suggests that the consumption of the fat/protein components of a meal prior to the carbohydrate components, reduces the peak by around 40% after food. This study aims to determine whether the order that macronutrients (i.e. protein, fat, carbohydrate) are eaten affects; blood sugar glucose levels in the blood after a meal, appetite, food intake and the release of hormones in the body, in women with GDM.\n\nPregnant women with GDM, aged 18-50 years old are eligible for the study. Women are not eligible if they have a history of type 1 or 2 diabetes, any clinically confirmed food allergies, taking medication for GDM, severe nausea or using anti-sickness medication.\n\nRecruitment will be via antenatal clinics in the South-Eastern Health and Social Care Trust (SEHSCT). Participants will attend the Centre for Public Health on two occasions (maximum 2 weeks between visits) and will involve the collection of demographic information, weight and height measurements, blood samples, glucose measurements, consumption of study breakfast, and completion of two 1-day food diaries.\n\nParticipants will be asked to eat either the protein/fat-based component of the meal (scrambled egg) before or after the carbohydrate-based component (wholemeal toast) on their first visit and on the other visit they will be asked to eat the meal in the reverse order. The order in which this occurs will be randomised and each participant will act as their own control. Scrambled egg was chosen as the protein and fat will be homogenously distributed (compared to boiled egg, for example). Wholemeal toast was chosen as, although lower glycaemic index and therefore less likely to expeditiously raise blood glucose than toasted white bread, it will be more consistent with the participants' existing dietary needs."
+        },
+        "conditionsModule": {
+          "conditions": [
+            "Gestational Diabetes Mellitus (GDM)"
+          ],
+          "keywords": [
+            "Gestational Diabetes Mellitus",
+            "Post-prandial glycaemia",
+            "Food Ordering"
+          ]
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "CROSSOVER",
+            "interventionModelDescription": "This will be a randomised crossover study. Participants will be asked to eat either the protein/fat-based component of the meal (scrambled egg) before or after the carbohydrate-based component (wholemeal toast) on their first visit and on the other visit they will be asked to eat the meal in the reverse order. The order in which this occurs will be randomised and each participant will act as their own control.",
+            "primaryPurpose": "OTHER",
+            "maskingInfo": {
+              "masking": "NONE",
+              "maskingDescription": "It is not possible to blind participants or researchers in this study due to the nature of the nutritional intervention. However, the allocation to each group will be blinded using envelopes."
+            }
+          },
+          "enrollmentInfo": {
+            "count": 35,
+            "type": "ESTIMATED"
+          }
+        },
+        "armsInterventionsModule": {
+          "armGroups": [
+            {
+              "label": "Visit 1: Protein/fat then carbohydrate. Visit 2: Carbohydrate then protein/fat.",
+              "type": "EXPERIMENTAL",
+              "description": "Participants who are randomised to eat the protein/fat-based component (scrambled egg) of the meal before the carbohydrate-based component (wholemeal toast) on their first study visit and on their second study visit they will be asked to eat the meal in the reverse order. The order in which this occurs will be randomised and each participant will act as their own control.",
+              "interventionNames": [
+                "Other: Visit 1: Protein/fat then carbohydrate. Visit 2: Carbohydrate then protein/fat."
+              ]
+            },
+            {
+              "label": "Visit 1: Carbohydrate then protein/fat. Visit 2: Protein/fat then carbohydrate.\"",
+              "type": "EXPERIMENTAL",
+              "description": "Participants who are randomised to eat the carbohydrate-based component (wholemeal toast) of the meal before the protein/fat-based component (scrambled egg) on their first study visit and on their second study visit they will be asked to eat the meal in the reverse order. The order in which this occurs will be randomised and each participant will act as their own control.",
+              "interventionNames": [
+                "Other: Visit 1: Carbohydrate then protein/fat. Visit 2: Protein/fat then carbohydrate."
+              ]
+            }
+          ],
+          "interventions": [
+            {
+              "type": "OTHER",
+              "name": "Visit 1: Protein/fat then carbohydrate. Visit 2: Carbohydrate then protein/fat.",
+              "description": "Participants who are randomised to eat the protein/fat-based component (scrambled egg) of the meal before the carbohydrate-based component (wholemeal toast) on their first study visit, will be asked to eat the meal in the reverse order at their second study visit. Meals will be prepared by members of the research team who have completed Food Safety training. Participants will be asked to consume a 440kcal breakfast meal within 10 minutes, approximately 1.5 hours after arrival at their first study visit and approximately 30 minutes after arrival at their second study visit.",
+              "armGroupLabels": [
+                "Visit 1: Protein/fat then carbohydrate. Visit 2: Carbohydrate then protein/fat."
+              ]
+            },
+            {
+              "type": "OTHER",
+              "name": "Visit 1: Carbohydrate then protein/fat. Visit 2: Protein/fat then carbohydrate.",
+              "description": "Participants who are randomised to eat the carbohydrate-based component (wholemeal toast) of the meal before the protein/fat-based component (scrambled egg) on their first study visit, will be asked to eat the meal in the reverse order at their second study visit. Meals will be prepared by members of the research team who have completed Food Safety training. Participants will be asked to consume a 440kcal breakfast meal within 10 minutes, approximately 1.5 hours after arrival at their first study visit and approximately 30 minutes after arrival at their second study visit.",
+              "armGroupLabels": [
+                "Visit 1: Carbohydrate then protein/fat. Visit 2: Protein/fat then carbohydrate.\""
+              ]
+            }
+          ]
+        },
+        "outcomesModule": {
+          "primaryOutcomes": [
+            {
+              "measure": "Postprandial Glucose",
+              "description": "The difference in the magnitude of postprandial rise in blood glucose between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 125 minutes] and Visit 2 [time 0 and 125 minutes]"
+            }
+          ],
+          "secondaryOutcomes": [
+            {
+              "measure": "Insulin",
+              "description": "The difference in the magnitude of postprandial change in serum levels of insulin between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "C-Peptide",
+              "description": "The difference in the magnitude of postprandial change in serum levels of c-peptide between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Total Ghrelin",
+              "description": "The difference in the magnitude of postprandial change in serum levels of total ghrelin between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Glucagon (GCG)",
+              "description": "The difference in the magnitude of postprandial change in serum levels of GCG between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Glucagon-like peptide-1 (GLP-1)",
+              "description": "The difference in the magnitude of postprandial change in serum levels of GLP-1 between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Peptide Tyrosine (PYY)",
+              "description": "The difference in the magnitude of postprandial change in serum levels of PYY between the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Satiety Scores",
+              "description": "The difference in mean change in pre-post ingestion satiety scores between the two test meals, using an appetite visual analogue scale (range 0 - 100) \\[The direction of the score will depend on the individual question\\].",
+              "timeFrame": "Difference between Visit 1 [time 0 and 30 minutes] and Visit 2 [time 0 and 30 minutes]"
+            },
+            {
+              "measure": "Nutrient intake",
+              "description": "The difference in 24 hour energy and macronutrient intake following the two test meals.",
+              "timeFrame": "Difference between Visit 1 [time 0 and 24 hours] and Visit 2 [time 0 and 24 hours]"
+            }
+          ]
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Pregnant women with gestational diabetes mellitus\n* Aged 18-50 years old\n\nExclusion Criteria:\n\n* History of type 1 or type 2 diabetes mellitus\n* Dietary restrictions or clinically confirmed food allergies that may affect study requirements\n* Pharmacologically managed GDM at the point of study entry\n* Hyperemesis gravidarum at the point of study entry (i.e. prolonged/severe nausea and vomiting)\n* Using antiemetic medication (e.g. dimenhydrinate, prochlorperazine, promethazine)\n* Any other problems or medical conditions that would substantially limit their ability to complete the study requirements\n\nParticipants can be recruited onto the study if they have previously had GDM in another pregnancy. Participants can also be recruited if they are involved in other research studies, but this will depend on the study type and the decision will be made by the Chief/Principal Investigator.",
+          "healthyVolunteers": false,
+          "sex": "FEMALE",
+          "genderBased": true,
+          "genderDescription": "Participants must be pregnant with GDM to take part in the study, and therefore must be female.",
+          "minimumAge": "18 Years",
+          "maximumAge": "50 Years",
+          "stdAges": [
+            "ADULT"
+          ]
+        },
+        "contactsLocationsModule": {
+          "centralContacts": [
+            {
+              "name": "Jayne Woodside, PhD",
+              "role": "CONTACT",
+              "phone": "02890 978942",
+              "email": "j.woodside@qub.ac.uk"
+            },
+            {
+              "name": "Danielle Logan, PhD",
+              "role": "CONTACT",
+              "email": "d.logan@qub.ac.uk"
+            }
+          ],
+          "overallOfficials": [
+            {
+              "name": "Jayne Woodside, PhD",
+              "affiliation": "Queen's University, Belfast",
+              "role": "PRINCIPAL_INVESTIGATOR"
+            }
+          ],
+          "locations": [
+            {
+              "facility": "Centre for Public Health, Institute of Clinical Sciences A",
+              "status": "RECRUITING",
+              "city": "Belfast",
+              "zip": "BT12 6BA",
+              "country": "United Kingdom",
+              "contacts": [
+                {
+                  "name": "Jayne Woodside, PhD",
+                  "role": "CONTACT",
+                  "phone": "02890 978942",
+                  "email": "j.woodside@qub.ac.uk"
+                },
+                {
+                  "name": "Danielle Logan, PhD",
+                  "role": "CONTACT",
+                  "email": "d.logan@qub.ac.uk"
+                },
+                {
+                  "name": "Jayne Woodside, PhD",
+                  "role": "PRINCIPAL_INVESTIGATOR"
+                }
+              ],
+              "geoPoint": {
+                "lat": 54.59682,
+                "lon": -5.92541
+              }
+            }
+          ]
+        },
+        "ipdSharingStatementModule": {
+          "ipdSharing": "YES",
+          "description": "The researchers are happy to share results from the study for the purposes of a meta-analysis. This will be completed on approach to the researchers.",
+          "infoTypes": [
+            "STUDY_PROTOCOL",
+            "ICF"
+          ],
+          "timeFrame": "Data should be available from December 2025 and will be available for 2 years.",
+          "accessCriteria": "Use of results in a meta-analysis will be available by contacting the research team."
+        }
+      },
+      "documentSection": {
+        "largeDocumentModule": {
+          "largeDocs": [
+            {
+              "typeAbbrev": "Prot_SAP",
+              "hasProtocol": true,
+              "hasSap": true,
+              "hasIcf": false,
+              "label": "Study Protocol and Statistical Analysis Plan",
+              "date": "2025-02-11",
+              "uploadDate": "2025-03-24T07:45",
+              "filename": "Prot_SAP_000.pdf",
+              "size": 279120
+            },
+            {
+              "typeAbbrev": "ICF",
+              "hasProtocol": false,
+              "hasSap": false,
+              "hasIcf": true,
+              "label": "Informed Consent Form",
+              "date": "2025-02-11",
+              "uploadDate": "2025-03-04T06:39",
+              "filename": "ICF_001.pdf",
+              "size": 138988
+            }
+          ]
+        }
+      },
+      "derivedSection": {
+        "miscInfoModule": {
+          "versionHolder": "2026-01-02"
+        },
+        "conditionBrowseModule": {
+          "meshes": [
+            {
+              "id": "D016640",
+              "term": "Diabetes, Gestational"
+            }
+          ],
+          "ancestors": [
+            {
+              "id": "D011248",
+              "term": "Pregnancy Complications"
+            },
+            {
+              "id": "D005261",
+              "term": "Female Urogenital Diseases and Pregnancy Complications"
+            },
+            {
+              "id": "D000091642",
+              "term": "Urogenital Diseases"
+            },
+            {
+              "id": "D003920",
+              "term": "Diabetes Mellitus"
+            },
+            {
+              "id": "D044882",
+              "term": "Glucose Metabolism Disorders"
+            },
+            {
+              "id": "D008659",
+              "term": "Metabolic Diseases"
+            },
+            {
+              "id": "D009750",
+              "term": "Nutritional and Metabolic Diseases"
+            },
+            {
+              "id": "D004700",
+              "term": "Endocrine System Diseases"
+            }
+          ]
+        }
+      },
+      "hasResults": false
+    }
+  ],
+  "metadata": {
+    "original_keywords": [
+      "eye",
+      "type 2",
+      "urinary",
+      "visual",
+      "kidney"
+    ],
+    "filtered_keywords": [
+      "eye",
+      "type 2",
+      "urinary",
+      "visual",
+      "kidney"
+    ],
+    "universal_keywords": [],
+    "total_trials": 10,
+    "filtered_trials": 3
+  }
+}
