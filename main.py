@@ -588,5 +588,128 @@ def get_results():
     })
 
 
+async def generate_explanation(nct_id: str, trial_data: Dict[str, Any], user_responses: Dict[str, bool]) -> str:
+    """Generate AI explanation for trial results"""
+    async with AgentManager(max_retries=3, retry_delay=5.0) as manager:
+        agent = manager.create_agent(
+            agent_id=MISTRAL_AGENT_ID,
+            name="ExplanationAgent",
+            model=AgentModel.SMALL.value,
+            description="Medical results explanation specialist"
+        )
+        
+        # Prepare questions and answers summary
+        inclusion_qa = []
+        exclusion_qa = []
+        
+        for q_id, q_data in trial_data['questions']['inclusion'].items():
+            answer = user_responses.get(q_id, None)
+            if answer is not None:
+                inclusion_qa.append(f"- {q_data['question']}: {'Yes' if answer else 'No'}")
+        
+        for q_id, q_data in trial_data['questions']['exclusion'].items():
+            answer = user_responses.get(q_id, None)
+            if answer is not None:
+                exclusion_qa.append(f"- {q_data['question']}: {'Yes' if answer else 'No'}")
+        
+        inclusion_text = "\n".join(inclusion_qa) if inclusion_qa else "No inclusion questions answered"
+        exclusion_text = "\n".join(exclusion_qa) if exclusion_qa else "No exclusion questions answered"
+        
+        prompt = f"""
+        You are a medical assistant explaining clinical trial eligibility results to a patient.
+        
+        **Trial Information:**
+        - Trial ID: {trial_data['nct_id']}
+        - Title: {trial_data['title']}
+        
+        **Patient's Responses to Exclusion Criteria:**
+        {exclusion_text}
+        
+        **Patient's Responses to Inclusion Criteria:**
+        {inclusion_text}
+        
+        **Task:**
+        Provide a clear, empathetic explanation in 3-4 paragraphs covering:
+        
+        1. **Eligibility Summary**: Start by clearly stating if the patient is eligible, partially eligible, or not eligible.
+        
+        2. **Key Factors**: Explain which specific answers led to this result. Be specific about which criteria were met or not met.
+        
+        3. **What This Means**: Help the patient understand what these results mean for their participation in this trial.
+        
+        4. **Next Steps** (if applicable): If partially eligible or not eligible, briefly suggest what might help or what alternatives to consider.
+        
+        **Important Guidelines:**
+        - Use simple, patient-friendly language
+        - Be empathetic and encouraging
+        - Avoid medical jargon
+        - Keep it concise (150-200 words)
+        - Do not give medical advice, only explain the assessment
+        - Focus on the factual responses, not medical interpretation
+        
+        Generate the explanation now:
+        """
+        
+        # ✅ FIX: Extract the text content from the response
+        response = await manager.chat_with_retry_async(
+            agent_name="ExplanationAgent",
+            message=prompt
+        )
+        
+        # Extract text from ChatCompletionResponse object
+        if hasattr(response, 'choices') and len(response.choices) > 0:
+            return response.choices[0].message.content
+        elif hasattr(response, 'content'):
+            return response.content
+        elif isinstance(response, str):
+            return response
+        else:
+            # Fallback: convert to string
+            return str(response)
+
+
+@app.route('/explain_result', methods=['POST'])
+def explain_result():
+    """Generate AI explanation for a specific trial result"""
+    request_data = request.json
+    nct_id = request_data.get('nct_id')
+    
+    if not nct_id:
+        return jsonify({'error': 'Trial ID is required'}), 400
+    
+    data = load_session_data()
+    if not data:
+        return jsonify({'error': 'Session expired'}), 400
+    
+    # Find the trial
+    trial_data = None
+    for trial in data['trials_data']:
+        if trial['nct_id'] == nct_id:
+            trial_data = trial
+            break
+    
+    if not trial_data:
+        return jsonify({'error': 'Trial not found'}), 404
+    
+    # Get user responses for this trial
+    user_responses = data['user_responses'].get(nct_id, {})
+    
+    if not user_responses:
+        return jsonify({'error': 'No responses found for this trial'}), 404
+    
+    async def run_explanation():
+        return await generate_explanation(nct_id, trial_data, user_responses)
+    
+    try:
+        explanation = asyncio.run(run_explanation())
+        return jsonify({
+            'nct_id': nct_id,
+            'explanation': explanation
+        })
+    except Exception as e:
+        logger.error(f"Error generating explanation: {e}")
+        return jsonify({'error': f'Failed to generate explanation: {str(e)}'}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

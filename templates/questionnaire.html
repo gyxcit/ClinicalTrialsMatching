@@ -154,6 +154,28 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
+        .btn-explain {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-explain:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-explain:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .results {
             margin-top: 30px;
         }
@@ -271,6 +293,27 @@
 
         .score-display strong {
             color: #1565c0;
+        }
+
+        .explanation-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .explanation-content h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .explanation-content p {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -477,9 +520,61 @@
                     <p><strong>Status:</strong> ${result.eligible ? '✅ Fully Eligible' : (percentage > 0 ? '⚠️ Partially Eligible' : '❌ Not Eligible')}</p>
                     <p><strong>Inclusion Score:</strong> ${result.inclusion_score || 0}/${result.total_inclusion_questions || 0} criteria met</p>
                     <p><strong>Reason:</strong> ${result.reason}</p>
+                    <button class="btn-explain" onclick="explainResult('${result.nct_id}')">
+                        🤖 Explain Results
+                    </button>
+                    <div id="explanation-${result.nct_id}" class="explanation-box hidden"></div>
                 `;
                 resultsList.appendChild(resultItem);
             });
+        }
+
+        async function explainResult(nctId) {
+            const explanationBox = document.getElementById(`explanation-${nctId}`);
+            const button = event.target;
+            
+            // Toggle visibility
+            if (!explanationBox.classList.contains('hidden')) {
+                explanationBox.classList.add('hidden');
+                button.textContent = '🤖 Explain Results';
+                return;
+            }
+            
+            // Show loading
+            button.disabled = true;
+            button.textContent = '⏳ Generating explanation...';
+            explanationBox.classList.remove('hidden');
+            explanationBox.innerHTML = '<div class="loading">Analyzing your responses...</div>';
+            
+            try {
+                const response = await fetch('/explain_result', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nct_id: nctId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    explanationBox.innerHTML = `<p style="color: #c62828;">❌ ${data.error}</p>`;
+                } else {
+                    explanationBox.innerHTML = `
+                        <div class="explanation-content">
+                            <h4>📋 Explanation</h4>
+                            <p>${data.explanation}</p>
+                        </div>
+                    `;
+                }
+                
+                button.textContent = '🤖 Hide Explanation';
+            } catch (error) {
+                explanationBox.innerHTML = `<p style="color: #c62828;">❌ Error generating explanation: ${error.message}</p>`;
+                button.textContent = '🤖 Explain Results';
+            } finally {
+                button.disabled = false;
+            }
         }
     </script>
 </body>
