@@ -544,7 +544,7 @@
             button.disabled = true;
             button.textContent = '⏳ Generating explanation...';
             explanationBox.classList.remove('hidden');
-            explanationBox.innerHTML = '<div class="loading">Analyzing your responses...</div>';
+            explanationBox.innerHTML = '<div class="loading">Analyzing your responses and ensuring clarity...</div>';
             
             try {
                 const response = await fetch('/explain_result', {
@@ -560,7 +560,30 @@
                 if (data.error) {
                     explanationBox.innerHTML = `<p style="color: #c62828;">❌ ${data.error}</p>`;
                 } else {
+                    // Show quality badge
+                    const score = data.quality.comprehension_score;
+                    const attempts = data.quality.attempts;
+                    const qualityBadge = score >= 80 ? '🌟 Excellent' : 
+                                        score >= 60 ? '✅ Good' : 
+                                        '⚠️ Fair';
+                    
+                    let qualityInfo = `
+                        <div style="background: #e3f2fd; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.85em;">
+                            <strong>Quality:</strong> ${qualityBadge} (${score}/100)
+                            ${attempts > 1 ? ` | Improved after ${attempts} attempts` : ''}
+                        </div>
+                    `;
+                    
+                    if (data.warning) {
+                        qualityInfo += `
+                            <div style="background: #fff3e0; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.85em; color: #e65100;">
+                                ⚠️ ${data.warning}
+                            </div>
+                        `;
+                    }
+                    
                     explanationBox.innerHTML = `
+                        ${qualityInfo}
                         <div class="explanation-content">
                             <h4>📋 Explanation</h4>
                             <p>${data.explanation}</p>

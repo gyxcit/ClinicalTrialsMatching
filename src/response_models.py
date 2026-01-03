@@ -2,7 +2,7 @@
 Pydantic models for structured agent responses.
 Define your response schemas here for type-safe agent interactions.
 """
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field
 
 
@@ -37,3 +37,29 @@ class EligibilityQuestions(BaseModel):
     nct_id: str = Field(description="NCT ID of the clinical trial")
     inclusion_questions: List[str] = Field(default_factory=list, description="List of inclusion questions")
     exclusion_questions: List[str] = Field(default_factory=list, description="List of exclusion questions")
+
+
+class ExplanationEvaluation(BaseModel):
+    """Structured response for explanation evaluation."""
+    comprehension_score: int = Field(
+        description="Comprehension score from 0 to 100, where 100 is perfectly understandable",
+        ge=0,
+        le=100
+    )
+    is_acceptable: bool = Field(
+        description="True if comprehension_score >= 60, False otherwise"
+    )
+    issues: List[str] = Field(
+        default_factory=list,
+        description="List of specific issues that make the explanation hard to understand"
+    )
+    suggestions: Union[str, List[str]] = Field(  # ✅ Accepte string OU liste
+        default="",
+        description="Specific suggestions for improving the explanation"
+    )
+    
+    def get_suggestions_text(self) -> str:
+        """Get suggestions as a single string"""
+        if isinstance(self.suggestions, list):
+            return "\n".join(self.suggestions)
+        return self.suggestions

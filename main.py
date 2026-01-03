@@ -13,7 +13,7 @@ import pickle
 
 # Import workflow functions
 from src.agent_manager import AgentManager, AgentModel, ResponseFormat
-from src.response_models import IllnessInfo, EligibilityQuestions
+from src.response_models import IllnessInfo, EligibilityQuestions, ExplanationEvaluation
 from src.config import MISTRAL_AGENT_ID
 from src.logger import logger
 from src.trials import fetch_trials_async
@@ -668,6 +668,222 @@ async def generate_explanation(nct_id: str, trial_data: Dict[str, Any], user_res
             return str(response)
 
 
+async def evaluate_explanation(explanation: str, trial_context: str) -> ExplanationEvaluation:
+    """Evaluate if explanation is comprehensible enough"""
+    async with AgentManager(max_retries=2, retry_delay=3.0) as manager:
+        evaluator = manager.create_agent(
+            agent_id=MISTRAL_AGENT_ID,
+            name="ExplanationEvaluator",
+            model=AgentModel.SMALL.value,
+            response_format=ResponseFormat.JSON,
+            response_model=ExplanationEvaluation,
+            description="Evaluates medical explanations for patient comprehension"
+        )
+        
+        eval_prompt = f"""
+        You are an expert in medical communication. Evaluate the following explanation for patient comprehension.
+        
+        **Context:** {trial_context}
+        
+        **Explanation to evaluate:**
+        {explanation}
+        
+        **Evaluation Criteria:**
+        1. **Clarity** (0-25 points): Is the language simple and clear? No medical jargon?
+        2. **Structure** (0-25 points): Is it well-organized? Easy to follow?
+        3. **Completeness** (0-25 points): Does it address eligibility, key factors, and next steps?
+        4. **Empathy** (0-25 points): Is it patient-friendly, encouraging, and respectful?
+        
+        **Scoring:**
+        - 80-100: Excellent - Very easy to understand
+        - 60-79: Good - Acceptable comprehension
+        - 40-59: Fair - Needs improvement
+        - 0-39: Poor - Hard to understand
+        
+        **Instructions:**
+        1. Calculate comprehension_score (0-100)
+        2. Set is_acceptable to true if score >= 60, false otherwise
+        3. If score < 60, list specific issues (medical jargon, complex sentences, missing information, etc.)
+        4. Provide specific suggestions for improvement
+        
+        Return a JSON object with: comprehension_score, is_acceptable, issues, suggestions
+        """
+        
+        evaluation = await manager.chat_with_retry_async(
+            agent_name="ExplanationEvaluator",
+            message=eval_prompt,
+            response_model=ExplanationEvaluation
+        )
+        
+        return evaluation
+
+
+async def generate_explanation_with_validation(
+    nct_id: str, 
+    trial_data: Dict[str, Any], 
+    user_responses: Dict[str, bool],
+    max_retries: int = 3
+) -> Dict[str, Any]:
+    """Generate explanation with automatic evaluation and rewriting if needed"""
+    
+    trial_context = f"Trial {trial_data['nct_id']}: {trial_data['title'][:100]}..."
+    
+    for attempt in range(max_retries):
+        logger.info(f"Generating explanation (Attempt {attempt + 1}/{max_retries})...")
+        
+        # Generate explanation
+        explanation = await generate_explanation(nct_id, trial_data, user_responses)
+        
+        # Evaluate explanation
+        logger.info("Evaluating explanation comprehension...")
+        evaluation = await evaluate_explanation(explanation, trial_context)
+        
+        logger.info(f"Comprehension score: {evaluation.comprehension_score}/100")
+        
+        # Check if acceptable
+        if evaluation.is_acceptable:
+            logger.info("✅ Explanation is comprehensible enough")
+            return {
+                'explanation': explanation,
+                'comprehension_score': evaluation.comprehension_score,
+                'attempts': attempt + 1,
+                'evaluation': {
+                    'score': evaluation.comprehension_score,
+                    'is_acceptable': True
+                }
+            }
+        
+        # Log issues and retry
+        logger.warning(f"⚠️ Explanation needs improvement (Score: {evaluation.comprehension_score}/100)")
+        logger.warning(f"Issues: {', '.join(evaluation.issues)}")
+        logger.info(f"Suggestions: {evaluation.suggestions}")
+        
+        if attempt < max_retries - 1:
+            # Rewrite with feedback
+            logger.info("Requesting rewrite with specific improvements...")
+            explanation = await rewrite_explanation_with_feedback(
+                nct_id, 
+                trial_data, 
+                user_responses, 
+                explanation,
+                evaluation
+            )
+    
+    # If all retries failed, return last attempt with warning
+    logger.error(f"❌ Failed to achieve acceptable comprehension after {max_retries} attempts")
+    return {
+        'explanation': explanation,
+        'comprehension_score': evaluation.comprehension_score,
+        'attempts': max_retries,
+        'evaluation': {
+            'score': evaluation.comprehension_score,
+            'is_acceptable': False,
+            'issues': evaluation.issues
+        },
+        'warning': 'Explanation may be difficult to understand'
+    }
+
+
+async def rewrite_explanation_with_feedback(
+    nct_id: str,
+    trial_data: Dict[str, Any],
+    user_responses: Dict[str, bool],
+    previous_explanation: str,
+    evaluation: ExplanationEvaluation
+) -> str:
+    """Rewrite explanation based on evaluator feedback"""
+    
+    async with AgentManager(max_retries=3, retry_delay=5.0) as manager:
+        agent = manager.create_agent(
+            agent_id=MISTRAL_AGENT_ID,
+            name="ExplanationRewriter",
+            model=AgentModel.SMALL.value,
+            description="Rewrites medical explanations based on feedback"
+        )
+        
+        # Prepare Q&A summary
+        inclusion_qa = []
+        exclusion_qa = []
+        
+        for q_id, q_data in trial_data['questions']['inclusion'].items():
+            answer = user_responses.get(q_id, None)
+            if answer is not None:
+                inclusion_qa.append(f"- {q_data['question']}: {'Yes' if answer else 'No'}")
+        
+        for q_id, q_data in trial_data['questions']['exclusion'].items():
+            answer = user_responses.get(q_id, None)
+            if answer is not None:
+                exclusion_qa.append(f"- {q_data['question']}: {'Yes' if answer else 'No'}")
+        
+        inclusion_text = "\n".join(inclusion_qa) if inclusion_qa else "No inclusion questions answered"
+        exclusion_text = "\n".join(exclusion_qa) if exclusion_qa else "No exclusion questions answered"
+        
+        issues_text = "\n".join([f"- {issue}" for issue in evaluation.issues])
+        
+        # ✅ Utilise la méthode helper
+        suggestions_text = evaluation.get_suggestions_text() if hasattr(evaluation, 'get_suggestions_text') else str(evaluation.suggestions)
+        
+        rewrite_prompt = f"""
+        You are a medical assistant. Your previous explanation was evaluated and needs improvement.
+        
+        **Trial Information:**
+        - Trial ID: {trial_data['nct_id']}
+        - Title: {trial_data['title']}
+        
+        **Patient's Responses:**
+        
+        Exclusion Criteria:
+        {exclusion_text}
+        
+        Inclusion Criteria:
+        {inclusion_text}
+        
+        **Your Previous Explanation:**
+        {previous_explanation}
+        
+        **Evaluation Score:** {evaluation.comprehension_score}/100 (Below acceptable threshold)
+        
+        **Issues Identified:**
+        {issues_text}
+        
+        **Improvement Suggestions:**
+        {suggestions_text}
+        
+        **Task:**
+        Rewrite the explanation addressing ALL the issues mentioned above. Focus on:
+        
+        1. **Use simpler language** - Replace any complex medical terms with everyday words
+        2. **Shorter sentences** - Break long sentences into shorter ones (max 15 words each)
+        3. **Clear structure** - Use clear topic sentences for each paragraph
+        4. **Be specific** - Mention exact criteria that were/weren't met
+        5. **Be encouraging** - Show empathy and provide hope where appropriate
+        
+        **Format Requirements:**
+        - 3-4 short paragraphs
+        - 150-200 words total
+        - Start with eligibility status
+        - Explain key factors clearly
+        - End with actionable next steps or encouragement
+        
+        Write the improved explanation now (do NOT include any meta-commentary or evaluation):
+        """
+        
+        response = await manager.chat_with_retry_async(
+            agent_name="ExplanationRewriter",
+            message=rewrite_prompt
+        )
+        
+        # Extract text
+        if hasattr(response, 'choices') and len(response.choices) > 0:
+            return response.choices[0].message.content
+        elif hasattr(response, 'content'):
+            return response.content
+        elif isinstance(response, str):
+            return response
+        else:
+            return str(response)
+
+
 @app.route('/explain_result', methods=['POST'])
 def explain_result():
     """Generate AI explanation for a specific trial result"""
@@ -698,14 +914,27 @@ def explain_result():
         return jsonify({'error': 'No responses found for this trial'}), 404
     
     async def run_explanation():
-        return await generate_explanation(nct_id, trial_data, user_responses)
+        return await generate_explanation_with_validation(nct_id, trial_data, user_responses)
     
     try:
-        explanation = asyncio.run(run_explanation())
-        return jsonify({
+        result = asyncio.run(run_explanation())
+        
+        response_data = {
             'nct_id': nct_id,
-            'explanation': explanation
-        })
+            'explanation': result['explanation'],
+            'quality': {
+                'comprehension_score': result['comprehension_score'],
+                'attempts': result['attempts'],
+                'is_acceptable': result['evaluation']['is_acceptable']
+            }
+        }
+        
+        # Add warning if quality is poor
+        if 'warning' in result:
+            response_data['warning'] = result['warning']
+        
+        return jsonify(response_data)
+        
     except Exception as e:
         logger.error(f"Error generating explanation: {e}")
         return jsonify({'error': f'Failed to generate explanation: {str(e)}'}), 500
