@@ -476,7 +476,7 @@ async def generate_eligibility_questions(trials_with_eligibility: List[Dict[str,
                 - Do NOT include explanations, just the questions.
                 - If a criterion is vague or ambiguous, skip it.
                 - Ensure questions are relevant to the patient's perspective.
-                - Limit to a maximum of 5 questions per category (inclusion/exclusion).
+                - Limit to a maximum of 10 questions per category (inclusion/exclusion).
 
                 Return a JSON object:
                 
