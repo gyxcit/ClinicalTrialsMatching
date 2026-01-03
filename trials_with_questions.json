@@ -13,21 +13,21 @@
       "inclusion": [
         "Are you between 18 and 65 years old?",
         "Have you been diagnosed with type 1 diabetes for more than 5 years?",
-        "Is your glycated hemoglobin (HbA1c) level 7.5% or less?",
+        "Is your glycated hemoglobin (HbA1c) level 7.5% or lower?",
         "Have you been diagnosed with diabetic nephropathy?",
-        "Is your urine albumin-to-creatinine ratio (UACR) between 30 and 300 and your eGFR 60 or higher?"
+        "Is your UACR between 30 and 300 and your eGFR 60 or higher?"
       ],
       "exclusion": [
-        "Do you have any type of diabetes other than type 1?",
-        "Have you used any antidiabetic medications other than insulin in the last month?",
+        "Do you have any other type of diabetes besides type 1?",
+        "Have you used any diabetes medications other than insulin in the past month?",
         "Have you had diabetic ketoacidosis in the last 3 months?",
-        "Have you been hospitalized for poor blood sugar control in the last month?",
-        "Have you had severe hypoglycemia more than once in the last month?",
-        "Have you used SGLT2 inhibitors or other renal protective medications in the last 6 months?",
+        "Have you been hospitalized for poor blood sugar control in the past month?",
+        "Have you had severe low blood sugar needing medical help more than once in the past month?",
+        "Have you used SGLT2 inhibitors or other kidney protective medications in the past 6 months?",
         "Are you planning to become pregnant, pregnant, or breastfeeding?",
-        "Have you had any cardiovascular disease in the last 6 months?",
-        "Do you have unstable or rapidly progressing kidney disease or renal artery stenosis?",
-        "Have you had major liver disease or malignant tumors in the last 5 years?"
+        "Have you had any heart disease in the past 6 months?",
+        "Do you have serious or rapidly worsening kidney disease or renal artery stenosis?",
+        "Have you had major liver disease or cancer in the past 5 years?"
       ]
     }
   },
@@ -51,7 +51,7 @@
         "Is your fasting blood sugar level less than or equal to 13.3 mmol/L?",
         "Have you not used specific antidiabetic drugs in the last 90 days?",
         "Has your weight changed less than 5% in the last 3 months?",
-        "Are you using reliable contraceptive measures if you can have children?"
+        "If you are of childbearing age, are you using reliable contraception?"
       ],
       "exclusion": [
         "Do you drink more than 30g of alcohol daily in the past 10 years?",
@@ -59,18 +59,19 @@
         "Have you had liver diseases like hepatitis B or C?",
         "Do you have liver cirrhosis or liver cancer?",
         "Are you HIV-positive or have a history of substance abuse?",
-        "Have you been diagnosed with type 1 diabetes?",
+        "Do you have type 1 diabetes?",
         "Have you participated in other diabetes drug trials in the last 3 months?",
         "Have you had diabetic ketoacidosis or severe hypoglycemia in the past 6 months?",
-        "Do you have severe heart disease or history of myocardial infarction?",
+        "Do you have severe heart disease or a history of myocardial infarction?",
         "Do you have abnormal liver function with high ALT or AST levels?",
         "Do you have chronic kidney damage with high creatinine levels?",
         "Are you using corticosteroid medications regularly?",
         "Do you have malignant tumors, active tuberculosis, or chronic infections?",
         "Are you pregnant, mentally ill, critically ill, or cognitively impaired?",
-        "Have you had recurrent urinary tract infections or allergies to the study drug?",
+        "Have you had recurrent urinary tract infections or genital infections?",
+        "Are you allergic to the investigational drug or its components?",
         "Have you been assessed as having low blood volume?",
-        "Have you been deemed unsuitable for this study by the investigator?"
+        "Has a doctor told you that you should not participate in this study?"
       ]
     }
   },
@@ -86,19 +87,19 @@
     },
     "questions": {
       "inclusion": [
-        "Is your HbA1c level greater than 48 mmol/mol?",
+        "Has your HbA1c level ever been higher than 48 mmol/mol?",
         "Have you been diagnosed with type 2 diabetes in the last 6 years?",
         "Is your BMI 27 or higher? (25 or higher if you are Asian)"
       ],
       "exclusion": [
         "Do you have insulin deficiency?",
-        "Is your HbA1c level 12% or more?",
-        "Are you being treated with sulphonyl urea or SGL2 inhibitors?",
+        "Is your HbA1c level 12% or higher (108 mmol/mol or higher)?",
+        "Are you currently taking sulphonyl urea or sodium-glucose-cotrasporter2-inhibitor (SGL2-i)?",
         "Have you had a heart attack in the last 6 months?",
         "Do you have severe or unstable heart failure?",
-        "Have you been diagnosed with cancer?",
-        "Have you been diagnosed with a psychiatric or eating disorder?",
-        "Have you been diagnosed with severe depression?",
+        "Have you ever been diagnosed with cancer?",
+        "Have you ever been diagnosed with a psychiatric or eating disorder?",
+        "Have you ever been diagnosed with severe depression?",
         "Have you struggled with substance abuse?",
         "Do you have any condition that may affect your ability to participate in this study?"
       ]
@@ -127,7 +128,7 @@
       "exclusion": [
         "Do you disapprove the volunteer consent form?",
         "Is your Nutritional Strength Scale score below 2.5?",
-        "Are you pregnant, breastfeeding, or planning to become pregnant in the next 3 months?",
+        "Are you pregnant, breastfeeding, or planning to become pregnant within 3 months?",
         "Is your daily dietary energy less than 800 kcal or more than 4000 kcal?",
         "Have you been diagnosed with pre-diabetes, type 1 diabetes, or gestational diabetes?",
         "Is your HbA1c level greater than 10?",
@@ -138,11 +139,10 @@
         "Have you had diabetic ketoacidosis, diabetic coma, or serious infections in the last 6 months?",
         "Have you had surgery or serious trauma requiring insulin treatment?",
         "Are you undergoing haemodialysis treatment?",
-        "Have you had serious liver injury or serious vascular complications requiring hospitalization?",
+        "Have you had serious liver injury or serious vascular complications?",
         "Are you taking medications that affect appetite, such as psychotropics or steroids?",
-        "Have you been diagnosed with an eating disorder or psychological disorder?",
-        "Do you have physical illnesses that affect eating behavior or appetite, such as thyroid problems or chronic renal failure?",
-        "Have you been diagnosed with tuberculosis or HIV infection?"
+        "Have you been diagnosed with eating disorders or psychological disorders?",
+        "Do you have physical illnesses that affect eating behavior or appetite?"
       ]
     }
   },
@@ -163,33 +163,36 @@
         "Have you been treated with insulin for at least 6 months?",
         "Have you had stage 3 chronic kidney disease for at least 6 months?",
         "Is your HbA1c less than 12% based on a recent blood test?",
-        "Have you been treated with an SGLT2 inhibitor and/or GLP-1 receptor agonist for at least 3 months, or have you been offered these therapies before, or do you have a reason you can't take these therapies?",
+        "Have you been treated with an SGLT2 inhibitor and/or GLP-1 receptor agonist for at least 3 months?",
+        "Have you been offered SGLT2 inhibitor and/or GLP-1 receptor agonist therapies before?",
+        "Do you have a contraindication or intolerance to SGLT2 inhibitor and/or GLP-1 receptor agonist therapies?",
         "Are you willing to wear study devices and follow study instructions?",
-        "Can you give informed consent?"
+        "Are you capable of giving informed consent?"
       ],
       "exclusion": [
         "Do you have type 1 diabetes?",
         "Do you currently use an insulin pump?",
-        "Do you currently use any closed-loop insulin system?",
-        "Do you have an alternative cause of kidney disease such as polycystic kidney disease or glomerulonephritis?",
+        "Do you currently use any closed-loop system?",
+        "Do you have an alternative cause of chronic kidney disease?",
         "Do you have a known or suspected allergy to insulin?",
         "Are you pregnant, planning to become pregnant, or breastfeeding?",
         "Do you have severe visual impairment?",
         "Do you have severe hearing impairment?",
         "Have you had two episodes of severe hypoglycemia in the last 6 months?",
-        "Do you have a medically documented allergy to the adhesive (glue) of plasters?",
-        "Do you have serious skin diseases where the glucose sensor might be placed?",
-        "Do you have any physical or psychological disease or take medications that might interfere with the study?",
-        "Have you had a heart attack, stroke, or been hospitalized for heart failure in the last three months?",
+        "Do you have a medically documented allergy to the adhesive of plasters?",
+        "Do you have serious skin diseases where a glucose sensor might be placed?",
+        "Do you have any physical or psychological disease that could interfere with the study?",
+        "Do you take any medications that could interfere with the study?",
+        "Have you had a heart attack, stroke, or heart failure in the last three months?",
         "Do you have active cancer?",
-        "Have you taken immunosuppressants within the last 3 months?",
-        "Do you have issues with drug or alcohol abuse?",
-        "Do you have trouble following the study procedures, for example due to language problems?",
+        "Have you taken immunosuppressants in the last 3 months?",
+        "Do you have known or suspected non-compliance, drug or alcohol abuse?",
+        "Are you unable to follow the study procedures due to language problems?",
         "Are you unable to give informed consent?",
-        "Do you have any condition that prevents you from undergoing an MRI, such as a pacemaker or severe claustrophobia?",
-        "Do you refuse to be informed of incidental findings related to your health discovered during the study?",
+        "Do you have any condition that prevents you from undergoing an MRI?",
+        "Do you refuse to be informed of incidental findings related to your health?",
         "Have you participated in another clinical trial in the last 30 days?",
-        "Have you previously enrolled in this investigation?",
+        "Have you been enrolled in this investigation before?",
         "Are you a family member, employee, or dependent of the principal investigator?"
       ]
     }
