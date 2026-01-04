@@ -163,4 +163,14 @@ def run_from_profile():
         session.modified = True
         return redirect(url_for("patient.patient_profile"))
 
-    return redirect(url_for("questionnaire.questionnaire"))
+    return redirect(url_for("workflow.loading"))
+
+
+@workflow_bp.get("/loading")
+def loading():
+    # page de transition (UI)
+    return render_template(
+        "workflow_loading.html",
+        layout="app",
+        active_page="matching"
+    )

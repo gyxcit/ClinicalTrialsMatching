@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% set layout = "app" %}
+{% set active_page = "matching" %}
+{% block content %}
+
+<div class="card">
+  <div class="card-h">
+    <h1 class="page-title">Preparing your matching…</h1>
+    <p class="page-subtitle">
+      We’re analyzing the profile, fetching trials, and generating questions.
+    </p>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:12px; padding:16px 0;">
+    <div class="spinner" aria-hidden="true"></div>
+    <div>
+      <div style="font-weight:600;">Please wait</div>
+      <div style="color:#64748b;">This can take a few seconds.</div>
+    </div>
+  </div>
+
+  <div id="wf-error" class="hidden" style="margin-top:12px; padding:12px; border-radius:10px; background:#fee2e2; color:#991b1b;">
+    <strong>Error:</strong> <span id="wf-error-msg"></span>
+  </div>
+</div>
+
+<script>
+(async function () {
+  try {
+    const res = await fetch("{{ url_for('workflow.process_workflow') }}");
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || "Workflow failed");
+    }
+
+    // ✅ workflow OK => go questionnaire
+    window.location.href = "{{ url_for('questionnaire.questionnaire') }}";
+  } catch (e) {
+    const box = document.getElementById("wf-error");
+    const msg = document.getElementById("wf-error-msg");
+    box.classList.remove("hidden");
+    msg.textContent = e.message || "Unknown error";
+  }
+})();
+</script>
+
+{% endblock %}
