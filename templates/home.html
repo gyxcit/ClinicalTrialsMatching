@@ -1,274 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinical Trial Matcher - Home</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% set title = "TrialMatch • Home" %}
+{% block content %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 700px;
-            width: 100%;
-            padding: 50px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            text-align: center;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 40px;
-            text-align: center;
-            font-size: 1.1em;
-        }
-
-        label {
-            display: block;
-            color: #333;
-            font-weight: bold;
-            margin-bottom: 10px;
-            margin-top: 25px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 150px;
-            transition: border-color 0.3s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .slider-container {
-            margin-top: 30px;
-        }
-
-        .slider-value {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-left: 15px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #e0e0e0;
-            outline: none;
-            margin-top: 15px;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            border: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 30px;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            text-align: center;
-            color: #667eea;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🏥 Clinical Trial Matcher</h1>
-        <p class="subtitle">Find clinical trials that match your health condition</p>
-
-        <form id="workflow-form">
-            <label for="description">
-                Describe your health condition:
-                <span style="color: #999; font-weight: normal; font-size: 0.9em;">
-                    (Be as detailed as possible - include symptoms, diagnosis, affected organs, etc.)
-                </span>
-            </label>
-            <textarea 
-                id="description" 
-                name="description" 
-                placeholder="Example: I have type 2 diabetes with complications affecting my kidneys and eyes. I've been diagnosed for 5 years..."
-                required
-            ></textarea>
-
-            <div class="slider-container">
-                <label for="num-studies">
-                    Number of studies to search:
-                    <span class="slider-value" id="slider-value">10</span>
-                </label>
-                <input 
-                    type="range" 
-                    id="num-studies" 
-                    name="num_studies" 
-                    min="1" 
-                    max="100" 
-                    value="10"
-                >
-                <div style="display: flex; justify-content: space-between; color: #999; font-size: 0.9em; margin-top: 5px;">
-                    <span>1</span>
-                    <span>100</span>
-                </div>
-            </div>
-
-            <button type="submit" id="start-btn">Start Matching Process</button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Processing your request... This may take a few moments.</p>
-            <p style="font-size: 0.9em; color: #999; margin-top: 10px;">
-                We're analyzing your condition, searching for trials, and generating questions...
-            </p>
-        </div>
+<section class="landing">
+  <div class="landing-inner">
+    <div class="pill">
+      <span class="pill-icon">🩺</span>
+      <span>Clinical Trial Matching Agent</span>
     </div>
 
-    <script>
-        // Update slider value display
-        const slider = document.getElementById('num-studies');
-        const sliderValue = document.getElementById('slider-value');
-        
-        slider.addEventListener('input', function() {
-            sliderValue.textContent = this.value;
-        });
+    <h1 class="landing-title">
+      Find the Right <span class="text-gradient-hero">Clinical Trial</span><br/>
+      for You
+    </h1>
 
-        // Handle form submission
-        document.getElementById('workflow-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const description = document.getElementById('description').value;
-            const numStudies = parseInt(document.getElementById('num-studies').value);
-            
-            if (!description.trim()) {
-                alert('Please describe your health condition');
-                return;
-            }
+    <p class="landing-subtitle">
+      Our intelligent matching system helps connect patients with potentially life-changing clinical trials.
+      Simple for patients, detailed for professionals.
+    </p>
 
-            // Show loading
-            document.getElementById('workflow-form').style.display = 'none';
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('start-btn').disabled = true;
+    <div class="landing-actions">
+      <form method="post" action="{{ url_for('home.set_mode') }}">
+        <input type="hidden" name="mode" value="patient">
+        <button class="btn btn-patient" type="submit">
+          <span class="btn-icon">👤</span>
+          <span>I am a Patient</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
 
-            try {
-                // Start workflow
-                const startResponse = await fetch('/start_workflow', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        description: description,
-                        num_studies: numStudies
-                    })
-                });
+      <form method="post" action="{{ url_for('home.set_mode') }}">
+        <input type="hidden" name="mode" value="professional">
+        <button class="btn btn-pro" type="submit">
+          <span class="btn-icon">🩺</span>
+          <span>I am a Healthcare Professional</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+    </div>
 
-                if (!startResponse.ok) throw new Error('Failed to start workflow');
+    <p class="landing-disclaimer">
+      <span class="warn">⚠️</span>
+      This tool does not replace professional medical advice. Always consult with your healthcare provider.
+    </p>
+  </div>
+</section>
 
-                // Process workflow
-                const processResponse = await fetch('/process_workflow');
-                const result = await processResponse.json();
+<!-- =========================
+     HOW IT WORKS
+========================== -->
+<section class="home-section">
+  <div class="home-container">
+    <h2 class="section-title">How TrialMatch Works</h2>
+    <p class="section-subtitle">
+      Our platform simplifies the complex process of finding clinical trials that match
+      your specific medical situation.
+    </p>
 
-                if (result.error) {
-                    alert(result.error);
-                    location.reload();
-                    return;
-                }
+    <div class="feature-grid">
+      <article class="feature-card card-hover">
+        <div class="feature-icon">🔎</div>
+        <h3 class="feature-title">Smart Matching</h3>
+        <p class="feature-text">
+          AI-powered analysis matches your profile to relevant clinical trials automatically.
+        </p>
+      </article>
 
-                // Redirect to questionnaire
-                window.location.href = '/questionnaire';
+      <article class="feature-card card-hover">
+        <div class="feature-icon">📄</div>
+        <h3 class="feature-title">Clear Explanations</h3>
+        <p class="feature-text">
+          Understand why you match or don't match each trial with detailed breakdowns.
+        </p>
+      </article>
 
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-                location.reload();
-            }
-        });
-    </script>
-</body>
-</html>
+      <article class="feature-card card-hover">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">Privacy First</h3>
+        <p class="feature-text">
+          Your medical information stays secure and is never shared without consent.
+        </p>
+      </article>
+
+      <article class="feature-card card-hover">
+        <div class="feature-icon">❤️</div>
+        <h3 class="feature-title">Save & Track</h3>
+        <p class="feature-text">
+          Bookmark trials of interest and track your matching journey over time.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     JOURNEY
+========================== -->
+<section class="home-section home-section--muted">
+  <div class="home-container">
+    <h2 class="section-title">Your Journey to Finding Trials</h2>
+
+    <div class="journey">
+      <div class="journey-line" aria-hidden="true"></div>
+
+      <div class="journey-step">
+        <div class="journey-dot">1</div>
+        <h3 class="journey-title">Enter Your Profile</h3>
+        <p class="journey-text">
+          Provide your medical information (form or free text) so the agent can understand your situation.
+        </p>
+      </div>
+
+      <div class="journey-step">
+        <div class="journey-dot">2</div>
+        <h3 class="journey-title">Get Matched</h3>
+        <p class="journey-text">
+          The system compares your profile with eligibility criteria and computes match scores.
+        </p>
+      </div>
+
+      <div class="journey-step">
+        <div class="journey-dot">3</div>
+        <h3 class="journey-title">Review Results</h3>
+        <p class="journey-text">
+          Explore explanations, missing information, and next questions to discuss with your doctor.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

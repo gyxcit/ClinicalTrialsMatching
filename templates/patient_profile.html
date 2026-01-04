@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% set layout = "app" %}
+{% set title = "Patient Profile • TrialMatch" %}
+{% set active_page = "patient_profile" %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Patient Profile</h1>
+    <p class="page-subtitle">
+      {% if session.get('mode','patient') == 'patient' %}
+        Tell us about your medical situation to find matching trials.
+      {% else %}
+        Enter patient clinical data for trial matching analysis.
+      {% endif %}
+    </p>
+  </div>
+
+  <form method="post" action="{{ url_for('patient.load_sample_profile') }}">
+    <button class="btn btn-outline" type="submit">Load Sample Data</button>
+  </form>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" type="button" data-tab="formTab">Fill Out Form</button>
+  <button class="tab-btn" type="button" data-tab="freeTab">Describe Your Situation</button>
+</div>
+
+<!-- FORM TAB -->
+<section id="formTab" class="tab-panel active">
+  <form method="post" action="{{ url_for('patient.save_patient_profile') }}" class="stack-24">
+
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">
+          {% if session.get('mode','patient') == 'patient' %}Basic Information{% else %}Patient Demographics{% endif %}
+        </h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Your Name {% if session.get('mode','patient') == 'patient' %}(Optional){% endif %}</label>
+          <input name="name" placeholder="Enter name" value="{{ profile.get('name','') }}">
+        </div>
+
+        <div class="field">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="Enter age" value="{{ profile.get('age','') }}">
+        </div>
+
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender">
+            {% set g = profile.get('gender','') %}
+            <option value="" {{ 'selected' if g=='' else '' }}>Select gender</option>
+            <option value="Male" {{ 'selected' if g=='Male' else '' }}>Male</option>
+            <option value="Female" {{ 'selected' if g=='Female' else '' }}>Female</option>
+            <option value="Other" {{ 'selected' if g=='Other' else '' }}>Other</option>
+            <option value="Prefer not to say" {{ 'selected' if g=='Prefer not to say' else '' }}>Prefer not to say</option>
+          </select>
+        </div>
+
+        {% if session.get('mode','patient') != 'patient' %}
+        <div class="field">
+          <label>ECOG Status</label>
+          <select name="ecogStatus">
+            {% set e = profile.get('ecogStatus','') %}
+            <option value="" {{ 'selected' if e=='' else '' }}>Select ECOG status</option>
+            <option value="0" {{ 'selected' if e=='0' else '' }}>0 - Fully Active</option>
+            <option value="1" {{ 'selected' if e=='1' else '' }}>1 - Restricted Activity</option>
+            <option value="2" {{ 'selected' if e=='2' else '' }}>2 - Ambulatory, Self-care</option>
+            <option value="3" {{ 'selected' if e=='3' else '' }}>3 - Limited Self-care</option>
+            <option value="4" {{ 'selected' if e=='4' else '' }}>4 - Completely Disabled</option>
+          </select>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">
+          {% if session.get('mode','patient') == 'patient' %}Your Diagnosis{% else %}Clinical Diagnosis{% endif %}
+        </h2>
+        <p class="card-sub">
+          {% if session.get('mode','patient') == 'patient' %}
+            What condition are you seeking treatment for?
+          {% else %}
+            Primary diagnosis and staging information
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{% if session.get('mode','patient') == 'patient' %}Condition / Cancer Type{% else %}Primary Diagnosis{% endif %}</label>
+          <input name="diagnosis" placeholder="e.g., Lung Cancer, Breast Cancer" value="{{ profile.get('diagnosis','') }}">
+        </div>
+        <div class="field">
+          <label>{% if session.get('mode','patient') == 'patient' %}Stage (if known){% else %}Disease Stage{% endif %}</label>
+          <input name="stage" placeholder="e.g., Stage IV" value="{{ profile.get('stage','') }}">
+        </div>
+      </div>
+    </div>
+
+    {% if session.get('mode','patient') != 'patient' %}
+    <!-- Biomarkers -->
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">Biomarkers</h2>
+        <p class="card-sub">Add relevant biomarker test results</p>
+      </div>
+
+      <div class="chip-row">
+        <input id="bioInput" placeholder="e.g., EGFR+, PD-L1 High (80%)">
+        <button type="button" class="btn btn-outline btn-icon" onclick="addChip('biomarkers')">＋</button>
+      </div>
+
+      <div id="biomarkersChips" class="chips"></div>
+      <input type="hidden" name="biomarkers" id="biomarkersHidden"
+             value="{{ (profile.get('biomarkers',[])|join('||')) if profile.get('biomarkers') else '' }}">
+    </div>
+
+    <!-- Prior Treatments -->
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">Prior Treatments</h2>
+        <p class="card-sub">List previous treatments received</p>
+      </div>
+
+      <div class="chip-row">
+        <input id="treatInput" placeholder="e.g., Carboplatin/Paclitaxel, Radiation therapy">
+        <button type="button" class="btn btn-outline btn-icon" onclick="addChip('treatments')">＋</button>
+      </div>
+
+      <div id="treatmentsChips" class="chips"></div>
+      <input type="hidden" name="priorTreatments" id="treatmentsHidden"
+             value="{{ (profile.get('priorTreatments',[])|join('||')) if profile.get('priorTreatments') else '' }}">
+    </div>
+
+    <!-- Comorbidities -->
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">Comorbidities</h2>
+        <p class="card-sub">Other medical conditions</p>
+      </div>
+
+      <div class="chip-row">
+        <input id="comInput" placeholder="e.g., Diabetes, Hypertension">
+        <button type="button" class="btn btn-outline btn-icon" onclick="addChip('comorbidities')">＋</button>
+      </div>
+
+      <div id="comorbiditiesChips" class="chips"></div>
+      <input type="hidden" name="comorbidities" id="comorbiditiesHidden"
+             value="{{ (profile.get('comorbidities',[])|join('||')) if profile.get('comorbidities') else '' }}">
+    </div>
+    {% endif %}
+
+    <div class="actions-right">
+      <button class="btn btn-primary" type="submit">
+        Continue <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+  </form>
+</section>
+
+<!-- FREE TEXT TAB -->
+<section id="freeTab" class="tab-panel">
+  {# ✅ FIX: endpoint blueprint patient.save_patient_profile #}
+  <form method="post" action="{{ url_for('patient.save_patient_profile') }}" class="stack-24">
+    <div class="card">
+      <div class="card-h">
+        <h2 class="card-title">Describe Your Situation</h2>
+        <p class="card-sub">
+          {% if session.get('mode','patient') == 'patient' %}
+            Write about your diagnosis, treatments, and anything relevant. We’ll extract key details.
+          {% else %}
+            Paste clinical notes here. Include diagnosis, staging, molecular profiling, treatments, history.
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="field">
+        <textarea name="freeText" rows="12" placeholder="Paste or write notes...">{{ profile.get('freeText','') }}</textarea>
+      </div>
+    </div>
+
+    <div class="actions-right">
+      <button class="btn btn-primary" type="submit">
+        Continue <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </form>
+</section>
+
+<script>
+  // Tabs
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".tab-panel");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // Chips (professional mode)
+  function parseHidden(id){
+    const el = document.getElementById(id);
+    if(!el) return [];
+    const v = el.value || "";
+    return v ? v.split("||").filter(Boolean) : [];
+  }
+  function writeHidden(id, arr){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = arr.join("||");
+  }
+
+  const state = {
+    biomarkers: parseHidden("biomarkersHidden"),
+    treatments: parseHidden("treatmentsHidden"),
+    comorbidities: parseHidden("comorbiditiesHidden"),
+  };
+
+  function renderChips(type){
+    const map = {
+      biomarkers: ["biomarkersChips", "biomarkersHidden"],
+      treatments: ["treatmentsChips", "treatmentsHidden"],
+      comorbidities: ["comorbiditiesChips", "comorbiditiesHidden"],
+    };
+    const [containerId, hiddenId] = map[type];
+    const el = document.getElementById(containerId);
+    if(!el) return;
+
+    el.innerHTML = "";
+    (state[type] || []).forEach((txt, i) => {
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      chip.innerHTML = `<span>${txt}</span><button type="button" aria-label="Remove">×</button>`;
+      chip.querySelector("button").addEventListener("click", () => {
+        state[type].splice(i, 1);
+        writeHidden(hiddenId, state[type]);
+        renderChips(type);
+      });
+      el.appendChild(chip);
+    });
+
+    writeHidden(hiddenId, state[type]);
+  }
+
+  function addChip(type){
+    const inputMap = { biomarkers:"bioInput", treatments:"treatInput", comorbidities:"comInput" };
+    const hiddenMap = { biomarkers:"biomarkersHidden", treatments:"treatmentsHidden", comorbidities:"comorbiditiesHidden" };
+
+    const input = document.getElementById(inputMap[type]);
+    if(!input) return;
+    const val = (input.value || "").trim();
+    if(!val) return;
+
+    state[type].push(val);
+    input.value = "";
+    writeHidden(hiddenMap[type], state[type]);
+    renderChips(type);
+  }
+
+  // Init chips if present
+  renderChips("biomarkers");
+  renderChips("treatments");
+  renderChips("comorbidities");
+</script>
+
+{% endblock %}

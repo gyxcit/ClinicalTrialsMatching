@@ -1,0 +1,311 @@
+{# templates/clinical_trials.html #}
+{% extends "base.html" %}
+{% set layout = "app" %}
+{% set active_page = "clinical_trials" %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Clinical Trials</h1>
+    <p class="page-subtitle">
+      Browse available clinical trials or start matching to find the right ones for you.
+    </p>
+  </div>
+
+  <div class="header-actions">
+    <form method="post" action="{{ url_for('clinical_trials') }}">
+      <input type="hidden" name="condition" value="{{ session.get('patient_profile', {}).get('diagnosis', 'Type 2 diabetes') }}">
+      <input type="hidden" name="max_studies" value="30">
+      <button class="btn btn-outline" type="submit">
+        <span class="btn-ic">🗄️</span>
+        <span>Load Trials</span>
+      </button>
+    </form>
+
+    <a class="btn btn-primary" href="{{ url_for('matching') }}">
+      <span>Start Matching</span>
+      <span class="btn-arrow">→</span>
+    </a>
+  </div>
+</div>
+
+{% set p = session.get('patient_profile', {}) %}
+<div class="profile-summary">
+  <div class="profile-left">
+    <div class="avatar">
+      {{ (p.get('name','J')[:1] if p.get('name') else 'J') | upper }}
+    </div>
+
+    <div class="profile-meta">
+      <p class="profile-name">{{ p.get('name', 'John Doe') }}</p>
+      <p class="profile-detail">
+        {{ p.get('diagnosis','Non-Small Cell Lung Cancer') }}
+        {% if p.get('stage') %} • {{ p.get('stage') }}{% else %} • Stage IV{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <a class="btn-soft" href="{{ url_for('patient_profile') }}">Edit Profile</a>
+</div>
+
+<!-- ===== Controls: Sort + Pagination info ===== -->
+<div class="trials-controls">
+  <div class="trials-controls-left">
+    <label class="select-label" for="sortSelect">Sort by</label>
+    <select id="sortSelect" class="select">
+      <option value="updated_desc">Most Recent</option>
+      <option value="title_asc">Title (A → Z)</option>
+      <option value="phase_desc">Phase (High → Low)</option>
+      <option value="recruiting_first">Recruiting First</option>
+    </select>
+  </div>
+
+  <div class="trials-controls-right">
+    <span id="showingText" class="muted"></span>
+  </div>
+</div>
+
+<!-- ===== Trials list ===== -->
+<div id="trialList" class="trial-list">
+  {% for t in trials %}
+    {# --- Extraction safe depuis l'API clinicaltrials.gov --- #}
+    {% set ps = t.get("protocolSection", {}) %}
+    {% set idm = ps.get("identificationModule", {}) %}
+    {% set st = ps.get("statusModule", {}) %}
+    {% set dm = ps.get("designModule", {}) %}
+    {% set sm = ps.get("sponsorCollaboratorsModule", {}) %}
+    {% set cm = ps.get("conditionsModule", {}) %}
+
+    {% set title = idm.get("briefTitle") or "Untitled study" %}
+    {% set nct = idm.get("nctId") or "" %}
+    {% set phase = (dm.get("phases", []) | first) if dm.get("phases") else "" %}
+    {% set overall_status = st.get("overallStatus") or "" %}
+    {% set updated = st.get("lastUpdateSubmitDate") or st.get("studyFirstSubmitDate") or "" %}
+    {% set sponsor = (sm.get("leadSponsor", {}) or {}).get("name") or "" %}
+    {% set condition = (cm.get("conditions", []) | first) if cm.get("conditions") else "" %}
+
+    <article
+      class="trial-card"
+      data-title="{{ title|lower }}"
+      data-phase="{{ phase }}"
+      data-status="{{ overall_status }}"
+      data-updated="{{ updated }}"
+    >
+      <div class="trial-top">
+        <div class="trial-badges">
+          {% if phase %}<span class="badge badge-phase">{{ phase }}</span>{% endif %}
+          {% if overall_status %}<span class="badge badge-status">{{ overall_status }}</span>{% endif %}
+        </div>
+
+        {% if nct %}
+          <div class="trial-top-right" style="display:flex; gap:10px; align-items:center;">
+            <a class="trial-nct muted" target="_blank" rel="noopener"
+              href="https://clinicaltrials.gov/study/{{ nct }}">
+              {{ nct }}
+            </a>
+
+            <button
+              type="button"
+              class="heart {{ 'is-fav' if favorites and (nct in favorites) else '' }}"
+              data-nct="{{ nct }}"
+              aria-label="Toggle favorite"
+              aria-pressed="{{ 'true' if favorites and (nct in favorites) else 'false' }}"
+              title="{{ 'Remove from Favorites' if favorites and (nct in favorites) else 'Add to Favorites' }}"
+            >
+              <span class="heart-ic">{{ '❤️' if favorites and (nct in favorites) else '🤍' }}</span>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+
+      <h3 class="trial-title">{{ title }}</h3>
+
+      <div class="trial-meta">
+        {% if condition %}<div class="trial-meta-row">🧪 <span>{{ condition }}</span></div>{% endif %}
+        {% if sponsor %}<div class="trial-meta-row">🏥 <span>{{ sponsor }}</span></div>{% endif %}
+        {% if updated %}<div class="trial-meta-row">🕒 <span>Updated: {{ updated }}</span></div>{% endif %}
+      </div>
+
+      <div class="trial-actions">
+        {% if nct %}
+          <a class="btn btn-outline btn-sm" target="_blank" rel="noopener"
+            href="https://clinicaltrials.gov/study/{{ nct }}">
+            View Details ↗
+          </a>
+        {% else %}
+          <button class="btn btn-outline btn-sm" disabled>View Details</button>
+        {% endif %}
+      </div>
+    </article>
+  {% endfor %}
+</div>
+
+<!-- ===== Pagination ===== -->
+<div class="pagination">
+  <button class="btn btn-outline btn-sm" id="prevBtn" type="button">← Prev</button>
+  <div class="pagination-mid">
+    <span class="muted">Page</span>
+    <span id="pageText" class="page-pill">1</span>
+    <span class="muted">/</span>
+    <span id="pageTotal" class="muted">1</span>
+  </div>
+  <button class="btn btn-outline btn-sm" id="nextBtn" type="button">Next →</button>
+</div>
+
+<script>
+  // ===== Sorting + Pagination (10 per page) =====
+  const PAGE_SIZE = 10;
+
+  const listEl = document.getElementById("trialList");
+  const cards = Array.from(listEl.querySelectorAll(".trial-card"));
+
+  const sortSelect = document.getElementById("sortSelect");
+  const showingText = document.getElementById("showingText");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const pageText = document.getElementById("pageText");
+  const pageTotal = document.getElementById("pageTotal");
+
+  let currentPage = 1;
+  let working = [...cards];
+
+  function parsePhase(phaseStr){
+    // "PHASE3" / "PHASE 3" / "Phase 2" -> 3 / 2, sinon 0
+    if(!phaseStr) return 0;
+    const s = String(phaseStr).toLowerCase();
+    const m = s.match(/phase\s*([0-4])/);
+    if(m) return parseInt(m[1], 10);
+    if(s.includes("phase")) {
+      const n = s.replace(/[^0-4]/g, "");
+      return n ? parseInt(n[0], 10) : 0;
+    }
+    return 0;
+  }
+
+  function statusWeight(status){
+    // Recruiting d'abord (plus robuste)
+    const s = (status || "").toLowerCase().trim();
+    if (s === "recruiting") return 0;
+    if (s.includes("enrolling")) return 1;
+    if (s.includes("active") && s.includes("not recruiting")) return 2;
+    if (s.includes("not yet recruiting")) return 3;
+    if (s.includes("completed")) return 4;
+    return 9;
+  }
+
+  function parseDate(d){
+    // ex: "2024-06-03" ; si vide => 0
+    if(!d) return 0;
+    const ts = Date.parse(d);
+    return isNaN(ts) ? 0 : ts;
+  }
+
+  function applySort(){
+    const mode = sortSelect.value;
+
+    working.sort((a, b) => {
+      const ta = a.dataset.title || "";
+      const tb = b.dataset.title || "";
+      const pa = parsePhase(a.dataset.phase || "");
+      const pb = parsePhase(b.dataset.phase || "");
+      const sa = statusWeight(a.dataset.status || "");
+      const sb = statusWeight(b.dataset.status || "");
+      const da = parseDate(a.dataset.updated || "");
+      const db = parseDate(b.dataset.updated || "");
+
+      switch(mode){
+        case "title_asc":
+          return ta.localeCompare(tb);
+        case "phase_desc":
+          return pb - pa; // high -> low
+        case "recruiting_first":
+          return sa - sb; // low weight = best
+        case "updated_desc":
+        default:
+          return db - da; // recent first
+      }
+    });
+
+    currentPage = 1;
+    renderPage();
+  }
+
+  function renderPage(){
+    // remove all then append only current page
+    listEl.innerHTML = "";
+
+    const total = working.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+    currentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+    const startIdx = (currentPage - 1) * PAGE_SIZE;
+    const endIdx = Math.min(startIdx + PAGE_SIZE, total);
+    const slice = working.slice(startIdx, endIdx);
+
+    slice.forEach(card => listEl.appendChild(card));
+
+    // UI
+    pageText.textContent = String(currentPage);
+    pageTotal.textContent = String(totalPages);
+
+    prevBtn.disabled = (currentPage <= 1);
+    nextBtn.disabled = (currentPage >= totalPages);
+
+    if(total === 0){
+      showingText.textContent = "No trials loaded yet.";
+    } else {
+      showingText.textContent = `Showing ${startIdx + 1}–${endIdx} of ${total}`;
+    }
+  }
+
+  // ===== Favorites AJAX =====
+  async function toggleFavorite(btn){
+    const nct = btn.dataset.nct;
+    if(!nct) return;
+
+    btn.disabled = true;
+
+    try{
+      const res = await fetch("/api/favorites/toggle", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ nct })
+      });
+
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || "Request failed");
+
+      const isFav = data.is_favorite;
+      btn.classList.toggle("is-fav", isFav);
+      btn.setAttribute("aria-pressed", isFav ? "true" : "false");
+      btn.title = isFav ? "Remove from Favorites" : "Add to Favorites";
+
+      const ic = btn.querySelector(".heart-ic");
+      if(ic) ic.textContent = isFav ? "❤️" : "🤍";
+
+    } catch(err){
+      console.error(err);
+      alert("Impossible de mettre à jour les favoris. Réessaie.");
+    } finally{
+      btn.disabled = false;
+    }
+  }
+
+  // Delegation: fonctionne même après pagination/sort
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".heart");
+    if(!btn) return;
+    toggleFavorite(btn);
+  });
+
+  sortSelect.addEventListener("change", applySort);
+  prevBtn.addEventListener("click", () => { currentPage--; renderPage(); });
+  nextBtn.addEventListener("click", () => { currentPage++; renderPage(); });
+
+  // init
+  applySort();
+</script>
+
+{% endblock %}

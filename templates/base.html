@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="{{ lang|default('en') }}">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title|default("TrialMatch") }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+
+  {% if layout == "landing" %}
+    <main class="min-h-screen">
+  {% else %}
+    <div class="min-h-screen flex">
+      {% include "components/sidebar.html" %}
+      <main class="flex-1">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+          <div class="grid grid-cols-12 gap-6">
+            <section class="col-span-12 xl:col-span-9">
+  {% endif %}
+
+              {% block content %}{% endblock %}
+
+  {% if layout == "landing" %}
+    </main>
+  {% else %}
+            </section>
+            <aside class="col-span-12 xl:col-span-3">
+              {% include "components/assistant.html" %}
+            </aside>
+          </div>
+        </div>
+      </main>
+    </div>
+  {% endif %}
+
+</body>
+</html>
