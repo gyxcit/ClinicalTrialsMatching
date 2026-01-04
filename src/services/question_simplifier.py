@@ -56,7 +56,7 @@ class QuestionSimplifier:
                 message=prompt
             )
             
-            simplified = self._extract_text(response).strip()
+            simplified = manager._extract_response_text(response).strip()
         
         # ✅ Translate back to user's language
         if user_language != 'en':
@@ -114,3 +114,58 @@ Simplified: "Do you have diabetes that has caused swelling in your eyes?"
 
 Return ONLY the simplified question, nothing else.
 """
+def _extract_text(self, response: Any) -> str:
+    """
+        Extract plain text from different possible agent response formats.
+        Handles: str, dict, list, objects with .content/.text/.message
+    """
+    if response is None:
+        return ""
+
+    # already a string
+    if isinstance(response, str):
+        return response
+
+    # dict-like (common)
+    if isinstance(response, dict):
+        for key in ("text", "content", "message", "output", "result", "answer"):
+            val = response.get(key)
+            if isinstance(val, str) and val.strip():
+                return val
+
+            # OpenAI-ish / chat style: choices[0].message.content
+            choices = response.get("choices")
+            if isinstance(choices, list) and choices:
+                c0 = choices[0]
+                if isinstance(c0, dict):
+                    msg = c0.get("message")
+                    if isinstance(msg, dict):
+                        content = msg.get("content")
+                        if isinstance(content, str):
+                            return content
+                    content = c0.get("content")
+                    if isinstance(content, str):
+                        return content
+
+            return str(response)
+
+    # list/tuple
+    if isinstance(response, (list, tuple)):
+        if not response:
+            return ""
+        # try first element
+        return self._extract_text(response[0])
+
+    # object-like (pydantic / SDK response objects)
+    for attr in ("content", "text", "message", "output", "result", "answer"):
+        if hasattr(response, attr):
+            val = getattr(response, attr)
+            if isinstance(val, str) and val.strip():
+                return val
+            # nested message.content
+            if attr == "message" and isinstance(val, dict) and isinstance(val.get("content"), str):
+                return val["content"]
+            if attr == "message" and hasattr(val, "content") and isinstance(val.content, str):
+                return val.content
+
+    return str(response)

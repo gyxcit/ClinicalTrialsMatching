@@ -23,26 +23,36 @@
       <span class="nav-ic">👤</span><span>Patient Profile</span>
     </a>
 
+    {# ✅ Matching: pointe vers ta page questionnaire UI #}
+    <a class="nav-item {{ 'active' if active_page=='matching' else '' }}"
+    href="{{ url_for('workflow.run_from_profile', num_studies=10) }}">
+      <span class="nav-ic">🔗</span><span>Matching</span>
+    </a>
     <a class="nav-item {{ 'active' if active_page=='clinical_trials' else '' }}" href="{{ url_for('trials.clinical_trials') }}">
       <span class="nav-ic">📄</span><span>Clinical Trials</span>
     </a>
 
-    {# ✅ Matching: pointe vers ta page questionnaire UI #}
-    <a class="nav-item {{ 'active' if active_page=='matching' else '' }}"
-   href="{{ url_for('workflow.run_from_profile', num_studies=10) }}">
-      <span class="nav-ic">🔗</span><span>Matching</span>
-    </a>
-
-    <a class="nav-item {{ 'active' if active_page=='reports' else '' }}" href="{{ url_for('reports.reports') }}">
+    <a class="nav-item nav-item-disabled {{ 'active' if active_page=='reports' else '' }}"
+      href="#"
+      aria-disabled="true"
+      tabindex="-1"
+      onclick="return false;">
       <span class="nav-ic">📊</span><span>Reports</span>
-    </a>
+      <span class="nav-soon">Soon</span>
+   </a>
+
 
     <a class="nav-item {{ 'active' if active_page=='favorites' else '' }}" href="{{ url_for('favorites.favorites') }}">
       <span class="nav-ic">❤️</span><span>Favorites</span>
     </a>
 
-    <a class="nav-item {{ 'active' if active_page=='settings' else '' }}" href="{{ url_for('settings.settings') }}">
+    <a class="nav-item nav-item-disabled {{ 'active' if active_page=='settings' else '' }}"
+    href="#"
+    aria-disabled="true"
+    tabindex="-1"
+    onclick="return false;">
       <span class="nav-ic">⚙️</span><span>Settings</span>
+      <span class="nav-soon">Soon</span>
     </a>
   </nav>
 </aside>

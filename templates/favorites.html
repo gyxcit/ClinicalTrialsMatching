@@ -1,32 +1,101 @@
 {% extends "base.html" %}
 {% set layout = "app" %}
 {% set active_page = "favorites" %}
+{% set title = "Favorites • TrialMatch" %}
 
 {% block content %}
+
+<style>
+  /* Favorites: responsive grid like the rest of the app */
+  .fav-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap:16px;
+    margin-top:16px;
+  }
+
+  /* Make cards consistent height and spacing */
+  .trial-card{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  .trial-actions{ margin-top:auto; }
+
+  /* Empty state centered */
+  .fav-empty-wrap{
+    margin-top:16px;
+  }
+  .fav-empty{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:32px 18px;
+  }
+  .fav-empty-ic{
+    font-size:42px;
+    opacity:.6;
+    margin-bottom:10px;
+  }
+  .fav-empty-title{
+    font-size:18px;
+    font-weight:900;
+    margin-bottom:6px;
+  }
+  .fav-empty-text{
+    max-width:520px;
+    color:var(--muted, #64748b);
+    font-weight:600;
+    line-height:1.5;
+  }
+
+  /* Header count style (if not already styled) */
+  .fav-count{
+    font-weight:900;
+    color:var(--muted, #64748b);
+  }
+
+  /* Keep heart aligned nicely */
+  .trial-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+  }
+</style>
+
+{% set count_ids = (favorites|length) if favorites else 0 %}
+{% set count_cards = (fav_trials|length) if fav_trials else 0 %}
 
 <div class="page-header">
   <div>
     <h1 class="page-title">Favorites</h1>
     <p class="page-subtitle">Clinical trials you've saved for later review.</p>
   </div>
-  {% set count_ids = (favorites|length) if favorites else 0 %}
-  {% set count_cards = (fav_trials|length) if fav_trials else 0 %}
 
   <div class="header-actions">
     <span class="fav-count">{{ count_ids }} saved trial{{ '' if count_ids == 1 else 's' }}</span>
   </div>
+</div>
+{# ✅ IMPORTANT: page-header is now properly closed #}
 
 {% if count_ids == 0 or count_cards == 0 %}
-  <div class="fav-empty">
-    <div class="fav-empty-ic">♡</div>
-    <div class="fav-empty-title">No Favorites Yet</div>
-    <div class="fav-empty-text">
-      Browse clinical trials and click the heart icon to save trials you're interested in.
+
+  <div class="fav-empty-wrap">
+    <div class="card fav-empty">
+      <div class="fav-empty-ic">♡</div>
+      <div class="fav-empty-title">No Favorites Yet</div>
+      <div class="fav-empty-text">
+        Browse clinical trials and click the heart icon to save trials you're interested in.
+      </div>
     </div>
   </div>
+
 {% else %}
 
-  <div class="trial-list">
+  <div class="fav-grid">
     {% for t in fav_trials %}
       {% set ps = t.get("protocolSection", {}) %}
       {% set idm = ps.get("identificationModule", {}) %}
@@ -35,7 +104,7 @@
       {% set sm = ps.get("sponsorCollaboratorsModule", {}) %}
       {% set cm = ps.get("conditionsModule", {}) %}
 
-      {% set title = idm.get("briefTitle") or "Untitled study" %}
+      {% set title_ = idm.get("briefTitle") or "Untitled study" %}
       {% set nct = idm.get("nctId") or "" %}
       {% set phase = (dm.get("phases", []) | first) if dm.get("phases") else "" %}
       {% set overall_status = st.get("overallStatus") or "" %}
@@ -43,8 +112,8 @@
       {% set sponsor = (sm.get("leadSponsor", {}) or {}).get("name") or "" %}
       {% set condition = (cm.get("conditions", []) | first) if cm.get("conditions") else "" %}
 
-      <article class="trial-card"
-        data-title="{{ title|lower }}"
+      <article class="trial-card card"
+        data-title="{{ title_|lower }}"
         data-phase="{{ phase }}"
         data-status="{{ overall_status }}"
         data-updated="{{ updated }}"
@@ -69,14 +138,16 @@
           {% endif %}
         </div>
 
-        <h3 class="trial-title">{{ title }}</h3>
+        <h3 class="trial-title">{{ title_ }}</h3>
 
         <div class="trial-meta">
           {% if condition %}<div class="trial-meta-row">🧪 <span>{{ condition }}</span></div>{% endif %}
           {% if sponsor %}<div class="trial-meta-row">🏥 <span>{{ sponsor }}</span></div>{% endif %}
           {% if updated %}<div class="trial-meta-row">🕒 <span>Updated: {{ updated }}</span></div>{% endif %}
           {% if nct %}
-            <div class="trial-meta-row">🔗 <a class="muted" target="_blank" rel="noopener" href="https://clinicaltrials.gov/study/{{ nct }}">{{ nct }}</a></div>
+            <div class="trial-meta-row">
+              🔗 <a class="muted" target="_blank" rel="noopener" href="https://clinicaltrials.gov/study/{{ nct }}">{{ nct }}</a>
+            </div>
           {% endif %}
         </div>
 
@@ -112,16 +183,16 @@
       const data = await res.json();
       if(!data.ok) throw new Error(data.error || "Request failed");
 
-      // Si on retire un favori depuis la page Favorites => on enlève la card (UX clean)
+      // If removed from favorites => remove card
       if(!data.is_favorite){
         const card = btn.closest(".trial-card");
         if(card) card.remove();
 
-        // update compteur
+        // update counter
         const el = document.querySelector(".fav-count");
         if(el) el.textContent = `${data.count} saved trial${data.count === 1 ? "" : "s"}`;
 
-        // si plus rien => reload simple pour afficher empty state
+        // if empty => reload to show empty state
         if(data.count === 0){
           window.location.reload();
         }
