@@ -3,10 +3,12 @@ from .illness_analyzer import IllnessAnalyzer
 from .trial_filter import TrialFilter
 from .question_generator import QuestionGenerator
 from .explanation_service import ExplanationService
+from .question_simplifier import QuestionSimplifier  # ✅ Ajout
 
 __all__ = [
     'IllnessAnalyzer',
     'TrialFilter',
     'QuestionGenerator',
-    'ExplanationService'
+    'ExplanationService',
+    'QuestionSimplifier'  # ✅ Ajout
 ]

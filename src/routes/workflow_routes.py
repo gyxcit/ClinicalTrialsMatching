@@ -3,7 +3,7 @@
 Flask routes for workflow initialization and processing
 """
 import asyncio
-from flask import Blueprint, request, jsonify, session, redirect, url_for
+from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template
 from typing import Dict, Any
 
 from src.services.illness_analyzer import IllnessAnalyzer

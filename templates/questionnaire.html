@@ -133,15 +133,21 @@
   }
   .q-btn-no:hover { transform: translateY(-1px); }
 
-  .q-btn-start {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* ✅ Nouveau bouton "I don't know" */
+  .q-btn-unsure {
+    background: #f59e0b;
     color: white;
-    padding: 14px 28px;
-    font-size: 1.05em;
-    border-radius: 14px;
-    font-weight: 900;
   }
-  .q-btn-start:hover { transform: translateY(-1px); }
+  .q-btn-unsure:hover { transform: translateY(-1px); }
+
+  /* ✅ Nouveau bouton "Reformulate" */
+  .q-btn-reformulate {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.95em;
+    padding: 10px 20px;
+  }
+  .q-btn-reformulate:hover { transform: translateY(-1px); }
 
   .q-loading {
     text-align: center;
@@ -259,7 +265,8 @@
         currentTrial: "{{ url_for('questionnaire.get_current_trial') }}",
         submitAnswer: "{{ url_for('questionnaire.submit_answer') }}",
         getResults: "{{ url_for('results.get_results') }}",
-        explain: "{{ url_for('results.explain_result') }}"
+        explain: "{{ url_for('results.explain_result') }}",
+        reformulate: "{{ url_for('questionnaire.reformulate_question') }}"
       };
     </script>
 
@@ -295,8 +302,18 @@
       <div class="q-question-container">
         <span class="q-question-type" id="question-type">-</span>
         <div class="q-question" id="question-text">Loading question...</div>
+        
+        <!-- ✅ Bouton Reformulate en haut -->
+        <div style="margin: 12px 0;">
+          <button class="q-btn q-btn-reformulate" onclick="reformulateQuestion()" id="reformulate-btn">
+            🔄 Reformulate Question
+          </button>
+        </div>
+
+        <!-- ✅ Boutons de réponse avec "I don't know" -->
         <div class="q-btn-group">
           <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
+          <button class="q-btn q-btn-unsure" onclick="submitAnswer('unsure')">🤷‍♂️ I don't know</button>
           <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
         </div>
       </div>
@@ -327,6 +344,7 @@
 <script>
   let currentQuestion = null;
   let currentTrial = null;
+  let originalQuestion = null; // ✅ Stocker la question originale
 
   function show(elId){
     document.getElementById(elId).classList.remove('q-hidden');
@@ -354,6 +372,7 @@
 
     currentTrial = data.trial_info;
     currentQuestion = data.current_question;
+    originalQuestion = currentQuestion.question; // ✅ Sauvegarder l'original
 
     show('questionnaire-screen');
 
@@ -371,6 +390,50 @@
     updateProgress(currentTrial.trial_number || 0, currentTrial.total_trials || 1);
   }
 
+  // ✅ Nouvelle fonction pour reformuler la question
+  async function reformulateQuestion() {
+    const btn = document.getElementById('reformulate-btn');
+    const questionEl = document.getElementById('question-text');
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Reformulating...';
+    
+    try {
+      const response = await fetch(URLS.reformulate, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: originalQuestion,
+          context: {
+            trial_title: currentTrial.title,
+            nct_id: currentTrial.nct_id
+          }
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        showNotification('❌ Error reformulating question', 'excluded');
+        setTimeout(clearNotification, 2000);
+      } else {
+        // Afficher la question simplifiée
+        questionEl.textContent = data.simplified_question;
+        showNotification('✨ Question simplified!', 'completed');
+        setTimeout(clearNotification, 1500);
+      }
+      
+    } catch (error) {
+      console.error('Reformulation error:', error);
+      showNotification('❌ Failed to reformulate', 'excluded');
+      setTimeout(clearNotification, 2000);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 Reformulate Question';
+    }
+  }
+
+  // ✅ Fonction submitAnswer modifiée pour gérer "unsure"
   async function submitAnswer(answer) {
     hide('questionnaire-screen');
     show('loading-screen');
@@ -380,7 +443,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question_id: currentQuestion.question_id,
-        answer: answer,
+        answer: answer, // ✅ Peut être true, false, ou "unsure"
         nct_id: currentTrial.nct_id,
         question_type: currentQuestion.type
       })
@@ -399,7 +462,6 @@
     }
 
     if (data.trial_completed && data.all_completed) {
-      // récupérer résultats finaux depuis results blueprint
       const resultsResponse = await fetch(URLS.getResults);
       const resultsData = await resultsResponse.json();
       showResults(resultsData.results || []);
@@ -412,13 +474,13 @@
       setTimeout(() => {
         clearNotification();
         loadNextQuestion();
-      }, 2000);
+      });
       return;
     }
 
-    // sinon: question suivante renvoyée
     currentQuestion = data.current_question;
     currentTrial = data.trial_info;
+    originalQuestion = currentQuestion.question; // ✅ Mettre à jour l'original
 
     show('questionnaire-screen');
 
@@ -477,7 +539,7 @@
         </h3>
         <p><strong>Title:</strong> ${r.title || ''}</p>
         <p><strong>Status:</strong> ${r.eligible ? '✅ Fully Eligible' : (pct > 0 ? '⚠️ Partially Eligible' : '❌ Not Eligible')}</p>
-        <p><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0)}/${(r.total_inclusion_questions || 0)} criteria met</p>
+        <p><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0).toFixed(1)}/${(r.total_inclusion_questions || 0)} criteria met</p>
         <p><strong>Reason:</strong> ${r.reason || ''}</p>
         <button class="q-btn-explain" data-nct="${r.nct_id}" onclick="explainResult(event, '${r.nct_id}')">🤖 Explain Results</button>
         <div id="explanation-${r.nct_id}" class="q-explanation-box q-hidden"></div>
@@ -490,7 +552,6 @@
     const box = document.getElementById(`explanation-${nctId}`);
     const btn = evt.target;
 
-    // toggle
     if (!box.classList.contains('q-hidden')) {
       box.classList.add('q-hidden');
       btn.textContent = '🤖 Explain Results';
