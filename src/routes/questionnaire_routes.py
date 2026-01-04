@@ -85,18 +85,25 @@ def reformulate_question():
     question = request_data.get("question")
     context = request_data.get("context", {})
     
+    # ✅ Get user's language from session
+    data = SessionManager.load_data()
+    user_language = 'en'
+    if data:
+        user_language = data.get('user_language', 'en')
+    
     if not question:
         return jsonify({"error": "Question is required"}), 400
     
     async def run_simplification():
         simplifier = QuestionSimplifier()
-        return await simplifier.simplify(question, context)
+        return await simplifier.simplify(question, context, user_language=user_language)
     
     try:
         simplified = asyncio.run(run_simplification())
         return jsonify({
             "original_question": question,
-            "simplified_question": simplified
+            "simplified_question": simplified,
+            "language": user_language
         })
     except Exception as e:
         logger.error(f"Error simplifying question: {e}")

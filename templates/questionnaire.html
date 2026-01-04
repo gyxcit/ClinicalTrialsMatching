@@ -274,16 +274,19 @@
       <div class="q-title">🏥 Clinical Trial Eligibility</div>
       <div class="q-subtitle">Find clinical trials that match your profile</div>
 
+      <!-- ✅ Afficher la langue détectée -->
+      {% if session.get('user_language_name') %}
+      <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
+        🌍 <strong>Detected Language:</strong> {{ session.get('user_language_name') }}
+      </div>
+      {% endif %}
+
       <p style="margin: 14px 0; color:#4b5563; line-height:1.6;">
-        We will ask you a series of questions to determine which clinical trials you may be eligible for.
-        Answer <strong>Yes</strong> or <strong>No</strong> to each question.
+        We'll assess your eligibility for <strong>{{ total_trials }}</strong> clinical trials.
+        Answer each question with Yes or No.
       </p>
 
-      <p style="margin: 14px 0; color:#4b5563;">
-        <strong>Total trials to assess: {{ total_trials }}</strong>
-      </p>
-
-      <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Questionnaire</button>
+      <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Assessment</button>
     </div>
 
     <div id="questionnaire-screen" class="q-hidden">

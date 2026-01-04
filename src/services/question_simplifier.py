@@ -3,6 +3,7 @@ from typing import Dict, Any
 from ..agent_manager import AgentManager, AgentModel
 from ..config import MISTRAL_AGENT_ID
 from ..logger import logger
+from .language_service import LanguageService
 
 
 class QuestionSimplifier:
@@ -10,18 +11,36 @@ class QuestionSimplifier:
     
     def __init__(self, agent_id: str = MISTRAL_AGENT_ID):
         self.agent_id = agent_id
+        self.language_service = LanguageService()  # ✅ Ajout
     
-    async def simplify(self, question: str, context: Dict[str, Any] = None) -> str:
+    async def simplify(
+        self, 
+        question: str, 
+        context: Dict[str, Any] = None,
+        user_language: str = 'en'  # ✅ Nouveau paramètre
+    ) -> str:
         """
         Simplify a medical question to be more understandable.
         
         Args:
             question (str): Original question
             context (Dict[str, Any]): Optional context (trial info)
+            user_language (str): Language of the user (default: 'en')
             
         Returns:
             str: Simplified question
         """
+        # ✅ If question is in user's language, translate to English first
+        original_question = question
+        if user_language != 'en':
+            logger.info(f"🌐 Translating question to English for processing...")
+            question = await self.language_service.translate_text(
+                question,
+                'en',
+                context="medical question"
+            )
+        
+        # Simplify in English
         async with AgentManager(max_retries=2, retry_delay=3.0) as manager:
             agent = manager.create_agent(
                 agent_id=self.agent_id,
@@ -37,16 +56,19 @@ class QuestionSimplifier:
                 message=prompt
             )
             
-            # Extract text from response
-            if hasattr(response, 'choices') and len(response.choices) > 0:
-                return response.choices[0].message.content.strip()
-            elif hasattr(response, 'content'):
-                return response.content.strip()
-            elif isinstance(response, str):
-                return response.strip()
-            else:
-                return str(response).strip()
-    
+            simplified = self._extract_text(response).strip()
+        
+        # ✅ Translate back to user's language
+        if user_language != 'en':
+            logger.info(f"🌐 Translating simplified question back to user's language...")
+            simplified = await self.language_service.translate_text(
+                simplified,
+                user_language,
+                context="simplified medical question"
+            )
+        
+        return simplified
+
     def _build_simplification_prompt(self, question: str, context: Dict[str, Any] = None) -> str:
         """Build prompt for question simplification"""
         context_info = ""

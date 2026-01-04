@@ -44,6 +44,9 @@ def explain_result():
     if not data:
         return jsonify({'error': 'Session expired'}), 400
     
+    # ✅ Get user's language
+    user_language = data.get('user_language', 'en')
+    
     # Find the trial
     trial_data = None
     for trial in data['trials_data']:
@@ -62,7 +65,12 @@ def explain_result():
     
     async def run_explanation():
         explanation_service = ExplanationService()
-        return await explanation_service.generate_with_validation(nct_id, trial_data, user_responses)
+        return await explanation_service.generate_with_validation(
+            nct_id, 
+            trial_data, 
+            user_responses,
+            user_language=user_language  # ✅ Pass language
+        )
     
     try:
         result = asyncio.run(run_explanation())
@@ -70,6 +78,7 @@ def explain_result():
         response_data = {
             'nct_id': nct_id,
             'explanation': result['explanation'],
+            'language': user_language,  # ✅ Include language info
             'quality': {
                 'comprehension_score': result['comprehension_score'],
                 'attempts': result['attempts'],
@@ -77,7 +86,6 @@ def explain_result():
             }
         }
         
-        # Add warning if quality is poor
         if 'warning' in result:
             response_data['warning'] = result['warning']
         
