@@ -7,253 +7,64 @@
 {% block content %}
 
 <style>
-  /* Scoped styles inside app content */
-  .q-wrap {
-    min-height: calc(100vh - 160px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  .q-wrap{min-height:calc(100vh - 160px);display:flex;justify-content:center;align-items:center;padding:20px}
+  .q-container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.12);max-width:900px;width:100%;padding:32px}
+  .q-title{color:#111827;margin-bottom:8px;font-size:1.8em;font-weight:800}
+  .q-subtitle{color:#6b7280;margin-bottom:22px}
+
+  .q-progress-bar{background:#e5e7eb;height:10px;border-radius:999px;margin-bottom:18px;overflow:hidden}
+  .q-progress-fill{background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);height:100%;width:0%;transition:width .3s ease}
+
+  .q-trial-info{background:#f3f4f6;padding:16px;border-radius:12px;margin-bottom:18px}
+  .q-trial-info h2{color:#4f46e5;margin-bottom:8px;font-size:1.05em;font-weight:900}
+  .q-trial-info p{color:#4b5563;line-height:1.6;margin:4px 0;font-weight:600}
+
+  .q-question-type{display:inline-block;padding:6px 12px;border-radius:999px;font-size:.85em;font-weight:900;margin-bottom:12px}
+  .q-question-type.exclusion{background:#fee2e2;color:#b91c1c}
+  .q-question-type.inclusion{background:#dcfce7;color:#166534}
+
+  .q-question{font-size:1.15em;color:#111827;margin:0 0 16px;line-height:1.45;font-weight:900}
+
+  .q-btn-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .q-btn{padding:12px 26px;font-size:1.05em;border:none;border-radius:12px;cursor:pointer;transition:.15s;font-weight:900;min-width:140px}
+  .q-btn:active{transform:translateY(1px)}
+  .q-btn-yes{background:#22c55e;color:#fff}
+  .q-btn-no{background:#ef4444;color:#fff}
+  .q-btn-start{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:14px 28px;font-size:1.05em;border-radius:14px;font-weight:950}
+
+  .q-hidden{display:none}
+
+  .q-notification{padding:12px;border-radius:12px;margin-bottom:14px;animation:qSlideIn .25s ease;font-weight:800}
+  .q-notification.excluded{background:#fee2e2;color:#b91c1c;border-left:5px solid #b91c1c}
+  .q-notification.completed{background:#dbeafe;color:#1d4ed8;border-left:5px solid #1d4ed8}
+  @keyframes qSlideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+  .q-results{margin-top:18px}
+  .q-result-item{background:#f3f4f6;padding:16px;border-radius:12px;margin-bottom:12px;border-left:5px solid #d1d5db}
+  .q-result-item.eligible{border-left-color:#22c55e;background:#dcfce7}
+  .q-result-item.partial{border-left-color:#f59e0b;background:#ffedd5}
+  .q-result-item.not-eligible{border-left-color:#ef4444;background:#fee2e2}
+
+  .q-percentage-badge{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:950;margin-left:10px;font-size:.85em;color:#fff;background:#6b7280}
+  .q-badge-100{background:#22c55e}
+  .q-badge-high{background:#84cc16}
+  .q-badge-medium{background:#f59e0b}
+  .q-badge-low{background:#ef4444}
+
+  .q-btn-explain{
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:#fff;padding:10px 14px;font-size:.9em;border:none;border-radius:10px;
+    cursor:pointer;margin-top:10px;font-weight:900
   }
+  .q-btn-explain:disabled{opacity:.6;cursor:not-allowed}
 
-  .q-container {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-    max-width: 900px;
-    width: 100%;
-    padding: 32px;
-  }
-
-  .q-title {
-    color: #111827;
-    margin-bottom: 8px;
-    font-size: 1.8em;
-    font-weight: 800;
-  }
-
-  .q-subtitle {
-    color: #6b7280;
-    margin-bottom: 22px;
-  }
-
-  .q-progress-bar {
-    background: #e5e7eb;
-    height: 10px;
-    border-radius: 999px;
-    margin-bottom: 18px;
-    overflow: hidden;
-  }
-
-  .q-progress-fill {
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s ease;
-  }
-
-  .q-trial-info {
-    background: #f3f4f6;
-    padding: 16px;
-    border-radius: 12px;
-    margin-bottom: 22px;
-  }
-
-  .q-trial-info h2 {
-    color: #4f46e5;
-    margin-bottom: 10px;
-    font-size: 1.05em;
-    font-weight: 700;
-  }
-
-  .q-trial-info p {
-    color: #4b5563;
-    line-height: 1.6;
-    margin: 6px 0;
-  }
-
-  .q-question-container {
-    margin-bottom: 22px;
-  }
-
-  .q-question-type {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 0.85em;
-    font-weight: 800;
-    margin-bottom: 14px;
-  }
-
-  .q-question-type.exclusion {
-    background: #fee2e2;
-    color: #b91c1c;
-  }
-
-  .q-question-type.inclusion {
-    background: #dcfce7;
-    color: #166534;
-  }
-
-  .q-question {
-    font-size: 1.15em;
-    color: #111827;
-    margin-bottom: 18px;
-    line-height: 1.45;
-    font-weight: 700;
-  }
-
-  .q-btn-group {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .q-btn {
-    padding: 12px 26px;
-    font-size: 1.05em;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 800;
-    min-width: 140px;
-  }
-
-  .q-btn-yes {
-    background: #22c55e;
-    color: white;
-  }
-  .q-btn-yes:hover { transform: translateY(-1px); }
-
-  .q-btn-no {
-    background: #ef4444;
-    color: white;
-  }
-  .q-btn-no:hover { transform: translateY(-1px); }
-
-  .q-btn-start {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 14px 28px;
-    font-size: 1.05em;
-    border-radius: 14px;
-    font-weight: 900;
-  }
-  .q-btn-start:hover { transform: translateY(-1px); }
-
-  .q-loading {
-    text-align: center;
-    color: #4f46e5;
-    font-size: 1.05em;
-    margin: 16px 0;
-    font-weight: 700;
-  }
-
-  .q-hidden { display: none; }
-
-  .q-notification {
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    animation: qSlideIn 0.25s ease;
-    font-weight: 700;
-  }
-
-  .q-notification.excluded {
-    background: #fee2e2;
-    color: #b91c1c;
-    border-left: 5px solid #b91c1c;
-  }
-
-  .q-notification.completed {
-    background: #dbeafe;
-    color: #1d4ed8;
-    border-left: 5px solid #1d4ed8;
-  }
-
-  @keyframes qSlideIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .q-results {
-    margin-top: 18px;
-  }
-
-  .q-result-item {
-    background: #f3f4f6;
-    padding: 16px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    border-left: 5px solid #d1d5db;
-  }
-
-  .q-result-item.eligible {
-    border-left-color: #22c55e;
-    background: #dcfce7;
-  }
-
-  .q-result-item.partial {
-    border-left-color: #f59e0b;
-    background: #ffedd5;
-  }
-
-  .q-result-item.not-eligible {
-    border-left-color: #ef4444;
-    background: #fee2e2;
-  }
-
-  .q-percentage-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 900;
-    margin-left: 10px;
-    font-size: 0.85em;
-    color: white;
-    background: #6b7280;
-  }
-
-  .q-badge-100 { background: #22c55e; }
-  .q-badge-high { background: #84cc16; }
-  .q-badge-medium { background: #f59e0b; }
-  .q-badge-low { background: #ef4444; }
-
-  .q-btn-explain {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 10px 14px;
-    font-size: 0.9em;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-weight: 800;
-  }
-
-  .q-btn-explain:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .q-explanation-box {
-    background: #eef2ff;
-    border-left: 4px solid #4f46e5;
-    padding: 14px;
-    margin-top: 12px;
-    border-radius: 10px;
-  }
-
-  .q-explanation-box p {
-    color: #111827;
-    line-height: 1.6;
-    white-space: pre-wrap;
-  }
+  .q-explanation-box{background:#eef2ff;border-left:4px solid #4f46e5;padding:14px;margin-top:12px;border-radius:10px}
+  .q-explanation-box p{color:#111827;line-height:1.6;white-space:pre-wrap;margin:0}
 </style>
 
 <div class="q-wrap">
   <div class="q-container">
 
-    {# URLs PATCHÉS via url_for (blueprints + prefixes) #}
     <script>
       const URLS = {
         currentTrial: "{{ url_for('questionnaire.get_current_trial') }}",
@@ -263,62 +74,58 @@
       };
     </script>
 
+    <!-- WELCOME -->
     <div id="welcome-screen">
       <div class="q-title">🏥 Clinical Trial Eligibility</div>
       <div class="q-subtitle">Find clinical trials that match your profile</div>
 
-      <p style="margin: 14px 0; color:#4b5563; line-height:1.6;">
+      <p style="margin:14px 0;color:#4b5563;line-height:1.6;font-weight:600;">
         We will ask you a series of questions to determine which clinical trials you may be eligible for.
         Answer <strong>Yes</strong> or <strong>No</strong> to each question.
       </p>
 
-      <p style="margin: 14px 0; color:#4b5563;">
+      <p style="margin:14px 0;color:#4b5563;font-weight:700;">
         <strong>Total trials to assess: {{ total_trials }}</strong>
       </p>
 
       <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Questionnaire</button>
     </div>
 
+    <!-- QUESTIONNAIRE -->
     <div id="questionnaire-screen" class="q-hidden">
-      <div class="q-progress-bar">
-        <div class="q-progress-fill" id="progress"></div>
-      </div>
+      <div class="q-progress-bar"><div class="q-progress-fill" id="progress"></div></div>
 
       <div id="notification-area"></div>
 
-      <div class="q-trial-info" id="trial-info">
+      <div class="q-trial-info">
         <h2 id="trial-title">Loading...</h2>
         <p><strong>Trial ID:</strong> <span id="trial-id">-</span></p>
         <p><strong>Progress:</strong> Trial <span id="trial-number">-</span> of <span id="total-trials">-</span></p>
       </div>
 
-      <div class="q-question-container">
-        <span class="q-question-type" id="question-type">-</span>
-        <div class="q-question" id="question-text">Loading question...</div>
-        <div class="q-btn-group">
-          <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
-          <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
-        </div>
+      <span class="q-question-type" id="question-type">-</span>
+      <div class="q-question" id="question-text">Loading question...</div>
+
+      <div class="q-btn-group">
+        <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
+        <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
       </div>
     </div>
 
+    <!-- RESULTS -->
     <div id="results-screen" class="q-hidden">
       <div class="q-title">📊 Results</div>
       <div class="q-subtitle">Your eligibility assessment is complete</div>
 
-      <div style="background:#f3f4f6; padding:16px; border-radius:12px; margin: 14px 0;">
-        <p><strong>Total trials assessed:</strong> <span id="total-assessed">0</span></p>
-        <p><strong>Fully eligible trials:</strong> <span id="eligible-count" style="color:#16a34a; font-weight:900;">0</span></p>
-        <p><strong>Partially eligible trials:</strong> <span id="partial-count" style="color:#d97706; font-weight:900;">0</span></p>
+      <div style="background:#f3f4f6;padding:16px;border-radius:12px;margin:14px 0;">
+        <p style="margin:6px 0;font-weight:700;"><strong>Total trials assessed:</strong> <span id="total-assessed">0</span></p>
+        <p style="margin:6px 0;font-weight:700;"><strong>Fully eligible trials:</strong> <span id="eligible-count" style="color:#16a34a;font-weight:950;">0</span></p>
+        <p style="margin:6px 0;font-weight:700;"><strong>Partially eligible trials:</strong> <span id="partial-count" style="color:#d97706;font-weight:950;">0</span></p>
       </div>
 
       <div class="q-results" id="results-list"></div>
 
       <button class="q-btn q-btn-start" onclick="location.reload()">Start New Assessment</button>
-    </div>
-
-    <div id="loading-screen" class="q-hidden">
-      <div class="q-loading">Loading...</div>
     </div>
 
   </div>
@@ -328,26 +135,43 @@
   let currentQuestion = null;
   let currentTrial = null;
 
-  function show(elId){
-    document.getElementById(elId).classList.remove('q-hidden');
+  function show(id){ document.getElementById(id).classList.remove("q-hidden"); }
+  function hide(id){ document.getElementById(id).classList.add("q-hidden"); }
+
+  function showNotification(message, type){
+    document.getElementById("notification-area").innerHTML =
+      `<div class="q-notification ${type}">${message}</div>`;
   }
-  function hide(elId){
-    document.getElementById(elId).classList.add('q-hidden');
+  function clearNotification(){ document.getElementById("notification-area").innerHTML = ""; }
+
+  function updateProgress(current, total){
+    const pct = total ? (current/total)*100 : 0;
+    document.getElementById("progress").style.width = pct + "%";
   }
 
-  async function startQuestionnaire() {
-    hide('welcome-screen');
-    show('loading-screen');
+  function badgeClass(percentage){
+    if (percentage === 100) return 'q-badge-100';
+    if (percentage >= 75) return 'q-badge-high';
+    if (percentage >= 50) return 'q-badge-medium';
+    return 'q-badge-low';
+  }
+
+  async function startQuestionnaire(){
+    hide("welcome-screen");
+    show("questionnaire-screen");
     await loadNextQuestion();
   }
 
-  async function loadNextQuestion() {
-    const response = await fetch(URLS.currentTrial);
-    const data = await response.json();
+  async function loadNextQuestion(){
+    const res = await fetch(URLS.currentTrial);
+    const data = await res.json();
 
-    hide('loading-screen');
+    if (data.error){
+      showNotification(`❌ ${data.error}`, "excluded");
+      return;
+    }
 
-    if (data.completed) {
+    if (data.completed){
       showResults(data.results || []);
       return;
     }
@@ -355,29 +179,26 @@
     currentTrial = data.trial_info;
     currentQuestion = data.current_question;
 
-    show('questionnaire-screen');
+    document.getElementById("trial-title").textContent = currentTrial.title || "Trial";
+    document.getElementById("trial-id").textContent = currentTrial.nct_id || "-";
+    document.getElementById("trial-number").textContent = currentTrial.trial_number || "-";
+    document.getElementById("total-trials").textContent = currentTrial.total_trials || "-";
 
-    document.getElementById('trial-title').textContent = currentTrial.title || "Trial";
-    document.getElementById('trial-id').textContent = currentTrial.nct_id || "-";
-    document.getElementById('trial-number').textContent = currentTrial.trial_number || "-";
-    document.getElementById('total-trials').textContent = currentTrial.total_trials || "-";
+    document.getElementById("question-text").textContent = currentQuestion.question || "Question";
 
-    document.getElementById('question-text').textContent = currentQuestion.question || "Question";
-
-    const qt = document.getElementById('question-type');
-    qt.textContent = (currentQuestion.type === 'exclusion') ? '⛔ Exclusion Criteria' : '✅ Inclusion Criteria';
-    qt.className = 'q-question-type ' + (currentQuestion.type || "");
+    const qt = document.getElementById("question-type");
+    qt.textContent = currentQuestion.type === "exclusion" ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
+    qt.className = "q-question-type " + (currentQuestion.type || "");
 
     updateProgress(currentTrial.trial_number || 0, currentTrial.total_trials || 1);
   }
 
-  async function submitAnswer(answer) {
-    hide('questionnaire-screen');
-    show('loading-screen');
+  async function submitAnswer(answer){
+    if (!currentTrial || !currentQuestion) return;
 
-    const response = await fetch(URLS.submitAnswer, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch(URLS.submitAnswer, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
         question_id: currentQuestion.question_id,
         answer: answer,
@@ -386,144 +207,112 @@
       })
     });
 
-    const data = await response.json();
-    hide('loading-screen');
+    const data = await res.json();
 
-    if (data.excluded) {
-      showNotification('❌ You are excluded from this trial. Moving to the next trial...', 'excluded');
-      setTimeout(() => {
-        clearNotification();
-        loadNextQuestion();
-      }, 1600);
+    if (data.error){
+      showNotification(`❌ ${data.error}`, "excluded");
       return;
     }
 
-    if (data.trial_completed && data.all_completed) {
-      // récupérer résultats finaux depuis results blueprint
-      const resultsResponse = await fetch(URLS.getResults);
-      const resultsData = await resultsResponse.json();
-      showResults(resultsData.results || []);
+    if (data.excluded){
+      showNotification("❌ You are excluded from this trial. Moving to the next trial...", "excluded");
+      setTimeout(()=>{ clearNotification(); loadNextQuestion(); }, 1400);
       return;
     }
 
-    if (data.trial_completed && data.move_to_next) {
-      const msg = `✓ Trial assessment complete!<br>Match: ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions} criteria met)`;
-      showNotification(msg, 'completed');
-      setTimeout(() => {
-        clearNotification();
-        loadNextQuestion();
-      }, 2000);
+    if (data.trial_completed && data.all_completed){
+      const r = await fetch(URLS.getResults);
+      const rd = await r.json();
+      showResults(rd.results || []);
       return;
     }
 
-    // sinon: question suivante renvoyée
+    if (data.trial_completed && data.move_to_next){
+      showNotification(`✓ Trial complete • Match ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions})`, "completed");
+      setTimeout(()=>{ clearNotification(); loadNextQuestion(); }, 1600);
+      return;
+    }
+
+    // next question same trial
     currentQuestion = data.current_question;
-    currentTrial = data.trial_info;
+    currentTrial = data.trial_info || currentTrial;
 
-    show('questionnaire-screen');
-
-    document.getElementById('question-text').textContent = currentQuestion.question || "Question";
-    const qt = document.getElementById('question-type');
-    qt.textContent = (currentQuestion.type === 'exclusion') ? '⛔ Exclusion Criteria' : '✅ Inclusion Criteria';
-    qt.className = 'q-question-type ' + (currentQuestion.type || "");
+    document.getElementById("question-text").textContent = currentQuestion.question || "Question";
+    const qt = document.getElementById("question-type");
+    qt.textContent = currentQuestion.type === "exclusion" ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
+    qt.className = "q-question-type " + (currentQuestion.type || "");
   }
 
-  function showNotification(message, type) {
-    const area = document.getElementById('notification-area');
-    area.innerHTML = `<div class="q-notification ${type}">${message}</div>`;
-  }
+  function showResults(results){
+    hide("questionnaire-screen");
+    show("results-screen");
 
-  function clearNotification() {
-    document.getElementById('notification-area').innerHTML = '';
-  }
+    const eligible = results.filter(r => r.eligible);
+    const partial = results.filter(r => !r.eligible && (r.inclusion_percentage || 0) > 0);
 
-  function updateProgress(current, total) {
-    const pct = total ? (current / total) * 100 : 0;
-    document.getElementById('progress').style.width = pct + '%';
-  }
+    document.getElementById("total-assessed").textContent = results.length;
+    document.getElementById("eligible-count").textContent = eligible.length;
+    document.getElementById("partial-count").textContent = partial.length;
 
-  function badgeClass(percentage) {
-    if (percentage === 100) return 'q-badge-100';
-    if (percentage >= 75) return 'q-badge-high';
-    if (percentage >= 50) return 'q-badge-medium';
-    return 'q-badge-low';
-  }
-
-  function showResults(results) {
-    hide('questionnaire-screen');
-    hide('welcome-screen');
-    show('results-screen');
-
-    const eligibleTrials = results.filter(r => r.eligible);
-    const partialTrials = results.filter(r => !r.eligible && (r.inclusion_percentage || 0) > 0);
-
-    document.getElementById('total-assessed').textContent = results.length;
-    document.getElementById('eligible-count').textContent = eligibleTrials.length;
-    document.getElementById('partial-count').textContent = partialTrials.length;
-
-    const list = document.getElementById('results-list');
-    list.innerHTML = '';
+    const list = document.getElementById("results-list");
+    list.innerHTML = "";
 
     results.forEach((r, idx) => {
       const pct = r.inclusion_percentage || 0;
-      const cls = r.eligible ? 'eligible' : (pct > 0 ? 'partial' : 'not-eligible');
+      const cls = r.eligible ? "eligible" : (pct > 0 ? "partial" : "not-eligible");
 
-      const item = document.createElement('div');
+      const item = document.createElement("div");
       item.className = `q-result-item ${cls}`;
       item.innerHTML = `
-        <h3 style="font-weight:900; color:#111827;">
-          ${idx + 1}. ${r.nct_id}
+        <h3 style="font-weight:950;color:#111827;margin:0 0 6px;">
+          ${idx+1}. ${r.nct_id}
           <span class="q-percentage-badge ${badgeClass(pct)}">${pct}% Match</span>
         </h3>
-        <p><strong>Title:</strong> ${r.title || ''}</p>
-        <p><strong>Status:</strong> ${r.eligible ? '✅ Fully Eligible' : (pct > 0 ? '⚠️ Partially Eligible' : '❌ Not Eligible')}</p>
-        <p><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0)}/${(r.total_inclusion_questions || 0)} criteria met</p>
-        <p><strong>Reason:</strong> ${r.reason || ''}</p>
-        <button class="q-btn-explain" data-nct="${r.nct_id}" onclick="explainResult(event, '${r.nct_id}')">🤖 Explain Results</button>
+        <p style="margin:4px 0;"><strong>Title:</strong> ${r.title || ""}</p>
+        <p style="margin:4px 0;"><strong>Status:</strong> ${r.eligible ? "✅ Fully Eligible" : (pct > 0 ? "⚠️ Partially Eligible" : "❌ Not Eligible")}</p>
+        <p style="margin:4px 0;"><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0)}/${(r.total_inclusion_questions || 0)} criteria met</p>
+        <p style="margin:4px 0;"><strong>Reason:</strong> ${r.reason || ""}</p>
+        <button class="q-btn-explain" onclick="explainResult(event,'${r.nct_id}')">🤖 Explain Results</button>
         <div id="explanation-${r.nct_id}" class="q-explanation-box q-hidden"></div>
       `;
       list.appendChild(item);
     });
   }
 
-  async function explainResult(evt, nctId) {
+  async function explainResult(evt, nctId){
     const box = document.getElementById(`explanation-${nctId}`);
     const btn = evt.target;
 
-    // toggle
-    if (!box.classList.contains('q-hidden')) {
-      box.classList.add('q-hidden');
-      btn.textContent = '🤖 Explain Results';
+    if (!box.classList.contains("q-hidden")){
+      box.classList.add("q-hidden");
+      btn.textContent = "🤖 Explain Results";
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = '⏳ Generating...';
-    box.classList.remove('q-hidden');
-    box.innerHTML = '<div class="q-loading">Analyzing your responses...</div>';
+    btn.textContent = "⏳ Generating…";
+    box.classList.remove("q-hidden");
+    box.innerHTML = `<p>Analyzing your responses…</p>`;
 
-    try {
+    try{
       const res = await fetch(URLS.explain, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({ nct_id: nctId })
       });
       const data = await res.json();
 
-      if (data.error) {
+      if (data.error){
         box.innerHTML = `<p style="color:#b91c1c;">❌ ${data.error}</p>`;
       } else {
         box.innerHTML = `
-          <div style="font-weight:900; color:#4f46e5; margin-bottom:8px;">📋 Explanation</div>
-          <p>${(data.explanation || '').replaceAll('\n','<br>')}</p>
+          <div style="font-weight:950;color:#4f46e5;margin-bottom:8px;">📋 Explanation</div>
+          <p>${(data.explanation || "")}</p>
         `;
       }
 
-      btn.textContent = '🤖 Hide Explanation';
-    } catch (err) {
-      box.innerHTML = `<p style="color:#b91c1c;">❌ Error: ${err.message}</p>`;
-      btn.textContent = '🤖 Explain Results';
-    } finally {
+      btn.textContent = "🤖 Hide Explanation";
+    } finally{
       btn.disabled = false;
     }
   }

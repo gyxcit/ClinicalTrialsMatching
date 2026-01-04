@@ -3,8 +3,9 @@
 Flask routes for workflow initialization and processing
 """
 import asyncio
-from flask import Blueprint, request, jsonify, session, redirect, url_for
 from typing import Dict, Any
+
+from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template
 
 from src.services.illness_analyzer import IllnessAnalyzer
 from src.services.trial_filter import TrialFilter
@@ -22,16 +23,13 @@ def _run_coro(coro):
     Fixes: 'asyncio.run() cannot be called from a running event loop'
     """
     try:
-        loop = asyncio.get_running_loop()
-        # If already running (rare in Flask, but happens in some setups),
-        # run in a brand new loop.
+        asyncio.get_running_loop()
         new_loop = asyncio.new_event_loop()
         try:
             return new_loop.run_until_complete(coro)
         finally:
             new_loop.close()
     except RuntimeError:
-        # No running loop → normal case
         return asyncio.run(coro)
 
 
@@ -74,13 +72,10 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
 
     logger.info("Step 1: Analyzing illness...")
     illness_info = await illness_analyzer.analyze(user_description)
-    
 
-    # ✅ Robust: accept IllnessInfo OR str
     illness_name = getattr(illness_info, "illness_name", None)
     if not illness_name and isinstance(illness_info, str):
         illness_name = illness_info.strip()
-
     illness_name = illness_name or "Unknown"
 
     logger.info(f"Step 2: Fetching clinical trials for condition='{illness_name}'...")
@@ -91,7 +86,6 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
         json_output=False,
         timeout=10,
     )
-
     if not trials:
         return {"error": "No trials found"}
 
@@ -137,6 +131,9 @@ def start_workflow():
 
 @workflow_bp.route("/process_workflow", methods=["GET"])
 def process_workflow():
+    """
+    API endpoint called by /workflow/loading (JS fetch)
+    """
     user_description = session.get("user_description", "")
     num_studies = int(session.get("num_studies", 10))
 
@@ -148,6 +145,11 @@ def process_workflow():
 
 @workflow_bp.route("/run_from_profile", methods=["GET"])
 def run_from_profile():
+    """
+    UI entry: Patient profile -> run workflow -> questionnaire.
+    IMPORTANT: do NOT run workflow here (otherwise loading page useless).
+    We only store inputs then redirect to loading page.
+    """
     profile = session.get("patient_profile", {}) or {}
     user_description = _build_description_from_profile(profile)
     num_studies = int(request.args.get("num_studies", 10))
@@ -156,21 +158,18 @@ def run_from_profile():
     session["num_studies"] = num_studies
     session.modified = True
 
-    result = _run_coro(_run_workflow_async(user_description, num_studies))
-
-    if "error" in result:
-        session["workflow_error"] = result["error"]
-        session.modified = True
-        return redirect(url_for("patient.patient_profile"))
-
+    # ✅ redirect to loading page that will call /process_workflow
     return redirect(url_for("workflow.loading"))
 
 
 @workflow_bp.get("/loading")
 def loading():
-    # page de transition (UI)
+    """
+    UI page that shows a spinner, calls /workflow/process_workflow,
+    then redirects to questionnaire when ready.
+    """
     return render_template(
         "workflow_loading.html",
         layout="app",
-        active_page="matching"
+        active_page="matching",
     )
