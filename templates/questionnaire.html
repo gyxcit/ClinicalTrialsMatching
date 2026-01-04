@@ -25,12 +25,59 @@
 
   .q-question{font-size:1.15em;color:#111827;margin:0 0 16px;line-height:1.45;font-weight:900}
 
-  .q-btn-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .q-btn{padding:12px 26px;font-size:1.05em;border:none;border-radius:12px;cursor:pointer;transition:.15s;font-weight:900;min-width:140px}
-  .q-btn:active{transform:translateY(1px)}
-  .q-btn-yes{background:#22c55e;color:#fff}
-  .q-btn-no{background:#ef4444;color:#fff}
-  .q-btn-start{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:14px 28px;font-size:1.05em;border-radius:14px;font-weight:950}
+  .q-btn-group {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .q-btn {
+    padding: 12px 26px;
+    font-size: 1.05em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 800;
+    min-width: 140px;
+  }
+
+  .q-btn-yes {
+    background: #22c55e;
+    color: white;
+  }
+  .q-btn-yes:hover { transform: translateY(-1px); }
+
+  .q-btn-no {
+    background: #ef4444;
+    color: white;
+  }
+  .q-btn-no:hover { transform: translateY(-1px); }
+
+  /* ✅ Nouveau bouton "I don't know" */
+  .q-btn-unsure {
+    background: #f59e0b;
+    color: white;
+  }
+  .q-btn-unsure:hover { transform: translateY(-1px); }
+
+  /* ✅ Nouveau bouton "Reformulate" */
+  .q-btn-reformulate {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.95em;
+    padding: 10px 20px;
+  }
+  .q-btn-reformulate:hover { transform: translateY(-1px); }
+
+  .q-loading {
+    text-align: center;
+    color: #4f46e5;
+    font-size: 1.05em;
+    margin: 16px 0;
+    font-weight: 700;
+  }
 
   .q-hidden{display:none}
 
@@ -70,7 +117,8 @@
         currentTrial: "{{ url_for('questionnaire.get_current_trial') }}",
         submitAnswer: "{{ url_for('questionnaire.submit_answer') }}",
         getResults: "{{ url_for('results.get_results') }}",
-        explain: "{{ url_for('results.explain_result') }}"
+        explain: "{{ url_for('results.explain_result') }}",
+        reformulate: "{{ url_for('questionnaire.reformulate_question') }}"
       };
     </script>
 
@@ -79,6 +127,13 @@
       <div class="q-title">🏥 Clinical Trial Eligibility</div>
       <div class="q-subtitle">Find clinical trials that match your profile</div>
 
+      <!-- ✅ Afficher la langue détectée -->
+      {% if session.get('user_language_name') %}
+      <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
+        🌍 <strong>Detected Language:</strong> {{ session.get('user_language_name') }}
+      </div>
+      {% endif %}
+
       <p style="margin:14px 0;color:#4b5563;line-height:1.6;font-weight:600;">
         We will ask you a series of questions to determine which clinical trials you may be eligible for.
         Answer <strong>Yes</strong> or <strong>No</strong> to each question.
@@ -86,9 +141,12 @@
 
       <p style="margin:14px 0;color:#4b5563;font-weight:700;">
         <strong>Total trials to assess: {{ total_trials }}</strong>
+      <p style="margin: 14px 0; color:#4b5563; line-height:1.6;">
+        We'll assess your eligibility for <strong>{{ total_trials }}</strong> clinical trials.
+        Answer each question with Yes or No.
       </p>
 
-      <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Questionnaire</button>
+      <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Assessment</button>
     </div>
 
     <!-- QUESTIONNAIRE -->
@@ -103,12 +161,23 @@
         <p><strong>Progress:</strong> Trial <span id="trial-number">-</span> of <span id="total-trials">-</span></p>
       </div>
 
-      <span class="q-question-type" id="question-type">-</span>
-      <div class="q-question" id="question-text">Loading question...</div>
+      <div class="q-question-container">
+        <span class="q-question-type" id="question-type">-</span>
+        <div class="q-question" id="question-text">Loading question...</div>
+        
+        <!-- ✅ Bouton Reformulate en haut -->
+        <div style="margin: 12px 0;">
+          <button class="q-btn q-btn-reformulate" onclick="reformulateQuestion()" id="reformulate-btn">
+            🔄 Reformulate Question
+          </button>
+        </div>
 
-      <div class="q-btn-group">
-        <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
-        <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
+        <!-- ✅ Boutons de réponse avec "I don't know" -->
+        <div class="q-btn-group">
+          <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
+          <button class="q-btn q-btn-unsure" onclick="submitAnswer('unsure')">🤷‍♂️ I don't know</button>
+          <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
+        </div>
       </div>
     </div>
 
@@ -134,6 +203,7 @@
 <script>
   let currentQuestion = null;
   let currentTrial = null;
+  let originalQuestion = null; // ✅ Stocker la question originale
 
   function show(id){ document.getElementById(id).classList.remove("q-hidden"); }
   function hide(id){ document.getElementById(id).classList.add("q-hidden"); }
@@ -178,11 +248,14 @@
 
     currentTrial = data.trial_info;
     currentQuestion = data.current_question;
+    originalQuestion = currentQuestion.question; // ✅ Sauvegarder l'original
 
-    document.getElementById("trial-title").textContent = currentTrial.title || "Trial";
-    document.getElementById("trial-id").textContent = currentTrial.nct_id || "-";
-    document.getElementById("trial-number").textContent = currentTrial.trial_number || "-";
-    document.getElementById("total-trials").textContent = currentTrial.total_trials || "-";
+    show('questionnaire-screen');
+
+    document.getElementById('trial-title').textContent = currentTrial.title || "Trial";
+    document.getElementById('trial-id').textContent = currentTrial.nct_id || "-";
+    document.getElementById('trial-number').textContent = currentTrial.trial_number || "-";
+    document.getElementById('total-trials').textContent = currentTrial.total_trials || "-";
 
     document.getElementById("question-text").textContent = currentQuestion.question || "Question";
 
@@ -193,15 +266,60 @@
     updateProgress(currentTrial.trial_number || 0, currentTrial.total_trials || 1);
   }
 
-  async function submitAnswer(answer){
-    if (!currentTrial || !currentQuestion) return;
+  // ✅ Nouvelle fonction pour reformuler la question
+  async function reformulateQuestion() {
+    const btn = document.getElementById('reformulate-btn');
+    const questionEl = document.getElementById('question-text');
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Reformulating...';
+    
+    try {
+      const response = await fetch(URLS.reformulate, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: originalQuestion,
+          context: {
+            trial_title: currentTrial.title,
+            nct_id: currentTrial.nct_id
+          }
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        showNotification('❌ Error reformulating question', 'excluded');
+        setTimeout(clearNotification, 2000);
+      } else {
+        // Afficher la question simplifiée
+        questionEl.textContent = data.simplified_question;
+        showNotification('✨ Question simplified!', 'completed');
+        setTimeout(clearNotification, 1500);
+      }
+      
+    } catch (error) {
+      console.error('Reformulation error:', error);
+      showNotification('❌ Failed to reformulate', 'excluded');
+      setTimeout(clearNotification, 2000);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 Reformulate Question';
+    }
+  }
+
+  // ✅ Fonction submitAnswer modifiée pour gérer "unsure"
+  async function submitAnswer(answer) {
+    hide('questionnaire-screen');
+    show('loading-screen');
 
     const res = await fetch(URLS.submitAnswer, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
         question_id: currentQuestion.question_id,
-        answer: answer,
+        answer: answer, // ✅ Peut être true, false, ou "unsure"
         nct_id: currentTrial.nct_id,
         question_type: currentQuestion.type
       })
@@ -220,22 +338,28 @@
       return;
     }
 
-    if (data.trial_completed && data.all_completed){
-      const r = await fetch(URLS.getResults);
-      const rd = await r.json();
-      showResults(rd.results || []);
+    if (data.trial_completed && data.all_completed) {
+      const resultsResponse = await fetch(URLS.getResults);
+      const resultsData = await resultsResponse.json();
+      showResults(resultsData.results || []);
       return;
     }
 
-    if (data.trial_completed && data.move_to_next){
-      showNotification(`✓ Trial complete • Match ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions})`, "completed");
-      setTimeout(()=>{ clearNotification(); loadNextQuestion(); }, 1600);
+    if (data.trial_completed && data.move_to_next) {
+      const msg = `✓ Trial assessment complete!<br>Match: ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions} criteria met)`;
+      showNotification(msg, 'completed');
+      setTimeout(() => {
+        clearNotification();
+        loadNextQuestion();
+      });
       return;
     }
 
-    // next question same trial
     currentQuestion = data.current_question;
-    currentTrial = data.trial_info || currentTrial;
+    currentTrial = data.trial_info;
+    originalQuestion = currentQuestion.question; // ✅ Mettre à jour l'original
+
+    show('questionnaire-screen');
 
     document.getElementById("question-text").textContent = currentQuestion.question || "Question";
     const qt = document.getElementById("question-type");
@@ -268,11 +392,11 @@
           ${idx+1}. ${r.nct_id}
           <span class="q-percentage-badge ${badgeClass(pct)}">${pct}% Match</span>
         </h3>
-        <p style="margin:4px 0;"><strong>Title:</strong> ${r.title || ""}</p>
-        <p style="margin:4px 0;"><strong>Status:</strong> ${r.eligible ? "✅ Fully Eligible" : (pct > 0 ? "⚠️ Partially Eligible" : "❌ Not Eligible")}</p>
-        <p style="margin:4px 0;"><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0)}/${(r.total_inclusion_questions || 0)} criteria met</p>
-        <p style="margin:4px 0;"><strong>Reason:</strong> ${r.reason || ""}</p>
-        <button class="q-btn-explain" onclick="explainResult(event,'${r.nct_id}')">🤖 Explain Results</button>
+        <p><strong>Title:</strong> ${r.title || ''}</p>
+        <p><strong>Status:</strong> ${r.eligible ? '✅ Fully Eligible' : (pct > 0 ? '⚠️ Partially Eligible' : '❌ Not Eligible')}</p>
+        <p><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0).toFixed(1)}/${(r.total_inclusion_questions || 0)} criteria met</p>
+        <p><strong>Reason:</strong> ${r.reason || ''}</p>
+        <button class="q-btn-explain" data-nct="${r.nct_id}" onclick="explainResult(event, '${r.nct_id}')">🤖 Explain Results</button>
         <div id="explanation-${r.nct_id}" class="q-explanation-box q-hidden"></div>
       `;
       list.appendChild(item);
@@ -283,9 +407,9 @@
     const box = document.getElementById(`explanation-${nctId}`);
     const btn = evt.target;
 
-    if (!box.classList.contains("q-hidden")){
-      box.classList.add("q-hidden");
-      btn.textContent = "🤖 Explain Results";
+    if (!box.classList.contains('q-hidden')) {
+      box.classList.add('q-hidden');
+      btn.textContent = '🤖 Explain Results';
       return;
     }
 

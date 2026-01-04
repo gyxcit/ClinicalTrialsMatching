@@ -4,8 +4,11 @@ Flask routes for questionnaire interface
 """
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 from typing import Dict, Any
+import asyncio
 
 from src.utils.session_manager import SessionManager
+from src.logger import logger
+
 
 
 questionnaire_bp = Blueprint("questionnaire", __name__)
@@ -73,12 +76,46 @@ def get_current_trial():
     return _get_next_question_internal(data, trial["nct_id"])
 
 
+@questionnaire_bp.route("/reformulate_question", methods=["POST"])
+def reformulate_question():
+    """Reformulate a question to be simpler"""
+    from src.services.question_simplifier import QuestionSimplifier
+    
+    request_data = request.json
+    question = request_data.get("question")
+    context = request_data.get("context", {})
+    
+    # ✅ Get user's language from session
+    data = SessionManager.load_data()
+    user_language = 'en'
+    if data:
+        user_language = data.get('user_language', 'en')
+    
+    if not question:
+        return jsonify({"error": "Question is required"}), 400
+    
+    async def run_simplification():
+        simplifier = QuestionSimplifier()
+        return await simplifier.simplify(question, context, user_language=user_language)
+    
+    try:
+        simplified = asyncio.run(run_simplification())
+        return jsonify({
+            "original_question": question,
+            "simplified_question": simplified,
+            "language": user_language
+        })
+    except Exception as e:
+        logger.error(f"Error simplifying question: {e}")
+        return jsonify({"error": f"Failed to simplify: {str(e)}"}), 500
+
+
 @questionnaire_bp.route("/submit_answer", methods=["POST"])
 def submit_answer():
     """Submit answer and get next question"""
     request_data = request.json or {}
     question_id = request_data.get("question_id")
-    answer = request_data.get("answer")
+    answer = request_data.get("answer")  # ✅ Peut être true, false, ou "unsure"
     nct_id = request_data.get("nct_id")
     question_type = request_data.get("question_type")
 
@@ -86,13 +123,25 @@ def submit_answer():
     if not data:
         return jsonify({"error": "Session expired"}), 400
 
+    # ✅ Gérer "unsure" comme une réponse partielle
+    if answer == "unsure":
+        # Pour "I don't know", on enregistre comme False mais on ajoute un flag
+        actual_answer = False
+        is_unsure = True
+    else:
+        actual_answer = answer
+        is_unsure = False
+
     # Save response
     if nct_id not in data["user_responses"]:
         data["user_responses"][nct_id] = {}
-    data["user_responses"][nct_id][question_id] = answer
+    data["user_responses"][nct_id][question_id] = {
+        "answer": actual_answer,
+        "is_unsure": is_unsure
+    }
 
     # Exclusion logic
-    if question_type == "exclusion" and answer:
+    if question_type == "exclusion" and actual_answer:
         trial_index = data["current_trial_index"]
         trial = data["trials_data"][trial_index]
 
@@ -118,11 +167,17 @@ def submit_answer():
             }
         )
 
-    # Inclusion scoring
-    if question_type == "inclusion" and answer:
+    # ✅ Inclusion scoring avec pénalité pour "unsure"
+    if question_type == "inclusion":
         if nct_id not in data["inclusion_scores"]:
-            data["inclusion_scores"][nct_id] = 0
-        data["inclusion_scores"][nct_id] += 1
+            data["inclusion_scores"][nct_id] = 0.0
+        
+        if actual_answer:
+            # Réponse "Yes" = 1 point
+            data["inclusion_scores"][nct_id] += 1.0
+        elif is_unsure:
+            # Réponse "I don't know" = 0.5 point
+            data["inclusion_scores"][nct_id] += 0.5
 
     SessionManager.save_data(data)
     return _get_next_question_internal(data, nct_id)
@@ -175,19 +230,19 @@ def _get_next_question_internal(data: Dict[str, Any], nct_id: str):
                 }
             )
 
-    # Calculate eligibility
+    # ✅ Calculate eligibility with decimal support for "unsure" answers
     inclusion_questions = trial["questions"]["inclusion"]
     total_inclusion = len(inclusion_questions)
-    inclusion_score = data["inclusion_scores"].get(nct_id, 0)
+    inclusion_score = data["inclusion_scores"].get(nct_id, 0.0)  # ✅ Float instead of int
     inclusion_percentage = (inclusion_score / total_inclusion * 100) if total_inclusion > 0 else 0
-    eligible = inclusion_score == total_inclusion
+    eligible = inclusion_score == total_inclusion  # ✅ Full score required for eligible
 
     data["results"].append(
         {
             "nct_id": nct_id,
             "title": trial["title"],
             "eligible": eligible,
-            "reason": "Eligible" if eligible else f"Met {inclusion_score}/{total_inclusion} criteria",
+            "reason": "Eligible" if eligible else f"Met {inclusion_score:.1f}/{total_inclusion} criteria",  # ✅ Show decimal
             "inclusion_score": inclusion_score,
             "total_inclusion_questions": total_inclusion,
             "inclusion_percentage": round(inclusion_percentage, 1),

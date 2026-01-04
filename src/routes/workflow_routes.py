@@ -10,6 +10,7 @@ from flask import Blueprint, request, jsonify, session, redirect, url_for, rende
 from src.services.illness_analyzer import IllnessAnalyzer
 from src.services.trial_filter import TrialFilter
 from src.services.question_generator import QuestionGenerator
+from src.services.language_service import LanguageService
 from src.trials import fetch_trials_async
 from src.logger import logger
 from src.utils.session_manager import SessionManager
@@ -69,10 +70,23 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
     illness_analyzer = IllnessAnalyzer()
     trial_filter = TrialFilter()
     question_generator = QuestionGenerator()
+    language_service = LanguageService()  # ✅ Ajout
+
+    # ✅ Step 0: Detect user's language
+    logger.info("Step 0: Detecting user's language...")
+    language_info = await language_service.detect_language(user_description)
+    user_language = language_info['code']
+    
+    # Store in session for later use
+    session['user_language'] = user_language
+    session['user_language_name'] = language_info['name']
+    session.modified = True
+    
+    logger.info(f"📝 User language: {language_info['name']} ({user_language})")
 
     logger.info("Step 1: Analyzing illness...")
     illness_info = await illness_analyzer.analyze(user_description)
-
+    
     illness_name = getattr(illness_info, "illness_name", None)
     if not illness_name and isinstance(illness_info, str):
         illness_name = illness_info.strip()
@@ -94,7 +108,25 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
         return {"error": "No relevant trials found"}
 
     trials_eligibility = trial_filter.extract_eligibility_criteria(filtered_trials)
+    
+    # ✅ Generate questions in ENGLISH (backend language)
+    logger.info("Step 3: Generating questions in English (backend)...")
     trials_with_questions = await question_generator.generate_for_all_trials(trials_eligibility)
+    
+    # ✅ Step 4: Translate questions to user's language
+    if user_language != 'en':
+        logger.info(f"Step 4: Translating questions to {language_info['name']}...")
+        for trial in trials_with_questions:
+            # Translate inclusion questions
+            trial['questions']['inclusion'] = await language_service.translate_questions_batch(
+                trial['questions']['inclusion'],
+                user_language
+            )
+            # Translate exclusion questions
+            trial['questions']['exclusion'] = await language_service.translate_questions_batch(
+                trial['questions']['exclusion'],
+                user_language
+            )
 
     session_id = SessionManager.initialize_session()
     SessionManager.create_data_file(
@@ -105,6 +137,7 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
             "results": [],
             "user_responses": {},
             "inclusion_scores": {},
+            "user_language": user_language,  # ✅ Store language
         },
     )
 
@@ -112,7 +145,11 @@ async def _run_workflow_async(user_description: str, num_studies: int) -> Dict[s
     session["workflow_started"] = True
     session.modified = True
 
-    return {"success": True, "total_trials": len(trials_with_questions)}
+    return {
+        "success": True, 
+        "total_trials": len(trials_with_questions),
+        "language": language_info['name']
+    }
 
 
 @workflow_bp.route("/start_workflow", methods=["POST"])

@@ -5,7 +5,7 @@ from ..response_models import ExplanationEvaluation
 from ..config import MISTRAL_AGENT_ID
 from ..logger import logger
 from ..utils.response_extractor import ResponseExtractor
-
+from .language_service import LanguageService
 
 class ExplanationService:
     """Generates and evaluates explanations for trial results"""
@@ -13,13 +13,15 @@ class ExplanationService:
     def __init__(self, agent_id: str = MISTRAL_AGENT_ID):
         self.agent_id = agent_id
         self.extractor = ResponseExtractor()
+        self.language_service = LanguageService()  # ✅ Ajout
     
     async def generate_with_validation(
         self,
         nct_id: str,
         trial_data: Dict[str, Any],
         user_responses: Dict[str, bool],
-        max_retries: int = 3
+        max_retries: int = 3,
+        user_language: str = 'en'  # ✅ Nouveau paramètre
     ) -> Dict[str, Any]:
         """
         Generate explanation with automatic validation and rewriting.
@@ -29,6 +31,7 @@ class ExplanationService:
             trial_data (Dict[str, Any]): Trial data including questions
             user_responses (Dict[str, bool]): User's responses to questions
             max_retries (int): Maximum number of rewrite attempts
+            user_language (str): Language code for the user's preferred language (e.g., 'en', 'fr')
             
         Returns:
             Dict[str, Any]: Explanation with quality metrics
@@ -38,18 +41,27 @@ class ExplanationService:
         for attempt in range(max_retries):
             logger.info(f"Generating explanation (Attempt {attempt + 1}/{max_retries})...")
             
-            # Generate explanation
+            # ✅ Generate explanation in ENGLISH first
             explanation = await self._generate_explanation(nct_id, trial_data, user_responses)
             
-            # Evaluate
+            # Evaluate (in English)
             logger.info("Evaluating explanation comprehension...")
             evaluation = await self._evaluate_explanation(explanation, trial_context)
             
             logger.info(f"Comprehension score: {evaluation.comprehension_score}/100")
             
-            # Check if acceptable
             if evaluation.is_acceptable:
                 logger.info("✅ Explanation is comprehensible enough")
+                
+                # ✅ Translate to user's language if needed
+                if user_language != 'en':
+                    logger.info(f"🌐 Translating explanation to user's language...")
+                    explanation = await self.language_service.translate_text(
+                        explanation,
+                        user_language,
+                        context="medical explanation"
+                    )
+                
                 return {
                     'explanation': explanation,
                     'comprehension_score': evaluation.comprehension_score,
@@ -60,7 +72,6 @@ class ExplanationService:
                     }
                 }
             
-            # Log issues and retry
             logger.warning(f"⚠️ Explanation needs improvement (Score: {evaluation.comprehension_score}/100)")
             logger.warning(f"Issues: {', '.join(evaluation.issues)}")
             
@@ -69,7 +80,14 @@ class ExplanationService:
                     nct_id, trial_data, user_responses, explanation, evaluation
                 )
         
-        # All retries failed
+        # All retries failed - translate anyway
+        if user_language != 'en':
+            explanation = await self.language_service.translate_text(
+                explanation,
+                user_language,
+                context="medical explanation"
+            )
+        
         logger.error(f"❌ Failed to achieve acceptable comprehension after {max_retries} attempts")
         return {
             'explanation': explanation,
