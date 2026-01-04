@@ -6,224 +6,190 @@
 
 {% block content %}
 
-<style>
-  .q-wrap{min-height:calc(100vh - 160px);display:flex;justify-content:center;align-items:center;padding:20px}
-  .q-container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.12);max-width:900px;width:100%;padding:32px}
-  .q-title{color:#111827;margin-bottom:8px;font-size:1.8em;font-weight:800}
-  .q-subtitle{color:#6b7280;margin-bottom:22px}
+<script>
+  const URLS = {
+    currentTrial: "{{ url_for('questionnaire.get_current_trial') }}",
+    submitAnswer: "{{ url_for('questionnaire.submit_answer') }}",
+    getResults: "{{ url_for('results.get_results') }}",
+    explain: "{{ url_for('results.explain_result') }}",
+    reformulate: "{{ url_for('questionnaire.reformulate_question') }}",
+    favoritesPage: "{{ url_for('favorites.favorites') }}",
+    favoriteToggle: "{{ url_for('favorites.api_toggle_favorite') }}",
+  };
 
-  .q-progress-bar{background:#e5e7eb;height:10px;border-radius:999px;margin-bottom:18px;overflow:hidden}
-  .q-progress-fill{background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);height:100%;width:0%;transition:width .3s ease}
+  // Session favorites snapshot
+  const SESSION_FAVORITES = {{ (session.get("favorites", []) or []) | tojson }};
+</script>
 
-  .q-trial-info{background:#f3f4f6;padding:16px;border-radius:12px;margin-bottom:18px}
-  .q-trial-info h2{color:#4f46e5;margin-bottom:8px;font-size:1.05em;font-weight:900}
-  .q-trial-info p{color:#4b5563;line-height:1.6;margin:4px 0;font-weight:600}
-
-  .q-question-type{display:inline-block;padding:6px 12px;border-radius:999px;font-size:.85em;font-weight:900;margin-bottom:12px}
-  .q-question-type.exclusion{background:#fee2e2;color:#b91c1c}
-  .q-question-type.inclusion{background:#dcfce7;color:#166534}
-
-  .q-question{font-size:1.15em;color:#111827;margin:0 0 16px;line-height:1.45;font-weight:900}
-
-  .q-btn-group {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .q-btn {
-    padding: 12px 26px;
-    font-size: 1.05em;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 800;
-    min-width: 140px;
-  }
-
-  .q-btn-yes {
-    background: #22c55e;
-    color: white;
-  }
-  .q-btn-yes:hover { transform: translateY(-1px); }
-
-  .q-btn-no {
-    background: #ef4444;
-    color: white;
-  }
-  .q-btn-no:hover { transform: translateY(-1px); }
-
-  /* ✅ Nouveau bouton "I don't know" */
-  .q-btn-unsure {
-    background: #f59e0b;
-    color: white;
-  }
-  .q-btn-unsure:hover { transform: translateY(-1px); }
-
-  /* ✅ Nouveau bouton "Reformulate" */
-  .q-btn-reformulate {
-    background: #8b5cf6;
-    color: white;
-    font-size: 0.95em;
-    padding: 10px 20px;
-  }
-  .q-btn-reformulate:hover { transform: translateY(-1px); }
-
-  .q-loading {
-    text-align: center;
-    color: #4f46e5;
-    font-size: 1.05em;
-    margin: 16px 0;
-    font-weight: 700;
-  }
-
-  .q-hidden{display:none}
-
-  .q-notification{padding:12px;border-radius:12px;margin-bottom:14px;animation:qSlideIn .25s ease;font-weight:800}
-  .q-notification.excluded{background:#fee2e2;color:#b91c1c;border-left:5px solid #b91c1c}
-  .q-notification.completed{background:#dbeafe;color:#1d4ed8;border-left:5px solid #1d4ed8}
-  @keyframes qSlideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-
-  .q-results{margin-top:18px}
-  .q-result-item{background:#f3f4f6;padding:16px;border-radius:12px;margin-bottom:12px;border-left:5px solid #d1d5db}
-  .q-result-item.eligible{border-left-color:#22c55e;background:#dcfce7}
-  .q-result-item.partial{border-left-color:#f59e0b;background:#ffedd5}
-  .q-result-item.not-eligible{border-left-color:#ef4444;background:#fee2e2}
-
-  .q-percentage-badge{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:950;margin-left:10px;font-size:.85em;color:#fff;background:#6b7280}
-  .q-badge-100{background:#22c55e}
-  .q-badge-high{background:#84cc16}
-  .q-badge-medium{background:#f59e0b}
-  .q-badge-low{background:#ef4444}
-
-  .q-btn-explain{
-    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-    color:#fff;padding:10px 14px;font-size:.9em;border:none;border-radius:10px;
-    cursor:pointer;margin-top:10px;font-weight:900
-  }
-  .q-btn-explain:disabled{opacity:.6;cursor:not-allowed}
-
-  .q-explanation-box{background:#eef2ff;border-left:4px solid #4f46e5;padding:14px;margin-top:12px;border-radius:10px}
-  .q-explanation-box p{color:#111827;line-height:1.6;white-space:pre-wrap;margin:0}
-</style>
-
-<div class="q-wrap">
-  <div class="q-container">
-
-    <script>
-      const URLS = {
-        currentTrial: "{{ url_for('questionnaire.get_current_trial') }}",
-        submitAnswer: "{{ url_for('questionnaire.submit_answer') }}",
-        getResults: "{{ url_for('results.get_results') }}",
-        explain: "{{ url_for('results.explain_result') }}",
-        reformulate: "{{ url_for('questionnaire.reformulate_question') }}"
-      };
-    </script>
-
-    <!-- WELCOME -->
-    <div id="welcome-screen">
-      <div class="q-title">🏥 Clinical Trial Eligibility</div>
-      <div class="q-subtitle">Find clinical trials that match your profile</div>
-
-      <!-- ✅ Afficher la langue détectée -->
-      {% if session.get('user_language_name') %}
-      <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
-        🌍 <strong>Detected Language:</strong> {{ session.get('user_language_name') }}
-      </div>
-      {% endif %}
-
-      <p style="margin:14px 0;color:#4b5563;line-height:1.6;font-weight:600;">
-        We will ask you a series of questions to determine which clinical trials you may be eligible for.
-        Answer <strong>Yes</strong> or <strong>No</strong> to each question.
-      </p>
-
-      <p style="margin:14px 0;color:#4b5563;font-weight:700;">
-        <strong>Total trials to assess: {{ total_trials }}</strong>
-      <p style="margin: 14px 0; color:#4b5563; line-height:1.6;">
-        We'll assess your eligibility for <strong>{{ total_trials }}</strong> clinical trials.
-        Answer each question with Yes or No.
-      </p>
-
-      <button class="q-btn q-btn-start" onclick="startQuestionnaire()">Start Assessment</button>
-    </div>
-
-    <!-- QUESTIONNAIRE -->
-    <div id="questionnaire-screen" class="q-hidden">
-      <div class="q-progress-bar"><div class="q-progress-fill" id="progress"></div></div>
-
-      <div id="notification-area"></div>
-
-      <div class="q-trial-info">
-        <h2 id="trial-title">Loading...</h2>
-        <p><strong>Trial ID:</strong> <span id="trial-id">-</span></p>
-        <p><strong>Progress:</strong> Trial <span id="trial-number">-</span> of <span id="total-trials">-</span></p>
-      </div>
-
-      <div class="q-question-container">
-        <span class="q-question-type" id="question-type">-</span>
-        <div class="q-question" id="question-text">Loading question...</div>
-        
-        <!-- ✅ Bouton Reformulate en haut -->
-        <div style="margin: 12px 0;">
-          <button class="q-btn q-btn-reformulate" onclick="reformulateQuestion()" id="reformulate-btn">
-            🔄 Reformulate Question
-          </button>
-        </div>
-
-        <!-- ✅ Boutons de réponse avec "I don't know" -->
-        <div class="q-btn-group">
-          <button class="q-btn q-btn-yes" onclick="submitAnswer(true)">Yes</button>
-          <button class="q-btn q-btn-unsure" onclick="submitAnswer('unsure')">🤷‍♂️ I don't know</button>
-          <button class="q-btn q-btn-no" onclick="submitAnswer(false)">No</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RESULTS -->
-    <div id="results-screen" class="q-hidden">
-      <div class="q-title">📊 Results</div>
-      <div class="q-subtitle">Your eligibility assessment is complete</div>
-
-      <div style="background:#f3f4f6;padding:16px;border-radius:12px;margin:14px 0;">
-        <p style="margin:6px 0;font-weight:700;"><strong>Total trials assessed:</strong> <span id="total-assessed">0</span></p>
-        <p style="margin:6px 0;font-weight:700;"><strong>Fully eligible trials:</strong> <span id="eligible-count" style="color:#16a34a;font-weight:950;">0</span></p>
-        <p style="margin:6px 0;font-weight:700;"><strong>Partially eligible trials:</strong> <span id="partial-count" style="color:#d97706;font-weight:950;">0</span></p>
-      </div>
-
-      <div class="q-results" id="results-list"></div>
-
-      <button class="q-btn q-btn-start" onclick="location.reload()">Start New Assessment</button>
-    </div>
-
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Trial Matching</h1>
+    <p class="page-subtitle">Answer a few questions to estimate your eligibility.</p>
   </div>
 </div>
+
+<!-- WELCOME -->
+<section id="welcome-screen" class="card">
+  <div class="card-h">
+    <h2 class="card-title">Start your assessment</h2>
+
+    {% if session.get('user_language_name') %}
+      <div class="detected-lang">
+        🌍 <span>Detected Language:</span>
+        <strong>{{ session.get('user_language_name') }}</strong>
+      </div>
+    {% endif %}
+
+    <p class="card-sub" style="margin-top:10px;">
+      We’ll assess eligibility across <strong>{{ total_trials }}</strong> clinical trials.
+      Answer <strong>Yes</strong>, <strong>No</strong>, or <strong>I don’t know</strong>.
+    </p>
+  </div>
+
+  <div class="actions-right">
+    <button class="btn btn-primary" onclick="startQuestionnaire()" type="button">
+      Start Assessment <span class="btn-arrow">→</span>
+    </button>
+  </div>
+</section>
+
+<!-- QUESTIONNAIRE -->
+<section id="questionnaire-screen" class="stack-24 hidden">
+
+  <!-- Trial header card -->
+  <div class="card">
+    <div class="qm-top">
+      <div class="qm-title-wrap">
+        <h2 class="qm-trial-title" id="trial-title">Loading...</h2>
+
+        <div class="qm-meta">
+          <span class="badge badge-status">Trial ID: <strong id="trial-id">-</strong></span>
+          <span class="badge badge-status">
+            Progress: <strong><span id="trial-number">-</span></strong> /
+            <strong><span id="total-trials">-</span></strong>
+          </span>
+        </div>
+      </div>
+
+      <div class="qm-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="notification-area"></div>
+  </div>
+
+  <!-- Question card -->
+  <div class="card">
+    <div class="qm-qhead">
+      <span class="badge" id="question-type">-</span>
+
+      <button class="btn btn-outline btn-sm" onclick="reformulateQuestion()" id="reformulate-btn" type="button">
+        🔄 Reformulate
+      </button>
+    </div>
+
+    <div class="qm-question" id="question-text">Loading question...</div>
+
+    <div class="qm-actions">
+      <button class="btn qm-btn qm-btn-yes" onclick="submitAnswer(true)" type="button">Yes</button>
+      <button class="btn qm-btn qm-btn-unsure" onclick="submitAnswer('unsure')" type="button">🤷‍♂️ I don’t know</button>
+      <button class="btn qm-btn qm-btn-no" onclick="submitAnswer(false)" type="button">No</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- RESULTS -->
+<section id="results-screen" class="stack-24 hidden">
+
+  <div class="page-header" style="margin-bottom:0;">
+    <div>
+      <h1 class="page-title">Results</h1>
+      <p class="page-subtitle">Your eligibility assessment is complete</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="location.reload()" type="button">
+        New Assessment <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="qm-stats">
+    <div class="qm-stat qm-stat--success">
+      <div class="qm-stat-num" id="eligible-count">0</div>
+      <div class="qm-stat-label">Strong Matches</div>
+    </div>
+    <div class="qm-stat qm-stat--warn">
+      <div class="qm-stat-num" id="partial-count">0</div>
+      <div class="qm-stat-label">Potential Matches</div>
+    </div>
+    <div class="qm-stat">
+      <div class="qm-stat-num" id="total-assessed">0</div>
+      <div class="qm-stat-label">Total Analyzed</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <h2 class="card-title">Top Recommendations</h2>
+      <p class="card-sub">Trials ordered by match score.</p>
+    </div>
+
+    <div id="results-list" class="qm-results"></div>
+  </div>
+
+</section>
 
 <script>
   let currentQuestion = null;
   let currentTrial = null;
-  let originalQuestion = null; // ✅ Stocker la question originale
+  let originalQuestion = null;
 
-  function show(id){ document.getElementById(id).classList.remove("q-hidden"); }
-  function hide(id){ document.getElementById(id).classList.add("q-hidden"); }
+  // Explanation cache (avoid regenerating on show/hide)
+  const EXPLANATION_CACHE = {};
+
+  // Favorites Set (session truth)
+  const FAVORITES = new Set(Array.isArray(SESSION_FAVORITES) ? SESSION_FAVORITES : []);
+
+  const el = (id) => document.getElementById(id);
+  const setText = (id, value) => { const x = el(id); if (x) x.textContent = value; };
+
+  const show = (id) => { const x = el(id); if (x) x.classList.remove("hidden"); };
+  const hide = (id) => { const x = el(id); if (x) x.classList.add("hidden"); };
 
   function showNotification(message, type){
-    document.getElementById("notification-area").innerHTML =
-      `<div class="q-notification ${type}">${message}</div>`;
+    const area = el("notification-area");
+    if (!area) return;
+    const cls =
+      type === "excluded" ? "notice notice-danger" :
+      type === "completed" ? "notice notice-info" :
+      "notice notice-info";
+    area.innerHTML = `<div class="${cls}">${message}</div>`;
   }
-  function clearNotification(){ document.getElementById("notification-area").innerHTML = ""; }
+  function clearNotification(){
+    const area = el("notification-area");
+    if (area) area.innerHTML = "";
+  }
 
   function updateProgress(current, total){
-    const pct = total ? (current/total)*100 : 0;
-    document.getElementById("progress").style.width = pct + "%";
+    const pct = total ? (current / total) * 100 : 0;
+    const bar = el("progress");
+    if (bar) bar.style.width = pct + "%";
   }
 
-  function badgeClass(percentage){
-    if (percentage === 100) return 'q-badge-100';
-    if (percentage >= 75) return 'q-badge-high';
-    if (percentage >= 50) return 'q-badge-medium';
-    return 'q-badge-low';
+  async function fetchJson(url, options){
+    const res = await fetch(url, options);
+    let data;
+    try { data = await res.json(); }
+    catch { throw new Error(`Server returned invalid JSON (${res.status})`); }
+    if (!res.ok || (data && data.error)) {
+      throw new Error((data && data.error) ? data.error : `Request failed (${res.status})`);
+    }
+    return data;
   }
 
   async function startQuestionnaire(){
@@ -233,209 +199,431 @@
   }
 
   async function loadNextQuestion(){
-    const res = await fetch(URLS.currentTrial);
-    const data = await res.json();
+    try{
+      const data = await fetchJson(URLS.currentTrial);
 
-    if (data.error){
-      showNotification(`❌ ${data.error}`, "excluded");
-      return;
+      if (data.completed){
+        showResults(data.results || []);
+        return;
+      }
+
+      currentTrial = data.trial_info;
+      currentQuestion = data.current_question;
+      originalQuestion = currentQuestion?.question || null;
+
+      setText("trial-title", currentTrial?.title || "Trial");
+      setText("trial-id", currentTrial?.nct_id || "-");
+      setText("trial-number", String(currentTrial?.trial_number || "-"));
+      setText("total-trials", String(currentTrial?.total_trials || "-"));
+
+      setText("question-text", currentQuestion?.question || "Question");
+
+      const qt = el("question-type");
+      if (qt){
+        const isExcl = currentQuestion?.type === "exclusion";
+        qt.textContent = isExcl ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
+        qt.className = "badge " + (isExcl ? "badge-danger" : "badge-success");
+      }
+
+      updateProgress(currentTrial?.trial_number || 0, currentTrial?.total_trials || 1);
+
+    } catch(err){
+      console.error(err);
+      showNotification(`❌ ${err.message}`, "excluded");
     }
-
-    if (data.completed){
-      showResults(data.results || []);
-      return;
-    }
-
-    currentTrial = data.trial_info;
-    currentQuestion = data.current_question;
-    originalQuestion = currentQuestion.question; // ✅ Sauvegarder l'original
-
-    show('questionnaire-screen');
-
-    document.getElementById('trial-title').textContent = currentTrial.title || "Trial";
-    document.getElementById('trial-id').textContent = currentTrial.nct_id || "-";
-    document.getElementById('trial-number').textContent = currentTrial.trial_number || "-";
-    document.getElementById('total-trials').textContent = currentTrial.total_trials || "-";
-
-    document.getElementById("question-text").textContent = currentQuestion.question || "Question";
-
-    const qt = document.getElementById("question-type");
-    qt.textContent = currentQuestion.type === "exclusion" ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
-    qt.className = "q-question-type " + (currentQuestion.type || "");
-
-    updateProgress(currentTrial.trial_number || 0, currentTrial.total_trials || 1);
   }
 
-  // ✅ Nouvelle fonction pour reformuler la question
-  async function reformulateQuestion() {
-    const btn = document.getElementById('reformulate-btn');
-    const questionEl = document.getElementById('question-text');
-    
+  async function reformulateQuestion(){
+    if (!originalQuestion || !currentTrial) return;
+
+    const btn = el("reformulate-btn");
+    const questionEl = el("question-text");
+    if (!btn || !questionEl) return;
+
     btn.disabled = true;
-    btn.textContent = '⏳ Reformulating...';
-    
-    try {
-      const response = await fetch(URLS.reformulate, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    btn.textContent = "⏳ Reformulating…";
+
+    try{
+      const data = await fetchJson(URLS.reformulate, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
           question: originalQuestion,
-          context: {
-            trial_title: currentTrial.title,
-            nct_id: currentTrial.nct_id
-          }
+          context: { trial_title: currentTrial.title, nct_id: currentTrial.nct_id }
         })
       });
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        showNotification('❌ Error reformulating question', 'excluded');
-        setTimeout(clearNotification, 2000);
-      } else {
-        // Afficher la question simplifiée
-        questionEl.textContent = data.simplified_question;
-        showNotification('✨ Question simplified!', 'completed');
-        setTimeout(clearNotification, 1500);
-      }
-      
-    } catch (error) {
-      console.error('Reformulation error:', error);
-      showNotification('❌ Failed to reformulate', 'excluded');
+
+      questionEl.textContent = data.simplified_question || originalQuestion;
+      showNotification("✨ Question simplified!", "completed");
+      setTimeout(clearNotification, 1200);
+
+    } catch(err){
+      console.error(err);
+      showNotification(`❌ ${err.message}`, "excluded");
       setTimeout(clearNotification, 2000);
-    } finally {
+    } finally{
       btn.disabled = false;
-      btn.textContent = '🔄 Reformulate Question';
+      btn.textContent = "🔄 Reformulate";
     }
   }
 
-  // ✅ Fonction submitAnswer modifiée pour gérer "unsure"
-  async function submitAnswer(answer) {
-    hide('questionnaire-screen');
-    show('loading-screen');
+  async function submitAnswer(answer){
+    if (!currentTrial || !currentQuestion) return;
 
-    const res = await fetch(URLS.submitAnswer, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        question_id: currentQuestion.question_id,
-        answer: answer, // ✅ Peut être true, false, ou "unsure"
-        nct_id: currentTrial.nct_id,
-        question_type: currentQuestion.type
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.error){
-      showNotification(`❌ ${data.error}`, "excluded");
-      return;
-    }
-
-    if (data.excluded){
-      showNotification("❌ You are excluded from this trial. Moving to the next trial...", "excluded");
-      setTimeout(()=>{ clearNotification(); loadNextQuestion(); }, 1400);
-      return;
-    }
-
-    if (data.trial_completed && data.all_completed) {
-      const resultsResponse = await fetch(URLS.getResults);
-      const resultsData = await resultsResponse.json();
-      showResults(resultsData.results || []);
-      return;
-    }
-
-    if (data.trial_completed && data.move_to_next) {
-      const msg = `✓ Trial assessment complete!<br>Match: ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions} criteria met)`;
-      showNotification(msg, 'completed');
-      setTimeout(() => {
-        clearNotification();
-        loadNextQuestion();
+    try{
+      const data = await fetchJson(URLS.submitAnswer, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          question_id: currentQuestion.question_id,
+          answer,
+          nct_id: currentTrial.nct_id,
+          question_type: currentQuestion.type
+        })
       });
-      return;
+
+      if (data.excluded){
+        showNotification("❌ You are excluded from this trial. Moving to the next trial…", "excluded");
+        setTimeout(() => { clearNotification(); loadNextQuestion(); }, 1400);
+        return;
+      }
+
+      if (data.trial_completed && data.all_completed){
+        const rd = await fetchJson(URLS.getResults);
+        showResults(rd.results || []);
+        return;
+      }
+
+      if (data.trial_completed && data.move_to_next){
+        showNotification(`✓ Trial complete • Match ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions})`, "completed");
+        setTimeout(() => { clearNotification(); loadNextQuestion(); }, 1400);
+        return;
+      }
+
+      currentQuestion = data.current_question;
+      currentTrial = data.trial_info || currentTrial;
+      originalQuestion = currentQuestion?.question || null;
+
+      setText("question-text", currentQuestion?.question || "Question");
+
+      const qt = el("question-type");
+      if (qt){
+        const isExcl = currentQuestion?.type === "exclusion";
+        qt.textContent = isExcl ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
+        qt.className = "badge " + (isExcl ? "badge-danger" : "badge-success");
+      }
+
+    } catch(err){
+      console.error(err);
+      showNotification(`❌ ${err.message}`, "excluded");
+    }
+  }
+
+  // External trial link (clinicaltrials.gov)
+  function trialLink(nctId){
+    return `https://clinicaltrials.gov/study/${nctId}`;
+  }
+
+  // Favorites (SESSION via AJAX)
+  function isFavorite(nctId){
+    return FAVORITES.has(nctId);
+  }
+
+  function applyFavoriteUI(nctId){
+    const btn = document.querySelector(`.qm-fav-btn[data-nct="${nctId}"]`);
+    if (!btn) return;
+
+    const heart = btn.querySelector(".qm-heart");
+    const label = btn.querySelector(".qm-fav-label");
+    const on = isFavorite(nctId);
+
+    if (heart) heart.textContent = on ? "♥" : "♡";
+    if (label) label.textContent = on ? "Saved" : "Save";
+
+    btn.classList.toggle("qm-fav-on", on);
+  }
+
+  function initFavoritesUI(){
+    document.querySelectorAll(".qm-fav-btn[data-nct]").forEach(btn => {
+      const nct = btn.getAttribute("data-nct");
+      if (nct) applyFavoriteUI(nct);
+    });
+  }
+
+  async function toggleFavorite(evt, nctId){
+    const btn = evt.currentTarget || evt.target;
+    if (!nctId || !btn) return;
+
+    btn.disabled = true;
+
+    try{
+      const data = await fetchJson(URLS.favoriteToggle, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ nct: nctId })
+      });
+
+      if (data.is_favorite) FAVORITES.add(nctId);
+      else FAVORITES.delete(nctId);
+
+      applyFavoriteUI(nctId);
+
+    } catch(err){
+      console.error(err);
+      showNotification(`❌ ${err.message}`, "excluded");
+      setTimeout(clearNotification, 1800);
+    } finally{
+      btn.disabled = false;
+    }
+  }
+
+  // Result helpers
+  function summarizeMatch(r){
+    const pct = Math.round(r.inclusion_percentage || 0);
+    if (r.eligible) return "You appear to be a strong match for this trial based on your answers.";
+    if (pct >= 50) return "You may be a potential match, but some criteria may be missing or not met.";
+    if (pct > 0) return "This trial seems less aligned with your profile based on the current answers.";
+    return "This trial does not appear to match your profile based on the current answers.";
+  }
+
+  function extractPhase(title=""){
+    const m = title.match(/\bPhase\s*([0-4]|I{1,3}V?)\b/i);
+    if (!m) return null;
+    return `Phase ${String(m[1]).toUpperCase()}`;
+  }
+
+  function extractBiomarkerBadges(text=""){
+    const biomarkers = ["PD-L1","EGFR","ALK","ROS1","HER2","KRAS","BRAF","MET","RET","NTRK","BRCA","MSI","TMB"];
+    const found = [];
+    for (const b of biomarkers){
+      const re = new RegExp(`\\b${b.replace("-","\\-")}\\b`, "i");
+      if (re.test(text)) found.push(b);
+      if (found.length >= 2) break;
+    }
+    return found;
+  }
+
+  function extractNaiveBadge(text=""){
+    if (/\bna[iï]ve\b/i.test(text) || /\btreatment[-\s]?na[iï]ve\b/i.test(text) || /\bTKI[-\s]?na[iï]ve\b/i.test(text)){
+      return "Treatment Naive";
+    }
+    return null;
+  }
+
+  function buildBadges(r){
+    const title = r.title || "";
+    const badges = [];
+
+    const pct = Math.round(r.inclusion_percentage || 0);
+    if (r.eligible) badges.push({label:"Strong Match", cls:"badge badge-success"});
+    else if (pct > 0) badges.push({label:"Potential Match", cls:"badge badge-warning"});
+    else badges.push({label:"Not Eligible", cls:"badge badge-danger"});
+
+    const phase = extractPhase(title);
+    if (phase) badges.push({label:phase, cls:"badge badge-status"});
+
+    const bio = extractBiomarkerBadges(title);
+    for (const b of bio){
+      if (badges.length >= 3) break;
+      badges.push({label:b, cls:"badge badge-status"});
     }
 
-    currentQuestion = data.current_question;
-    currentTrial = data.trial_info;
-    originalQuestion = currentQuestion.question; // ✅ Mettre à jour l'original
+    const naive = extractNaiveBadge(title);
+    if (naive && badges.length < 3){
+      badges.push({label:naive, cls:"badge badge-status"});
+    }
 
-    show('questionnaire-screen');
+    return badges;
+  }
 
-    document.getElementById("question-text").textContent = currentQuestion.question || "Question";
-    const qt = document.getElementById("question-type");
-    qt.textContent = currentQuestion.type === "exclusion" ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
-    qt.className = "q-question-type " + (currentQuestion.type || "");
+  // logic:
+  // - If met == 0 => do NOT show "You meet these requirements"
+  // - If missing == 0 => do NOT show "Information needed"
+  function metMissingFromScores(r){
+    const met = Number(r.inclusion_score || 0);
+    const total = Number(r.total_inclusion_questions || 0);
+    const missing = Math.max(0, total - met);
+
+    let metText = null;
+    let missingText = null;
+
+    if (met > 0){
+      metText = total > 0
+        ? `Meets <strong>${met}</strong> of <strong>${total}</strong> inclusion criteria based on your answers.`
+        : `Some inclusion criteria were evaluated based on your answers.`;
+    }
+
+    if (missing > 0){
+      // (you previously asked to remove this line entirely at one point;
+      // leaving it here because your current file includes it and
+      // your latest request was only about removing "Next steps".
+      // If you want to remove it globally again, tell me and I’ll delete it.)
+      missingText = `Missing/uncertain: <strong>${missing}</strong> criteria. Additional information may be needed.`;
+    }
+
+    return { metText, missingText };
+  }
+
+  function renderRing(elRing, pct){
+    if (!elRing) return;
+    const cl =
+      pct >= 75 ? "var(--success)" :
+      pct >= 40 ? "#F59E0B" :
+      "#EF4444";
+    elRing.style.background = `conic-gradient(${cl} ${pct}%, rgba(20,30,40,.10) 0)`;
+  }
+
+  function eligibilityBorderClass(r){
+    const pct = Math.round(r.inclusion_percentage || 0);
+    if (r.eligible) return "card--eligible";
+    if (pct > 0) return "card--partial";
+    return "card--not-eligible";
   }
 
   function showResults(results){
     hide("questionnaire-screen");
+    hide("welcome-screen");
     show("results-screen");
 
     const eligible = results.filter(r => r.eligible);
     const partial = results.filter(r => !r.eligible && (r.inclusion_percentage || 0) > 0);
 
-    document.getElementById("total-assessed").textContent = results.length;
-    document.getElementById("eligible-count").textContent = eligible.length;
-    document.getElementById("partial-count").textContent = partial.length;
+    setText("total-assessed", String(results.length));
+    setText("eligible-count", String(eligible.length));
+    setText("partial-count", String(partial.length));
 
-    const list = document.getElementById("results-list");
+    const list = el("results-list");
+    if (!list) return;
     list.innerHTML = "";
 
     results.forEach((r, idx) => {
-      const pct = r.inclusion_percentage || 0;
-      const cls = r.eligible ? "eligible" : (pct > 0 ? "partial" : "not-eligible");
+      const pct = Math.round(r.inclusion_percentage || 0);
+      const badges = buildBadges(r);
+      const { metText, missingText } = metMissingFromScores(r);
+      const borderCls = eligibilityBorderClass(r);
 
       const item = document.createElement("div");
-      item.className = `q-result-item ${cls}`;
+      item.className = `qm-result qm-result--card ${borderCls}`;
+
       item.innerHTML = `
-        <h3 style="font-weight:950;color:#111827;margin:0 0 6px;">
-          ${idx+1}. ${r.nct_id}
-          <span class="q-percentage-badge ${badgeClass(pct)}">${pct}% Match</span>
-        </h3>
-        <p><strong>Title:</strong> ${r.title || ''}</p>
-        <p><strong>Status:</strong> ${r.eligible ? '✅ Fully Eligible' : (pct > 0 ? '⚠️ Partially Eligible' : '❌ Not Eligible')}</p>
-        <p><strong>Inclusion Score:</strong> ${(r.inclusion_score || 0).toFixed(1)}/${(r.total_inclusion_questions || 0)} criteria met</p>
-        <p><strong>Reason:</strong> ${r.reason || ''}</p>
-        <button class="q-btn-explain" data-nct="${r.nct_id}" onclick="explainResult(event, '${r.nct_id}')">🤖 Explain Results</button>
-        <div id="explanation-${r.nct_id}" class="q-explanation-box q-hidden"></div>
+        <div class="qm-ring" data-pct="${pct}">
+          <div class="qm-ring-inner">${pct}%</div>
+        </div>
+
+        <div class="qm-result-body">
+          <div class="qm-result-top">
+            <div class="qm-result-title">${idx+1}. ${r.nct_id}</div>
+            <div class="qm-badges">
+              ${badges.map(b => `<span class="${b.cls}">${b.label}</span>`).join("")}
+            </div>
+          </div>
+
+          <div class="qm-result-sub">${r.title || ""}</div>
+
+          <div class="qm-summary">${summarizeMatch(r)}</div>
+
+          <div class="qm-reqs">
+            ${
+              metText
+                ? `
+                  <div class="qm-req qm-req--ok">
+                    <div class="qm-req-title">✅ You meet these requirements</div>
+                    <div class="qm-req-text">${metText}</div>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              missingText
+                ? `
+                  <div class="qm-req qm-req--miss">
+                    <div class="qm-req-title">⚠️ Information needed</div>
+                    <div class="qm-req-text">${missingText}</div>
+                  </div>
+                `
+                : ""
+            }
+          </div>
+
+          <div class="qm-result-actions">
+            <a class="btn btn-outline btn-sm" href="${trialLink(r.nct_id)}" target="_blank" rel="noopener">
+              View Trial →
+            </a>
+
+            <button class="btn btn-outline btn-sm qm-fav-btn"
+                    type="button"
+                    data-nct="${r.nct_id}"
+                    onclick="toggleFavorite(event, '${r.nct_id}')">
+              <span class="qm-heart">♡</span>
+              <span class="qm-fav-label">Save</span>
+            </button>
+
+            <button class="btn btn-outline btn-sm" onclick="explainResult(event, '${r.nct_id}')" type="button">
+              🤖 Explain
+            </button>
+          </div>
+
+          <div id="explanation-${r.nct_id}" class="qm-explain hidden"></div>
+        </div>
       `;
+
       list.appendChild(item);
+      renderRing(item.querySelector(".qm-ring"), pct);
+      applyFavoriteUI(r.nct_id);
     });
+
+    initFavoritesUI();
   }
 
   async function explainResult(evt, nctId){
-    const box = document.getElementById(`explanation-${nctId}`);
+    const box = el(`explanation-${nctId}`);
     const btn = evt.target;
+    if (!box) return;
 
-    if (!box.classList.contains('q-hidden')) {
-      box.classList.add('q-hidden');
-      btn.textContent = '🤖 Explain Results';
+    // If already visible -> hide without clearing
+    if (!box.classList.contains("hidden")){
+      box.classList.add("hidden");
+      btn.textContent = "🤖 Explain";
+      return;
+    }
+
+    // If cached -> show instantly
+    if (EXPLANATION_CACHE[nctId]){
+      box.innerHTML = EXPLANATION_CACHE[nctId];
+      box.classList.remove("hidden");
+      btn.textContent = "🤖 Hide";
       return;
     }
 
     btn.disabled = true;
     btn.textContent = "⏳ Generating…";
-    box.classList.remove("q-hidden");
-    box.innerHTML = `<p>Analyzing your responses…</p>`;
+
+    box.classList.remove("hidden");
+    box.innerHTML = `<div class="notice notice-info">Analyzing your responses…</div>`;
 
     try{
-      const res = await fetch(URLS.explain, {
+      const data = await fetchJson(URLS.explain, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({ nct_id: nctId })
       });
-      const data = await res.json();
 
-      if (data.error){
-        box.innerHTML = `<p style="color:#b91c1c;">❌ ${data.error}</p>`;
-      } else {
-        box.innerHTML = `
-          <div style="font-weight:950;color:#4f46e5;margin-bottom:8px;">📋 Explanation</div>
-          <p>${(data.explanation || "")}</p>
-        `;
-      }
+      const html = `
+        <div class="qm-explain-card">
+          <div class="qm-explain-title">📋 Explanation</div>
+          <div class="qm-explain-text">${(data.explanation || "").replaceAll("\n","<br>")}</div>
+        </div>
+      `;
 
-      btn.textContent = "🤖 Hide Explanation";
+      EXPLANATION_CACHE[nctId] = html;
+      box.innerHTML = html;
+      btn.textContent = "🤖 Hide";
+
+    } catch(err){
+      console.error(err);
+      box.innerHTML = `<div class="notice notice-danger">❌ ${err.message}</div>`;
+      btn.textContent = "🤖 Explain";
     } finally{
       btn.disabled = false;
     }
