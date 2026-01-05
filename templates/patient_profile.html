@@ -23,12 +23,12 @@
 </div>
 
 <div class="tabs">
-  <button class="tab-btn active" type="button" data-tab="formTab">Fill Out Form</button>
-  <button class="tab-btn" type="button" data-tab="freeTab">Describe Your Situation</button>
+  <button class="tab-btn active" type="button" data-tab="freeTab">Describe Your Situation</button>
+  <button class="tab-btn" type="button" data-tab="formTab">Fill Out Form</button>
 </div>
 
 <!-- FORM TAB -->
-<section id="formTab" class="tab-panel active">
+<section id="formTab" class="tab-panel">
   <form method="post" action="{{ url_for('patient.save_patient_profile') }}" class="stack-24">
 
     <div class="card">
@@ -167,7 +167,7 @@
 </section>
 
 <!-- FREE TEXT TAB -->
-<section id="freeTab" class="tab-panel">
+<section id="freeTab" class="tab-panel active">
   {# ✅ FIX: endpoint blueprint patient.save_patient_profile #}
   <form method="post" action="{{ url_for('patient.save_patient_profile') }}" class="stack-24">
     <div class="card">
