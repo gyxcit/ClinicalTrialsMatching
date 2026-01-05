@@ -29,7 +29,7 @@ class QuestionGenerator:
             agent = manager.create_agent(
                 agent_id=self.agent_id,
                 name="QuestionGeneratorAgent",
-                model=AgentModel.SMALL.value,
+                model=AgentModel.LARGE.value,
                 response_format=ResponseFormat.JSON,
                 response_model=EligibilityQuestions
             )

@@ -45,7 +45,7 @@ class QuestionSimplifier:
             agent = manager.create_agent(
                 agent_id=self.agent_id,
                 name="QuestionSimplifier",
-                model=AgentModel.SMALL.value,
+                model=AgentModel.LARGE.value,
                 description="Simplifies medical questions for patients"
             )
             

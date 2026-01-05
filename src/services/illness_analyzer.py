@@ -35,7 +35,7 @@ class IllnessAnalyzer:
             manager.create_agent(
                 agent_id=self.agent_id,
                 name="IllnessTypeAgent",
-                model=AgentModel.SMALL.value,
+                model=AgentModel.MEDIUM.value,
                 response_format=ResponseFormat.JSON,
                 response_model=IllnessInfo,
             )
