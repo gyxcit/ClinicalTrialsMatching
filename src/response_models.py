@@ -77,6 +77,10 @@ class AnswerType(str, Enum):
     UNSURE = "unsure"
 
 
+# Scoring modes for ablation study
+ScoringMode = Literal["binary", "graded_linear", "graded_quadratic"]
+
+
 class GradedAnswer(BaseModel):
     """
     Simple graded answer with confidence level.
@@ -89,29 +93,47 @@ class GradedAnswer(BaseModel):
         description="Confidence level (1=very unsure, 5=very confident)"
     )
     
-    def to_score(self) -> float:
+    def to_score(self, mode: ScoringMode = "graded_quadratic") -> float:
         """
-        Convert to eligibility score (0.0 to 1.0)
+        Convert to eligibility score (0.0 to 1.0) based on scoring mode.
         
-        Logic:
-        - YES: confidence/5 (range 0.2 to 1.0)
-        - NO: 0.0 (always excluding)
-        - UNSURE: 0.5 * (confidence/5)^1.5 (range 0.09 to 0.5)
-          Uses quadratic modulation to amplify confidence effect:
-          - Low confidence (1-2) → much lower weight
-          - High confidence (4-5) → higher weight
+        Args:
+            mode: Scoring strategy to use (for ablation study)
+                - "binary": YES=1.0, NO=0.0, UNSURE=0.0 (baseline)
+                - "graded_linear": YES=conf/5, NO=0.0, UNSURE=0.5×conf/5
+                - "graded_quadratic": YES=conf/5, NO=0.0, UNSURE=0.5×(conf/5)^1.5 (default)
         
         Returns:
             float: Score between 0.0 and 1.0
+            
+        Quadratic modulation rationale:
+            - Low confidence (1-2) → heavily penalized
+            - High confidence (4-5) → preserved weight
+            - Encourages verification over guessing
         """
-        if self.answer == AnswerType.NO:
-            return 0.0
-        elif self.answer == AnswerType.YES:
-            return self.confidence / 5.0
-        else:  # UNSURE
-            # Quadratic modulation: amplify confidence impact
-            confidence_weight = (self.confidence / 5.0) ** 1.5
-            return 0.5 * confidence_weight
+        if mode == "binary":
+            # Binary baseline: UNSURE treated as NO
+            return 1.0 if self.answer == AnswerType.YES else 0.0
+        
+        elif mode == "graded_linear":
+            # Graded with linear UNSURE scoring
+            if self.answer == AnswerType.NO:
+                return 0.0
+            elif self.answer == AnswerType.YES:
+                return self.confidence / 5.0
+            else:  # UNSURE
+                return 0.5 * (self.confidence / 5.0)
+        
+        else:  # graded_quadratic (default)
+            # Graded with quadratic UNSURE modulation
+            if self.answer == AnswerType.NO:
+                return 0.0
+            elif self.answer == AnswerType.YES:
+                return self.confidence / 5.0
+            else:  # UNSURE
+                # Quadratic modulation: amplify confidence impact
+                confidence_weight = (self.confidence / 5.0) ** 1.5
+                return 0.5 * confidence_weight
 
 
 class TrialScore(BaseModel):
@@ -131,29 +153,30 @@ class TrialScore(BaseModel):
     low_confidence_count: int = Field(ge=0, description="Number of responses with confidence <= 2")
     
     @classmethod
-    def calculate(cls, nct_id: str, responses: dict) -> "TrialScore":
+    def calculate(cls, nct_id: str, responses: dict, scoring_mode: ScoringMode = "graded_quadratic") -> "TrialScore":
         """
-        Calculate trial score from graded responses.
+        Calculate trial eligibility score from graded responses.
         
         Args:
-            nct_id: Trial NCT ID
-            responses: Dict mapping question_id -> GradedAnswer
+            nct_id: Trial identifier
+            responses: Dictionary of question_id -> GradedAnswer (or dict)
+            scoring_mode: Scoring strategy for ablation study (default: quadratic)
         
         Returns:
-            TrialScore with calculated metrics
+            TrialScore with all computed metrics
         """
         inclusion_scores = []
         exclusion_scores = []
         uncertainty_count = 0
         low_confidence_count = 0
         
-        # Process each response
         for q_id, response in responses.items():
-            # Convert dict to GradedAnswer if needed
+            # Handle dict responses
             if isinstance(response, dict):
                 response = GradedAnswer(**response)
             
-            score = response.to_score()
+            # Calculate score with selected mode
+            score = response.to_score(mode=scoring_mode)
             
             # Count uncertainty metrics
             if response.answer == AnswerType.UNSURE:
@@ -161,7 +184,7 @@ class TrialScore(BaseModel):
             if response.confidence <= 2:
                 low_confidence_count += 1
             
-            # Categorize by question type (inclusion vs exclusion)
+            # Categorize by question type
             if "_INC_" in q_id:
                 inclusion_scores.append(score)
             elif "_EXC_" in q_id:
@@ -169,19 +192,18 @@ class TrialScore(BaseModel):
         
         # Calculate component scores
         inclusion_score = (
-            sum(inclusion_scores) / len(inclusion_scores) 
+            sum(inclusion_scores) / len(inclusion_scores)
             if inclusion_scores else 0.5
         )
         exclusion_score = max(exclusion_scores) if exclusion_scores else 0.0
         
         # Apply exclusion logic
-        # If any exclusion criterion triggered (score > 0.3), patient is ineligible
         if exclusion_score > 0.3:
             overall_score = 0.0
         else:
             overall_score = inclusion_score
         
-        # Categorize based on score
+        # Categorize based on overall score
         if overall_score >= 0.8:
             category = "Strong Match"
         elif overall_score >= 0.6:
