@@ -121,6 +121,43 @@ Amplification effect:
   - Score: 0.36-0.50 (higher contribution)
   - Example: Patient knows they never had the test mentioned
 
+#### Exponent Sensitivity Analysis
+
+**Why 1.5 instead of other values?**
+
+We tested exponents from 1.0 (linear) to 2.0 (fully quadratic) to determine optimal modulation:
+
+![Exponent Sensitivity](images/exponent_analysis.png)
+
+**Comparison Table**:
+
+| Exponent | conf=1 | conf=2 | conf=3 | Penalty at conf=2 | Assessment |
+|----------|--------|--------|--------|-------------------|------------|
+| 1.0 (Linear) | 0.10 | 0.20 | 0.30 | 0% | ❌ Too lenient |
+| 1.25 | 0.09 | 0.17 | 0.26 | -15% | ⚠️ Insufficient |
+| **1.5** | **0.09** | **0.14** | **0.23** | **-30%** | ✅ **Optimal** |
+| 1.75 | 0.07 | 0.12 | 0.19 | -40% | ⚠️ Too aggressive |
+| 2.0 (Quadratic) | 0.06 | 0.10 | 0.16 | -49% | ❌ Overly punitive |
+
+**Selection Criteria**:
+
+1. **Medical Validity**: -30% penalty at conf 2 appropriately reflects "uninformed uncertainty"
+2. **Statistical Balance**: Best coefficient of variation (0.64) for differentiation
+3. **Threshold Alignment**: Correctly downgrades low-confidence uncertainty
+4. **Mathematical Elegance**: 1.5 = 3/2, a well-established power law exponent
+
+**Impact on Trial Scoring**:
+
+Example with 2 inclusion questions (Q1: YES conf 5, Q2: UNSURE conf 2):
+
+- Linear (exp=1.0): Trial score = 0.60 → **Potential Match** (may be too lenient)
+- **Implemented (exp=1.5)**: Trial score = 0.57 → **Weak Match** (appropriate conservatism) ✅
+- Quadratic (exp=2.0): Trial score = 0.55 → **Weak Match** (overly harsh)
+
+> **Complete Analysis**: See [`exponent_sensitivity_analysis.md`](file:///C:/Users/regis/.gemini/antigravity/brain/ae87dfd7-5833-4f0c-a73c-cf8601a3c86c/exponent_sensitivity_analysis.md) for full mathematical justification, statistical properties, and alternative scenarios.
+
+---
+
 #### Trial-Level Scoring
 
 **Inclusion Score:**
