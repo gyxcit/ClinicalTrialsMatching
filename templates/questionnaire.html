@@ -18,7 +18,7 @@
   };
 
   // Session favorites snapshot
-  const SESSION_FAVORITES = {{ (session.get("favorites", []) or []) | tojson }};
+  const SESSION_FAVORITES = {{ (session.get("favorites", []) or[]) | tojson }};
 </script>
 
 <div class="page-header">
@@ -34,10 +34,10 @@
     <h2 class="card-title">Start your assessment</h2>
 
     {% if session.get('user_language_name') %}
-      <div class="detected-lang">
-        🌍 <span>Detected Language:</span>
-        <strong>{{ session.get('user_language_name') }}</strong>
-      </div>
+    <div class="detected-lang">
+      🌍 <span>Detected Language:</span>
+      <strong>{{ session.get('user_language_name') }}</strong>
+    </div>
     {% endif %}
 
     <p class="card-sub" style="margin-top:10px;">
@@ -93,10 +93,24 @@
 
     <div class="qm-question" id="question-text">Loading question...</div>
 
+    <!-- ✅ Confidence slider for graded responses -->
+    <div class="qm-confidence">
+      <label for="confidence-slider" class="qm-confidence-label">
+        How confident are you?
+        <span class="qm-confidence-value" id="confidence-display">3</span>/5
+      </label>
+      <input type="range" id="confidence-slider" min="1" max="5" value="3" class="qm-slider" />
+      <div class="qm-confidence-labels">
+        <span>Not sure</span>
+        <span>Very confident</span>
+      </div>
+    </div>
+
     <div class="qm-actions">
-      <button class="btn qm-btn qm-btn-yes" onclick="submitAnswer(true)" type="button">Yes</button>
-      <button class="btn qm-btn qm-btn-unsure" onclick="submitAnswer('unsure')" type="button">🤷‍♂️ I don’t know</button>
-      <button class="btn qm-btn qm-btn-no" onclick="submitAnswer(false)" type="button">No</button>
+      <button class="btn qm-btn qm-btn-yes" onclick="submitAnswer('yes')" type="button">Yes</button>
+      <button class="btn qm-btn qm-btn-unsure" onclick="submitAnswer('unsure')" type="button">🤷‍♂️ I don't
+        know</button>
+      <button class="btn qm-btn qm-btn-no" onclick="submitAnswer('no')" type="button">No</button>
     </div>
   </div>
 
@@ -161,27 +175,36 @@
   const show = (id) => { const x = el(id); if (x) x.classList.remove("hidden"); };
   const hide = (id) => { const x = el(id); if (x) x.classList.add("hidden"); };
 
-  function showNotification(message, type){
+  // ✅ Update confidence display
+  const confidenceSlider = el("confidence-slider");
+  const confidenceDisplay = el("confidence-display");
+  if (confidenceSlider && confidenceDisplay) {
+    confidenceSlider.addEventListener("input", (e) => {
+      confidenceDisplay.textContent = e.target.value;
+    });
+  }
+
+  function showNotification(message, type) {
     const area = el("notification-area");
     if (!area) return;
     const cls =
       type === "excluded" ? "notice notice-danger" :
-      type === "completed" ? "notice notice-info" :
-      "notice notice-info";
+        type === "completed" ? "notice notice-info" :
+          "notice notice-info";
     area.innerHTML = `<div class="${cls}">${message}</div>`;
   }
-  function clearNotification(){
+  function clearNotification() {
     const area = el("notification-area");
     if (area) area.innerHTML = "";
   }
 
-  function updateProgress(current, total){
+  function updateProgress(current, total) {
     const pct = total ? (current / total) * 100 : 0;
     const bar = el("progress");
     if (bar) bar.style.width = pct + "%";
   }
 
-  async function fetchJson(url, options){
+  async function fetchJson(url, options) {
     const res = await fetch(url, options);
     let data;
     try { data = await res.json(); }
@@ -192,17 +215,17 @@
     return data;
   }
 
-  async function startQuestionnaire(){
+  async function startQuestionnaire() {
     hide("welcome-screen");
     show("questionnaire-screen");
     await loadNextQuestion();
   }
 
-  async function loadNextQuestion(){
-    try{
+  async function loadNextQuestion() {
+    try {
       const data = await fetchJson(URLS.currentTrial);
 
-      if (data.completed){
+      if (data.completed) {
         showResults(data.results || []);
         return;
       }
@@ -219,7 +242,7 @@
       setText("question-text", currentQuestion?.question || "Question");
 
       const qt = el("question-type");
-      if (qt){
+      if (qt) {
         const isExcl = currentQuestion?.type === "exclusion";
         qt.textContent = isExcl ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
         qt.className = "badge " + (isExcl ? "badge-danger" : "badge-success");
@@ -227,13 +250,17 @@
 
       updateProgress(currentTrial?.trial_number || 0, currentTrial?.total_trials || 1);
 
-    } catch(err){
+      // ✅ Reset confidence to 3
+      if (confidenceSlider) confidenceSlider.value = 3;
+      if (confidenceDisplay) confidenceDisplay.textContent = "3";
+
+    } catch (err) {
       console.error(err);
       showNotification(`❌ ${err.message}`, "excluded");
     }
   }
 
-  async function reformulateQuestion(){
+  async function reformulateQuestion() {
     if (!originalQuestion || !currentTrial) return;
 
     const btn = el("reformulate-btn");
@@ -243,10 +270,10 @@
     btn.disabled = true;
     btn.textContent = "⏳ Reformulating…";
 
-    try{
+    try {
       const data = await fetchJson(URLS.reformulate, {
         method: "POST",
-        headers: { "Content-Type":"application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: originalQuestion,
           context: { trial_title: currentTrial.title, nct_id: currentTrial.nct_id }
@@ -257,45 +284,52 @@
       showNotification("✨ Question simplified!", "completed");
       setTimeout(clearNotification, 1200);
 
-    } catch(err){
+    } catch (err) {
       console.error(err);
       showNotification(`❌ ${err.message}`, "excluded");
       setTimeout(clearNotification, 2000);
-    } finally{
+    } finally {
       btn.disabled = false;
       btn.textContent = "🔄 Reformulate";
     }
   }
 
-  async function submitAnswer(answer){
+  async function submitAnswer(answer) {
     if (!currentTrial || !currentQuestion) return;
 
-    try{
+    // ✅ Get confidence level
+    const confidence = confidenceSlider ? parseInt(confidenceSlider.value) : 3;
+
+    try {
       const data = await fetchJson(URLS.submitAnswer, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question_id: currentQuestion.question_id,
-          answer,
+          answer,  // "yes", "no", or "unsure"
+          confidence,  // 1-5
           nct_id: currentTrial.nct_id,
           question_type: currentQuestion.type
         })
       });
 
-      if (data.excluded){
+      if (data.excluded) {
         showNotification("❌ You are excluded from this trial. Moving to the next trial…", "excluded");
         setTimeout(() => { clearNotification(); loadNextQuestion(); }, 1400);
         return;
       }
 
-      if (data.trial_completed && data.all_completed){
+      if (data.trial_completed && data.all_completed) {
         const rd = await fetchJson(URLS.getResults);
         showResults(rd.results || []);
         return;
       }
 
-      if (data.trial_completed && data.move_to_next){
-        showNotification(`✓ Trial complete • Match ${data.inclusion_percentage}% (${data.inclusion_score}/${data.total_inclusion_questions})`, "completed");
+      if (data.trial_completed && data.move_to_next) {
+        const msg = data.category
+          ? `✓ Trial complete • ${data.category} (${data.inclusion_percentage}%)`
+          : `✓ Trial complete • Match ${data.inclusion_percentage}%`;
+        showNotification(msg, "completed");
         setTimeout(() => { clearNotification(); loadNextQuestion(); }, 1400);
         return;
       }
@@ -307,29 +341,33 @@
       setText("question-text", currentQuestion?.question || "Question");
 
       const qt = el("question-type");
-      if (qt){
+      if (qt) {
         const isExcl = currentQuestion?.type === "exclusion";
         qt.textContent = isExcl ? "⛔ Exclusion Criteria" : "✅ Inclusion Criteria";
         qt.className = "badge " + (isExcl ? "badge-danger" : "badge-success");
       }
 
-    } catch(err){
+      // ✅ Reset confidence
+      if (confidenceSlider) confidenceSlider.value = 3;
+      if (confidenceDisplay) confidenceDisplay.textContent = "3";
+
+    } catch (err) {
       console.error(err);
       showNotification(`❌ ${err.message}`, "excluded");
     }
   }
 
   // External trial link (clinicaltrials.gov)
-  function trialLink(nctId){
+  function trialLink(nctId) {
     return `https://clinicaltrials.gov/study/${nctId}`;
   }
 
   // Favorites (SESSION via AJAX)
-  function isFavorite(nctId){
+  function isFavorite(nctId) {
     return FAVORITES.has(nctId);
   }
 
-  function applyFavoriteUI(nctId){
+  function applyFavoriteUI(nctId) {
     const btn = document.querySelector(`.qm-fav-btn[data-nct="${nctId}"]`);
     if (!btn) return;
 
@@ -343,23 +381,23 @@
     btn.classList.toggle("qm-fav-on", on);
   }
 
-  function initFavoritesUI(){
+  function initFavoritesUI() {
     document.querySelectorAll(".qm-fav-btn[data-nct]").forEach(btn => {
       const nct = btn.getAttribute("data-nct");
       if (nct) applyFavoriteUI(nct);
     });
   }
 
-  async function toggleFavorite(evt, nctId){
+  async function toggleFavorite(evt, nctId) {
     const btn = evt.currentTarget || evt.target;
     if (!nctId || !btn) return;
 
     btn.disabled = true;
 
-    try{
+    try {
       const data = await fetchJson(URLS.favoriteToggle, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nct: nctId })
       });
 
@@ -368,17 +406,17 @@
 
       applyFavoriteUI(nctId);
 
-    } catch(err){
+    } catch (err) {
       console.error(err);
       showNotification(`❌ ${err.message}`, "excluded");
       setTimeout(clearNotification, 1800);
-    } finally{
+    } finally {
       btn.disabled = false;
     }
   }
 
   // Result helpers
-  function summarizeMatch(r){
+  function summarizeMatch(r) {
     const pct = Math.round(r.inclusion_percentage || 0);
     if (r.eligible) return "You appear to be a strong match for this trial based on your answers.";
     if (pct >= 50) return "You may be a potential match, but some criteria may be missing or not met.";
@@ -386,51 +424,51 @@
     return "This trial does not appear to match your profile based on the current answers.";
   }
 
-  function extractPhase(title=""){
+  function extractPhase(title = "") {
     const m = title.match(/\bPhase\s*([0-4]|I{1,3}V?)\b/i);
     if (!m) return null;
     return `Phase ${String(m[1]).toUpperCase()}`;
   }
 
-  function extractBiomarkerBadges(text=""){
-    const biomarkers = ["PD-L1","EGFR","ALK","ROS1","HER2","KRAS","BRAF","MET","RET","NTRK","BRCA","MSI","TMB"];
+  function extractBiomarkerBadges(text = "") {
+    const biomarkers = ["PD-L1", "EGFR", "ALK", "ROS1", "HER2", "KRAS", "BRAF", "MET", "RET", "NTRK", "BRCA", "MSI", "TMB"];
     const found = [];
-    for (const b of biomarkers){
-      const re = new RegExp(`\\b${b.replace("-","\\-")}\\b`, "i");
+    for (const b of biomarkers) {
+      const re = new RegExp(`\\b${b.replace("-", "\\-")}\\b`, "i");
       if (re.test(text)) found.push(b);
       if (found.length >= 2) break;
     }
     return found;
   }
 
-  function extractNaiveBadge(text=""){
-    if (/\bna[iï]ve\b/i.test(text) || /\btreatment[-\s]?na[iï]ve\b/i.test(text) || /\bTKI[-\s]?na[iï]ve\b/i.test(text)){
+  function extractNaiveBadge(text = "") {
+    if (/\bna[iï]ve\b/i.test(text) || /\btreatment[-\s]?na[iï]ve\b/i.test(text) || /\bTKI[-\s]?na[iï]ve\b/i.test(text)) {
       return "Treatment Naive";
     }
     return null;
   }
 
-  function buildBadges(r){
+  function buildBadges(r) {
     const title = r.title || "";
     const badges = [];
 
     const pct = Math.round(r.inclusion_percentage || 0);
-    if (r.eligible) badges.push({label:"Strong Match", cls:"badge badge-success"});
-    else if (pct > 0) badges.push({label:"Potential Match", cls:"badge badge-warning"});
-    else badges.push({label:"Not Eligible", cls:"badge badge-danger"});
+    if (r.eligible) badges.push({ label: "Strong Match", cls: "badge badge-success" });
+    else if (pct > 0) badges.push({ label: "Potential Match", cls: "badge badge-warning" });
+    else badges.push({ label: "Not Eligible", cls: "badge badge-danger" });
 
     const phase = extractPhase(title);
-    if (phase) badges.push({label:phase, cls:"badge badge-status"});
+    if (phase) badges.push({ label: phase, cls: "badge badge-status" });
 
     const bio = extractBiomarkerBadges(title);
-    for (const b of bio){
+    for (const b of bio) {
       if (badges.length >= 3) break;
-      badges.push({label:b, cls:"badge badge-status"});
+      badges.push({ label: b, cls: "badge badge-status" });
     }
 
     const naive = extractNaiveBadge(title);
-    if (naive && badges.length < 3){
-      badges.push({label:naive, cls:"badge badge-status"});
+    if (naive && badges.length < 3) {
+      badges.push({ label: naive, cls: "badge badge-status" });
     }
 
     return badges;
@@ -439,7 +477,7 @@
   // logic:
   // - If met == 0 => do NOT show "You meet these requirements"
   // - If missing == 0 => do NOT show "Information needed"
-  function metMissingFromScores(r){
+  function metMissingFromScores(r) {
     const met = Number(r.inclusion_score || 0);
     const total = Number(r.total_inclusion_questions || 0);
     const missing = Math.max(0, total - met);
@@ -447,13 +485,13 @@
     let metText = null;
     let missingText = null;
 
-    if (met > 0){
+    if (met > 0) {
       metText = total > 0
         ? `Meets <strong>${met}</strong> of <strong>${total}</strong> inclusion criteria based on your answers.`
         : `Some inclusion criteria were evaluated based on your answers.`;
     }
 
-    if (missing > 0){
+    if (missing > 0) {
       // (you previously asked to remove this line entirely at one point;
       // leaving it here because your current file includes it and
       // your latest request was only about removing "Next steps".
@@ -464,23 +502,23 @@
     return { metText, missingText };
   }
 
-  function renderRing(elRing, pct){
+  function renderRing(elRing, pct) {
     if (!elRing) return;
     const cl =
       pct >= 75 ? "var(--success)" :
-      pct >= 40 ? "#F59E0B" :
-      "#EF4444";
+        pct >= 40 ? "#F59E0B" :
+          "#EF4444";
     elRing.style.background = `conic-gradient(${cl} ${pct}%, rgba(20,30,40,.10) 0)`;
   }
 
-  function eligibilityBorderClass(r){
+  function eligibilityBorderClass(r) {
     const pct = Math.round(r.inclusion_percentage || 0);
     if (r.eligible) return "card--eligible";
     if (pct > 0) return "card--partial";
     return "card--not-eligible";
   }
 
-  function showResults(results){
+  function showResults(results) {
     hide("questionnaire-screen");
     hide("welcome-screen");
     show("results-screen");
@@ -512,7 +550,7 @@
 
         <div class="qm-result-body">
           <div class="qm-result-top">
-            <div class="qm-result-title">${idx+1}. ${r.nct_id}</div>
+            <div class="qm-result-title">${idx + 1}. ${r.nct_id}</div>
             <div class="qm-badges">
               ${badges.map(b => `<span class="${b.cls}">${b.label}</span>`).join("")}
             </div>
@@ -523,27 +561,25 @@
           <div class="qm-summary">${summarizeMatch(r)}</div>
 
           <div class="qm-reqs">
-            ${
-              metText
-                ? `
+            ${metText
+          ? `
                   <div class="qm-req qm-req--ok">
                     <div class="qm-req-title">✅ You meet these requirements</div>
                     <div class="qm-req-text">${metText}</div>
                   </div>
                 `
-                : ""
-            }
+          : ""
+        }
 
-            ${
-              missingText
-                ? `
+            ${missingText
+          ? `
                   <div class="qm-req qm-req--miss">
                     <div class="qm-req-title">⚠️ Information needed</div>
                     <div class="qm-req-text">${missingText}</div>
                   </div>
                 `
-                : ""
-            }
+          : ""
+        }
           </div>
 
           <div class="qm-result-actions">
@@ -576,20 +612,20 @@
     initFavoritesUI();
   }
 
-  async function explainResult(evt, nctId){
+  async function explainResult(evt, nctId) {
     const box = el(`explanation-${nctId}`);
     const btn = evt.target;
     if (!box) return;
 
     // If already visible -> hide without clearing
-    if (!box.classList.contains("hidden")){
+    if (!box.classList.contains("hidden")) {
       box.classList.add("hidden");
       btn.textContent = "🤖 Explain";
       return;
     }
 
     // If cached -> show instantly
-    if (EXPLANATION_CACHE[nctId]){
+    if (EXPLANATION_CACHE[nctId]) {
       box.innerHTML = EXPLANATION_CACHE[nctId];
       box.classList.remove("hidden");
       btn.textContent = "🤖 Hide";
@@ -602,17 +638,17 @@
     box.classList.remove("hidden");
     box.innerHTML = `<div class="notice notice-info">Analyzing your responses…</div>`;
 
-    try{
+    try {
       const data = await fetchJson(URLS.explain, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nct_id: nctId })
       });
 
       const html = `
         <div class="qm-explain-card">
           <div class="qm-explain-title">📋 Explanation</div>
-          <div class="qm-explain-text">${(data.explanation || "").replaceAll("\n","<br>")}</div>
+          <div class="qm-explain-text">${(data.explanation || "").replaceAll("\n", "<br>")}</div>
         </div>
       `;
 
@@ -620,11 +656,11 @@
       box.innerHTML = html;
       btn.textContent = "🤖 Hide";
 
-    } catch(err){
+    } catch (err) {
       console.error(err);
       box.innerHTML = `<div class="notice notice-danger">❌ ${err.message}</div>`;
       btn.textContent = "🤖 Explain";
-    } finally{
+    } finally {
       btn.disabled = false;
     }
   }

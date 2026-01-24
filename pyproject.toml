@@ -9,6 +9,7 @@ dependencies = [
     "loguru>=0.7.3",
     "mistralai>=1.10.0",
     "pandas>=2.3.3",
+    "pytest>=9.0.2",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
 ]

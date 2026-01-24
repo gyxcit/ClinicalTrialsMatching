@@ -1453,3 +1453,79 @@ main.flex-1{
   color: rgba(100,116,139,.9);
   font-weight: 700;
 }
+
+
+/* ===========================
+   Graded Response Confidence Slider  
+=========================== */
+.qm-confidence {
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(31,112,193,.04);
+  border: 1px solid rgba(31,112,193,.12);
+  border-radius: 12px;
+}
+
+.qm-confidence-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 850;
+  color: rgba(27,36,48,.80);
+  margin-bottom: 12px;
+}
+
+.qm-confidence-value {
+  color: var(--primary);
+  font-weight: 950;
+  font-size: 16px;
+}
+
+.qm-slider {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(20,30,40,.12);
+  border-radius: 999px;
+  outline: none;
+}
+
+.qm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(31,112,193,.25);
+  transition: transform 120ms ease;
+}
+
+.qm-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.qm-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(31,112,193,.25);
+  border: none;
+  transition: transform 120ms ease;
+}
+
+.qm-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.qm-confidence-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(27,36,48,.62);
+  font-weight: 700;
+}
