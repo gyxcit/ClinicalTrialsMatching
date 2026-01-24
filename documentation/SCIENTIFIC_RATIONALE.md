@@ -134,10 +134,10 @@ We tested exponents from 1.0 (linear) to 2.0 (fully quadratic) to determine opti
 | Exponent | conf=1 | conf=2 | conf=3 | Penalty at conf=2 | Assessment |
 |----------|--------|--------|--------|-------------------|------------|
 | 1.0 (Linear) | 0.10 | 0.20 | 0.30 | 0% | ❌ Too lenient |
-| 1.25 | 0.09 | 0.17 | 0.26 | -15% | ⚠️ Insufficient |
-| **1.5** | **0.09** | **0.14** | **0.23** | **-30%** | ✅ **Optimal** |
-| 1.75 | 0.07 | 0.12 | 0.19 | -40% | ⚠️ Too aggressive |
-| 2.0 (Quadratic) | 0.06 | 0.10 | 0.16 | -49% | ❌ Overly punitive |
+| 1.25 | 0.07 | 0.16 | 0.26 | -20% | ⚠️ Moderate |
+| **1.5** | **0.04** | **0.13** | **0.23** | **-37%** | ✅ **Optimal** |
+| 1.75 | 0.03 | 0.10 | 0.21 | -50% | ⚠️ Aggressive |
+| 2.0 (Quadratic) | 0.02 | 0.08 | 0.18 | -60% | ❌ Too punitive |
 
 **Selection Criteria**:
 
@@ -146,13 +146,38 @@ We tested exponents from 1.0 (linear) to 2.0 (fully quadratic) to determine opti
 3. **Threshold Alignment**: Correctly downgrades low-confidence uncertainty
 4. **Mathematical Elegance**: 1.5 = 3/2, a well-established power law exponent
 
+**Score Distribution Analysis** (How scores are spaced):
+
+| Transition | Linear<br>(exp=1.0) | Implemented<br>(exp=1.5) | Ratio | Effect |
+|------------|---------------------|--------------------------|-------|---------|
+| **1→2** | +0.100 | **+0.082** | 0.82x | ⬇️ Smaller reward |
+| **2→3** | +0.100 | **+0.106** | 1.06x | ↗️ Slightly larger |
+| **3→4** | +0.100 | **+0.125** | 1.25x | ⬆️ Larger reward |
+| **4→5** | +0.100 | **+0.142** | 1.42x | ⬆️⬆️ Much larger |
+
+**Key Insight**: 
+- exp=1.5 creates **accelerating spacing** (-18% at 1→2, then +6%, +25%, +42%)
+- **Progressive incentive**: Higher confidence = more value per level
+- **Encourages verification** while discouraging low-confidence responses
+
+```
+Score increase per confidence level (exp=1.5):
+
+1→2:  ████████ +0.082         (-18% vs linear)
+2→3:  ███████████ +0.106      (+6% vs linear)
+3→4:  █████████████ +0.125    (+25% vs linear)
+4→5:  ███████████████ +0.142  (+42% vs linear)
+
+Linear: ██████████ (constant +0.10)
+```
+
 **Impact on Trial Scoring**:
 
 Example with 2 inclusion questions (Q1: YES conf 5, Q2: UNSURE conf 2):
 
-- Linear (exp=1.0): Trial score = 0.60 → **Potential Match** (may be too lenient)
-- **Implemented (exp=1.5)**: Trial score = 0.57 → **Weak Match** (appropriate conservatism) ✅
-- Quadratic (exp=2.0): Trial score = 0.55 → **Weak Match** (overly harsh)
+- Linear (exp=1.0): Trial score = (1.0 + 0.20) / 2 = 0.60 → **Potential Match** (borderline)
+- **Implemented (exp=1.5)**: Trial score = (1.0 + 0.13) / 2 = **0.57** → **Weak Match** (appropriate conservatism) ✅
+- Quadratic (exp=2.0): Trial score = (1.0 + 0.08) / 2 = 0.54 → **Weak Match** (overly harsh)
 
 > **Complete Analysis**: See [`exponent_sensitivity_analysis.md`](file:///C:/Users/regis/.gemini/antigravity/brain/ae87dfd7-5833-4f0c-a73c-cf8601a3c86c/exponent_sensitivity_analysis.md) for full mathematical justification, statistical properties, and alternative scenarios.
 
