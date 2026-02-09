@@ -1,0 +1,10 @@
+bin_label,raw_count,raw_eligible_count,raw_eligible_rate,isotonic_count,isotonic_eligible_count,isotonic_eligible_rate
+[0.0-0.2),139,1,0.007194244604316547,136,0,0.0
+[0.2-0.4),87,48,0.5517241379310345,322,126,0.391304347826087
+[0.4-0.6),269,101,0.3754646840148699,231,115,0.49783549783549785
+[0.6-0.8),195,91,0.4666666666666667,0,0,0.0
+[0.8-1.0],310,306,0.9870967741935484,311,306,0.9839228295819936
+
+Monotonic (Raw),False
+Monotonic (Isotonic),True
+Violations Eliminated,True

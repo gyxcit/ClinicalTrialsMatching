@@ -150,15 +150,18 @@ def analyze_calibration(
     )
 
 
-def run_calibration_analysis() -> Dict[str, CalibrationResult]:
+def run_calibration_analysis(n_cases: int = 15) -> Dict[str, CalibrationResult]:
     """
     Run calibration analysis on all scoring modes.
+    
+    Args:
+        n_cases: Number of cases to generate (default: 15 for manual dataset)
     
     Returns:
         Dictionary mapping mode to calibration results
     """
     # Get dataset and ablation results
-    dataset = generate_test_dataset()
+    dataset = generate_test_dataset(n_cases=n_cases)
     ablation_results = run_ablation(dataset)
     
     # Extract ground truth
@@ -325,10 +328,15 @@ def export_calibration_results(results: Dict[str, CalibrationResult], filename: 
     print(f"✅ Calibration results exported to {filename}")
 
 
-def main():
-    """Run calibration analysis and display results"""
+def main(n_cases: int = 15):
+    """
+    Run calibration analysis and display results
+    
+    Args:
+        n_cases: Number of cases to analyze (default: 15)
+    """
     print("\n" + "=" * 80)
-    print("RUNNING CALIBRATION & MONOTONICITY ANALYSIS")
+    print(f"RUNNING CALIBRATION & MONOTONICITY ANALYSIS ({n_cases} cases)")
     print("=" * 80)
     print()
     print("Objective: Verify ordinal significance of eligibility scores")
@@ -336,7 +344,7 @@ def main():
     print()
     
     # Run analysis
-    results = run_calibration_analysis()
+    results = run_calibration_analysis(n_cases=n_cases)
     
     # Print tables for each mode
     for mode_name, result in results.items():
@@ -347,7 +355,8 @@ def main():
     print(summary)
     
     # Export results
-    export_calibration_results(results)
+    suffix = f"_{n_cases}" if n_cases != 15 else ""
+    export_calibration_results(results, f"calibration_results{suffix}.json")
     
     print("\n✅ Calibration analysis complete!")
     print()

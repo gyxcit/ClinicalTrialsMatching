@@ -1,0 +1,5 @@
+method,accuracy,precision,recall,f1,ece,brier
+Binary,0.656,0.634,0.878,0.736,0.193,0.204
+Graded Linear,0.706,0.681,0.868,0.764,0.1,0.152
+Graded Quadratic,0.688,0.679,0.815,0.741,0.108,0.155
+Binary + TempScale (T=7.1),0.656,0.634,0.878,0.736,0.09,0.166

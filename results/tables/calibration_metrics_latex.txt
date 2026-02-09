@@ -1,0 +1,15 @@
+\begin{table}[h]
+\centering
+\caption{Calibration Metrics Comparison}
+\label{tab:calibration}
+\begin{tabular}{lcc}
+\toprule
+Method & ECE $\downarrow$ & Brier $\downarrow$ \\
+\midrule
+Binary & 0.1928 & 0.2040 \\
+Quadratic (Raw) & 0.1085 & 0.1548 \\
+Quadratic (Isotonic) & 0.0000 & 0.1383 \\
+Binary (T=7.13) & 0.0903 & 0.1664 \\
+\bottomrule
+\end{tabular}
+\end{table}

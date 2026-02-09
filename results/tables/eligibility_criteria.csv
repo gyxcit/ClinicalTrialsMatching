@@ -1,0 +1,5 @@
+Score Range,Category,Interpretation
+≥ 0.8,Strong Match,High likelihood of eligibility
+0.6–0.8,Potential Match,Moderate eligibility
+0.4–0.6,Weak Match,Low eligibility requires review
+< 0.4,Not Eligible,Insufficient evidence

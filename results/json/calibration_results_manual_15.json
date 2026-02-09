@@ -1,0 +1,119 @@
+{
+  "binary": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 3,
+        "eligible_count": 1,
+        "eligible_rate": 0.3333333333333333
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 1,
+        "eligible_count": 1,
+        "eligible_rate": 1.0
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 5,
+        "eligible_count": 4,
+        "eligible_rate": 0.8
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 1,
+        "eligible_count": 1,
+        "eligible_rate": 1.0
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 5,
+        "eligible_count": 4,
+        "eligible_rate": 0.8
+      }
+    ],
+    "is_monotonic": false,
+    "violations": [
+      "[0.2-0.4) (1.00) > [0.4-0.6) (0.80)",
+      "[0.6-0.8) (1.00) > [0.8-1.0] (0.80)"
+    ],
+    "spearman_correlation": 0.29080336345115265,
+    "spearman_p_value": 0.2930239477733647
+  },
+  "graded_linear": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 2,
+        "eligible_count": 0,
+        "eligible_rate": 0.0
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 1,
+        "eligible_count": 0,
+        "eligible_rate": 0.0
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 4,
+        "eligible_count": 3,
+        "eligible_rate": 0.75
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 5,
+        "eligible_count": 5,
+        "eligible_rate": 1.0
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 3,
+        "eligible_count": 3,
+        "eligible_rate": 1.0
+      }
+    ],
+    "is_monotonic": true,
+    "violations": [],
+    "spearman_correlation": 0.7178781821234494,
+    "spearman_p_value": 0.002580059874173908
+  },
+  "graded_quadratic": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 2,
+        "eligible_count": 0,
+        "eligible_rate": 0.0
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 1,
+        "eligible_count": 0,
+        "eligible_rate": 0.0
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 5,
+        "eligible_count": 4,
+        "eligible_rate": 0.8
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 4,
+        "eligible_count": 4,
+        "eligible_rate": 1.0
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 3,
+        "eligible_count": 3,
+        "eligible_rate": 1.0
+      }
+    ],
+    "is_monotonic": true,
+    "violations": [],
+    "spearman_correlation": 0.6991126899682786,
+    "spearman_p_value": 0.003728181706515602
+  }
+}

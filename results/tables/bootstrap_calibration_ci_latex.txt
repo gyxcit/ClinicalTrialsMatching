@@ -1,0 +1,13 @@
+\begin{table}[h]
+\centering
+\caption{Bootstrap 95\% CI for Calibration Metrics (N=1000, B=1000)}
+\label{tab:bootstrap_calibration}
+\begin{tabular}{lcc}
+\toprule
+Method & ECE [95\% CI] & Brier [95\% CI] \\
+\midrule
+Binary & 0.193 [0.168, 0.217] & 0.204 [0.186, 0.221] \\
+Quadratic & 0.113 [0.091, 0.134] & 0.155 [0.144, 0.165] \\
+\bottomrule
+\end{tabular}
+\end{table}

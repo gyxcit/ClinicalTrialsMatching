@@ -1,0 +1,123 @@
+{
+  "binary": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 185,
+        "eligible_count": 29,
+        "eligible_rate": 0.15675675675675677
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 58,
+        "eligible_count": 38,
+        "eligible_rate": 0.6551724137931034
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 145,
+        "eligible_count": 58,
+        "eligible_rate": 0.4
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 210,
+        "eligible_count": 58,
+        "eligible_rate": 0.2761904761904762
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 402,
+        "eligible_count": 364,
+        "eligible_rate": 0.9054726368159204
+      }
+    ],
+    "is_monotonic": false,
+    "violations": [
+      "[0.2-0.4) (0.66) > [0.4-0.6) (0.40)",
+      "[0.4-0.6) (0.40) > [0.6-0.8) (0.28)"
+    ],
+    "spearman_correlation": 0.5465633791155204,
+    "spearman_p_value": 5.752873079047425e-79
+  },
+  "graded_linear": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 134,
+        "eligible_count": 0,
+        "eligible_rate": 0.0
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 67,
+        "eligible_count": 34,
+        "eligible_rate": 0.5074626865671642
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 267,
+        "eligible_count": 98,
+        "eligible_rate": 0.36704119850187267
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 222,
+        "eligible_count": 109,
+        "eligible_rate": 0.49099099099099097
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 310,
+        "eligible_count": 306,
+        "eligible_rate": 0.9870967741935484
+      }
+    ],
+    "is_monotonic": false,
+    "violations": [
+      "[0.2-0.4) (0.51) > [0.4-0.6) (0.37)"
+    ],
+    "spearman_correlation": 0.6126598387676673,
+    "spearman_p_value": 4.328538560882146e-104
+  },
+  "graded_quadratic": {
+    "bins": [
+      {
+        "range": "[0.0-0.2)",
+        "count": 139,
+        "eligible_count": 1,
+        "eligible_rate": 0.007194244604316547
+      },
+      {
+        "range": "[0.2-0.4)",
+        "count": 87,
+        "eligible_count": 48,
+        "eligible_rate": 0.5517241379310345
+      },
+      {
+        "range": "[0.4-0.6)",
+        "count": 269,
+        "eligible_count": 101,
+        "eligible_rate": 0.3754646840148699
+      },
+      {
+        "range": "[0.6-0.8)",
+        "count": 195,
+        "eligible_count": 91,
+        "eligible_rate": 0.4666666666666667
+      },
+      {
+        "range": "[0.8-1.0]",
+        "count": 310,
+        "eligible_count": 306,
+        "eligible_rate": 0.9870967741935484
+      }
+    ],
+    "is_monotonic": false,
+    "violations": [
+      "[0.2-0.4) (0.55) > [0.4-0.6) (0.38)"
+    ],
+    "spearman_correlation": 0.5998540998771916,
+    "spearman_p_value": 9.258217743093964e-99
+  }
+}

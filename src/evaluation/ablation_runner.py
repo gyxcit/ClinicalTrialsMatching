@@ -45,9 +45,11 @@ class AblationResult:
     scores: List[float]
 
 
-def generate_test_dataset() -> List[PatientCase]:
+def generate_test_dataset_manual() -> List[PatientCase]:
     """
-    Generate fixed dataset of patient cases for ablation study.
+    Generate ORIGINAL fixed dataset of 15 patient cases for ablation study.
+    
+    This is the manually-created dataset for baseline comparison.
     
     Returns:
         List of 15 carefully designed patient cases covering various scenarios
@@ -250,6 +252,200 @@ def generate_test_dataset() -> List[PatientCase]:
     ))
     
     return dataset
+
+
+def generate_test_dataset(n_cases: int = 15, seed: int = 42) -> List[PatientCase]:
+    """
+    Generate dataset for ablation study.
+    
+    If n_cases == 15, returns the original manual dataset.
+    Otherwise, generates synthetic dataset with controlled distributions.
+    
+    Args:
+        n_cases: Number of cases to generate (default: 15 for manual dataset)
+        seed: Random seed for reproducibility (default: 42)
+    
+    Returns:
+        List of patient cases
+    """
+    if n_cases == 15:
+        return generate_test_dataset_manual()
+    else:
+        return generate_synthetic_dataset(n_cases=n_cases, seed=seed)
+
+
+def generate_synthetic_dataset(
+    n_cases: int = 1000,
+    seed: int = 42,
+    scenario_distribution: dict = None
+) -> List[PatientCase]:
+    """
+    Generate synthetic dataset with controlled distributions.
+    
+    Args:
+        n_cases: Number of cases to generate
+        seed: Random seed for reproducibility
+        scenario_distribution: Custom distribution (default: balanced)
+            {
+                'clearly_eligible': 0.30,
+                'clearly_ineligible': 0.30,
+                'borderline': 0.25,
+                'uncertain': 0.15
+            }
+    
+    Returns:
+        List of synthetic patient cases
+    """
+    import numpy as np
+    
+    # Set seed for reproducibility
+    np.random.seed(seed)
+    
+    # Default scenario distribution
+    if scenario_distribution is None:
+        scenario_distribution = {
+            'clearly_eligible': 0.30,
+            'clearly_ineligible': 0.30,
+            'borderline': 0.25,
+            'uncertain': 0.15
+        }
+    
+    dataset = []
+    scenarios = list(scenario_distribution.keys())
+    scenario_probs = list(scenario_distribution.values())
+    
+    for i in range(n_cases):
+        case_id = f"SYN{i+1:04d}"
+        nct_id = f"NCT{i+1:04d}"
+        
+        # Select scenario type
+        scenario = np.random.choice(scenarios, p=scenario_probs)
+        
+        # Determine number of questions (2-6)
+        n_inclusion = np.random.randint(2, 5)
+        n_exclusion = np.random.randint(1, 3)
+        
+        responses = {}
+        
+        # Generate responses based on scenario
+        if scenario == 'clearly_eligible':
+            # High confidence YES for inclusions, NO for exclusions
+            for j in range(n_inclusion):
+                conf = np.random.choice([4, 5], p=[0.3, 0.7])
+                responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                    answer=AnswerType.YES, confidence=conf
+                )
+            for j in range(n_exclusion):
+                conf = np.random.choice([4, 5], p=[0.3, 0.7])
+                responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                    answer=AnswerType.NO, confidence=conf
+                )
+            ground_truth = True
+            description = "Clearly eligible - strong match"
+        
+        elif scenario == 'clearly_ineligible':
+            # Either failed inclusion or triggered exclusion
+            if np.random.random() < 0.5:
+                # Failed inclusion
+                for j in range(n_inclusion):
+                    if j == 0:  # First one fails
+                        responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                            answer=AnswerType.NO, confidence=np.random.randint(4, 6)
+                        )
+                    else:
+                        conf = np.random.randint(3, 6)
+                        responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                            answer=AnswerType.YES, confidence=conf
+                        )
+                for j in range(n_exclusion):
+                    responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.NO, confidence=5
+                    )
+                description = "Ineligible - failed inclusion"
+            else:
+                # Triggered exclusion
+                for j in range(n_inclusion):
+                    conf = np.random.randint(4, 6)
+                    responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.YES, confidence=conf
+                    )
+                for j in range(n_exclusion):
+                    if j == 0:  # First exclusion triggers
+                        responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                            answer=AnswerType.YES, confidence=np.random.randint(3, 6)
+                        )
+                    else:
+                        responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                            answer=AnswerType.NO, confidence=5
+                        )
+                description = "Ineligible - exclusion triggered"
+            ground_truth = False
+        
+        elif scenario == 'borderline':
+            # Mix of moderate confidence YES and some UNSURE
+            for j in range(n_inclusion):
+                if np.random.random() < 0.3:
+                    # Some UNSURE
+                    conf = np.random.choice([3, 4], p=[0.6, 0.4])
+                    responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.UNSURE, confidence=conf
+                    )
+                else:
+                    # Moderate YES
+                    conf = np.random.choice([3, 4], p=[0.5, 0.5])
+                    responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.YES, confidence=conf
+                    )
+            for j in range(n_exclusion):
+                # Weak exclusion uncertainty or clear NO
+                if np.random.random() < 0.2:
+                    conf = np.random.choice([1, 2])
+                    responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.UNSURE, confidence=conf
+                    )
+                else:
+                    conf = np.random.randint(4, 6)
+                    responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.NO, confidence=conf
+                    )
+            # Borderline cases: 60% eligible, 40% not
+            ground_truth = np.random.random() < 0.6
+            description = "Borderline case - moderate confidence"
+        
+        else:  # uncertain
+            # Many UNSURE responses with varying confidence
+            for j in range(n_inclusion):
+                if np.random.random() < 0.6:
+                    # UNSURE
+                    conf = np.random.randint(2, 6)
+                    responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.UNSURE, confidence=conf
+                    )
+                else:
+                    # YES with varied confidence
+                    conf = np.random.randint(2, 6)
+                    responses[f"{nct_id}_INC_{j+1:03d}"] = GradedAnswer(
+                        answer=AnswerType.YES, confidence=conf
+                    )
+            for j in range(n_exclusion):
+                conf = np.random.randint(4, 6)
+                responses[f"{nct_id}_EXC_{j+1:03d}"] = GradedAnswer(
+                    answer=AnswerType.NO, confidence=conf
+                )
+            # Uncertain cases: slight bias toward eligible (55%)
+            ground_truth = np.random.random() < 0.55
+            description = "High uncertainty - many UNSURE responses"
+        
+        dataset.append(PatientCase(
+            case_id=case_id,
+            nct_id=nct_id,
+            responses=responses,
+            ground_truth=ground_truth,
+            description=description
+        ))
+    
+    return dataset
+
 
 
 def run_ablation(

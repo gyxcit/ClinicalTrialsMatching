@@ -1,0 +1,38 @@
+{
+  "binary": {
+    "accuracy": 0.5333333333333333,
+    "precision": 0.8333333333333334,
+    "recall": 0.45454545454545453,
+    "f1_score": 0.5882352941176471,
+    "false_negatives": 6,
+    "false_positives": 1,
+    "true_positives": 5,
+    "true_negatives": 3,
+    "uncertainty_rate": 0.2222222222222222,
+    "avg_score": 0.5666666666666667
+  },
+  "graded_linear": {
+    "accuracy": 0.8,
+    "precision": 1.0,
+    "recall": 0.7272727272727273,
+    "f1_score": 0.8421052631578948,
+    "false_negatives": 3,
+    "false_positives": 0,
+    "true_positives": 8,
+    "true_negatives": 4,
+    "uncertainty_rate": 0.2222222222222222,
+    "avg_score": 0.5677777777777778
+  },
+  "graded_quadratic": {
+    "accuracy": 0.7333333333333333,
+    "precision": 1.0,
+    "recall": 0.6363636363636364,
+    "f1_score": 0.7777777777777778,
+    "false_negatives": 4,
+    "false_positives": 0,
+    "true_positives": 7,
+    "true_negatives": 4,
+    "uncertainty_rate": 0.2222222222222222,
+    "avg_score": 0.5563143703980784
+  }
+}

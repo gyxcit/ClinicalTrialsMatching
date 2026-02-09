@@ -1,0 +1,62 @@
+% Monotonicity Table
+\begin{table}[h]
+\centering
+\caption{Monotonicity Analysis: Raw vs Isotonic Calibration}
+\label{tab:monotonicity}
+\begin{tabular}{lcccc}
+\toprule
+Score Bin & \multicolumn{2}{c}{Raw} & \multicolumn{2}{c}{Isotonic} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+& Count & Elig. Rate & Count & Elig. Rate \\
+\midrule
+[0.0-0.2) & 139 & 0.007 & 136 & 0.000 \\
+[0.2-0.4) & 87 & 0.552 & 322 & 0.391 \\
+[0.4-0.6) & 269 & 0.375 & 231 & 0.498 \\
+[0.6-0.8) & 195 & 0.467 & 0 & 0.000 \\
+[0.8-1.0] & 310 & 0.987 & 311 & 0.984 \\
+\midrule
+Monotonic & \multicolumn{2}{c}{No} & \multicolumn{2}{c}{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% McNemar's Test Table
+\begin{table}[h]
+\centering
+\caption{McNemar's Test: Binary vs Quadratic}
+\label{tab:mcnemar}
+\begin{tabular}{lc}
+\toprule
+Statistic & Value \\
+\midrule
+$n_{01}$ (Binary correct, Quadratic wrong) & 45 \\
+$n_{10}$ (Binary wrong, Quadratic correct) & 77 \\
+Test Type & chi2 \\
+Test Statistic & 7.877 \\
+$p$-value & 0.0050$^{**}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Note: $^{*}$ p < 0.05, $^{**}$ p < 0.01
+
+% Bootstrap CI Table
+\begin{table}[h]
+\centering
+\caption{Bootstrap 95\% Confidence Intervals: Binary vs Quadratic}
+\label{tab:bootstrap_ci}
+\begin{tabular}{lcccc}
+\toprule
+Metric & Mode & Mean & 95\% CI & Non-Overlap \\
+\midrule
+\multirow{2}{*}{Accuracy} & Binary & 0.656 & [0.627, 0.687] & - \\
+ & Quadratic & 0.689 & [0.660, 0.717] & - \\
+\cmidrule{2-5}
+\multirow{2}{*}{Recall} & Binary & 0.878 & [0.851, 0.904] & - \\
+ & Quadratic & 0.816 & [0.784, 0.848] & - \\
+\cmidrule{2-5}
+\multirow{2}{*}{F1 Score} & Binary & 0.736 & [0.710, 0.763] & - \\
+ & Quadratic & 0.741 & [0.715, 0.769] & - \\
+\bottomrule
+\end{tabular}
+\end{table}

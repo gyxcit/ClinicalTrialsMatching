@@ -1,0 +1,15 @@
+\begin{table}[h]
+\centering
+\caption{Performance Comparison on Synthetic Dataset (N=1000)}
+\label{tab:performance}
+\begin{tabular}{lcccccc}
+\toprule
+Method & Acc & Prec & Recall & F1 & ECE$\downarrow$ & Brier$\downarrow$ \\
+\midrule
+Binary & 0.656 & 0.634 & 0.878 & 0.736 & 0.193 & 0.204 \\
+Graded Linear & 0.706 & 0.681 & 0.868 & 0.764 & 0.100 & 0.152 \\
+Graded Quadratic & 0.688 & 0.679 & 0.815 & 0.741 & 0.108 & 0.155 \\
+Binary + TempScale (T=7.1) & 0.656 & 0.634 & 0.878 & 0.736 & 0.090 & 0.166 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,61 @@
+{
+  "performance_metrics": [
+    {
+      "method": "Binary",
+      "accuracy": 0.656,
+      "precision": 0.634,
+      "recall": 0.878,
+      "f1": 0.736,
+      "ece": 0.193,
+      "brier": 0.204
+    },
+    {
+      "method": "Graded Linear",
+      "accuracy": 0.706,
+      "precision": 0.681,
+      "recall": 0.868,
+      "f1": 0.764,
+      "ece": 0.1,
+      "brier": 0.152
+    },
+    {
+      "method": "Graded Quadratic",
+      "accuracy": 0.688,
+      "precision": 0.679,
+      "recall": 0.815,
+      "f1": 0.741,
+      "ece": 0.108,
+      "brier": 0.155
+    },
+    {
+      "method": "Binary + TempScale (T=7.1)",
+      "accuracy": 0.656,
+      "precision": 0.634,
+      "recall": 0.878,
+      "f1": 0.736,
+      "ece": 0.09,
+      "brier": 0.166
+    }
+  ],
+  "bootstrap_ci": {
+    "binary": {
+      "ece_mean": 0.1931,
+      "ece_ci_lower": 0.1683,
+      "ece_ci_upper": 0.2168,
+      "brier_mean": 0.2041,
+      "brier_ci_lower": 0.1863,
+      "brier_ci_upper": 0.2208
+    },
+    "quadratic": {
+      "ece_mean": 0.1128,
+      "ece_ci_lower": 0.0907,
+      "ece_ci_upper": 0.1337,
+      "brier_mean": 0.1548,
+      "brier_ci_lower": 0.1444,
+      "brier_ci_upper": 0.1649
+    }
+  },
+  "optimal_temperature": 7.133266859888464,
+  "n_cases": 1000,
+  "seed": 42
+}

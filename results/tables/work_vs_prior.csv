@@ -1,0 +1,7 @@
+Approach,Binary eligibility logic,Uncertainty explicitly modeled,Ordinal/Monotonic evaluation of scores,Calibration analysis,Patient-reported uncertainty
+Rule-based systems,yes,no,no,no,no
+NLP / ML matching (traditional),yes / partial,no,no,no,no
+Embedding / similarity methods,partial,no,no,no,no
+LLM-based matching,partial,no / partial,no,no,partial / no
+Bayesian/probabilistic scoring,no / partial,yes,partial,partial,no / partial
+This work (graded scoring),no,yes,yes,yes,yes

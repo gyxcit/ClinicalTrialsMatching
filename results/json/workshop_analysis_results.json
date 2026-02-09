@@ -1,0 +1,357 @@
+{
+  "calibration_metrics": [
+    {
+      "method": "Binary",
+      "ece": 0.19275,
+      "brier_score": 0.20402083333333337,
+      "n_samples": 1000,
+      "bins": [
+        {
+          "bin_idx": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 185,
+          "mean_score": 0.0,
+          "mean_outcome": 0.15675675675675677
+        },
+        {
+          "bin_idx": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 0,
+          "mean_score": 0.15000000000000002,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 25,
+          "mean_score": 0.25,
+          "mean_outcome": 0.48
+        },
+        {
+          "bin_idx": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 33,
+          "mean_score": 0.3333333333333333,
+          "mean_outcome": 0.7878787878787878
+        },
+        {
+          "bin_idx": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 0,
+          "mean_score": 0.45,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 145,
+          "mean_score": 0.5,
+          "mean_outcome": 0.4
+        },
+        {
+          "bin_idx": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 108,
+          "mean_score": 0.6666666666666669,
+          "mean_outcome": 0.25
+        },
+        {
+          "bin_idx": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 102,
+          "mean_score": 0.75,
+          "mean_outcome": 0.30392156862745096
+        },
+        {
+          "bin_idx": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 0,
+          "mean_score": 0.8500000000000001,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 402,
+          "mean_score": 1.0,
+          "mean_outcome": 0.9054726368159204
+        }
+      ]
+    },
+    {
+      "method": "Quadratic (Raw)",
+      "ece": 0.10847505544872683,
+      "brier_score": 0.15480390407527153,
+      "n_samples": 1000,
+      "bins": [
+        {
+          "bin_idx": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 134,
+          "mean_score": 0.0,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 5,
+          "mean_score": 0.15825747471644816,
+          "mean_outcome": 0.2
+        },
+        {
+          "bin_idx": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 37,
+          "mean_score": 0.26597715523660614,
+          "mean_outcome": 0.4594594594594595
+        },
+        {
+          "bin_idx": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 50,
+          "mean_score": 0.3600422797304209,
+          "mean_outcome": 0.62
+        },
+        {
+          "bin_idx": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 117,
+          "mean_score": 0.44366982224949497,
+          "mean_outcome": 0.4444444444444444
+        },
+        {
+          "bin_idx": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 183,
+          "mean_score": 0.547691594259918,
+          "mean_outcome": 0.3114754098360656
+        },
+        {
+          "bin_idx": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 132,
+          "mean_score": 0.6590062781369481,
+          "mean_outcome": 0.5075757575757576
+        },
+        {
+          "bin_idx": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 32,
+          "mean_score": 0.7453934466291664,
+          "mean_outcome": 0.5
+        },
+        {
+          "bin_idx": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 56,
+          "mean_score": 0.8255952380952379,
+          "mean_outcome": 0.9285714285714286
+        },
+        {
+          "bin_idx": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 254,
+          "mean_score": 0.955971128608924,
+          "mean_outcome": 1.0
+        }
+      ]
+    },
+    {
+      "method": "Quadratic (Isotonic)",
+      "ece": 1.1657341758564145e-17,
+      "brier_score": 0.13828272146732706,
+      "n_samples": 1000,
+      "bins": [
+        {
+          "bin_idx": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 136,
+          "mean_score": 0.0,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 0,
+          "mean_score": 0.15000000000000002,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 4,
+          "mean_score": 0.25,
+          "mean_outcome": 0.25
+        },
+        {
+          "bin_idx": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 318,
+          "mean_score": 0.39308176100628933,
+          "mean_outcome": 0.39308176100628933
+        },
+        {
+          "bin_idx": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 129,
+          "mean_score": 0.46511627906976744,
+          "mean_outcome": 0.46511627906976744
+        },
+        {
+          "bin_idx": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 102,
+          "mean_score": 0.5392156862745098,
+          "mean_outcome": 0.5392156862745098
+        },
+        {
+          "bin_idx": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 0,
+          "mean_score": 0.6500000000000001,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_score": 0.75,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 35,
+          "mean_score": 0.8571428571428574,
+          "mean_outcome": 0.8571428571428571
+        },
+        {
+          "bin_idx": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 276,
+          "mean_score": 1.0,
+          "mean_outcome": 1.0
+        }
+      ]
+    },
+    {
+      "method": "Binary (T=7.13)",
+      "ece": 0.09031528979419588,
+      "brier_score": 0.16636967719325765,
+      "n_samples": 1000,
+      "bins": [
+        {
+          "bin_idx": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 185,
+          "mean_score": 0.09452740995075538,
+          "mean_outcome": 0.15675675675675677
+        },
+        {
+          "bin_idx": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 0,
+          "mean_score": 0.15000000000000002,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 0,
+          "mean_score": 0.25,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_score": 0.35000000000000003,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 58,
+          "mean_score": 0.4696256705387972,
+          "mean_outcome": 0.6551724137931034
+        },
+        {
+          "bin_idx": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 355,
+          "mean_score": 0.5184257203624538,
+          "mean_outcome": 0.3267605633802817
+        },
+        {
+          "bin_idx": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 0,
+          "mean_score": 0.6500000000000001,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_score": 0.75,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 0,
+          "mean_score": 0.8500000000000001,
+          "mean_outcome": 0.0
+        },
+        {
+          "bin_idx": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 402,
+          "mean_score": 0.9054725900555602,
+          "mean_outcome": 0.9054726368159204
+        }
+      ]
+    }
+  ],
+  "optimal_temperature": 7.133266859888464
+}
