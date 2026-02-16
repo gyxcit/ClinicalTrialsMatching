@@ -1,0 +1,31 @@
+﻿python : Traceback 
+(most recent call 
+last):
+At line:1 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Traceba   
+ ck (most recent     
+call last)::Stri    
+ng) [], RemoteEx    
+ception
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  File "<string>", 
+line 5, in <module>
+    exec(open('script
+s/run_spotlight_analy
+ses.py').read())
+    ~~~~^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
+  File "<string>", 
+line 26, in <module>
+NameError: name 
+'__file__' is not 
+defined. Did you 
+mean: '__name__'?

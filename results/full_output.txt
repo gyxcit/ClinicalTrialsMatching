@@ -1,0 +1,120 @@
+﻿python : C:\Users\reg
+is\OneDrive\Documents
+\pge5\Future of Ai\as
+signement\code\script
+s\run_spotlight_analy
+ses.py:355: Matplotli
+bDeprecationWarning: 
+The 'labels' 
+parameter of 
+boxplot() has been 
+renamed 
+'tick_labels' since 
+Matplotlib 3.9; 
+support for the old 
+name will be dropped 
+in 3.11.
+At line:1 char:1
++ python -X utf8 scri
+pts/run_spotlight_ana
+lyses.py *>&1 | 
+Out-File -Fil ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (C:\User   
+ s\regis\...roppe    
+d in 3.11.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  bp = 
+ax.boxplot(data, 
+labels=["Binary", 
+"Quadratic"],
+C:\Users\regis\OneDri
+ve\Documents\pge5\Fut
+ure of Ai\assignement
+\code\scripts\run_spo
+tlight_analyses.py:35
+5: MatplotlibDeprecat
+ionWarning: The 
+'labels' parameter 
+of boxplot() has 
+been renamed 
+'tick_labels' since 
+Matplotlib 3.9; 
+support for the old 
+name will be dropped 
+in 3.11.
+  bp = 
+ax.boxplot(data, 
+labels=["Binary", 
+"Quadratic"],
+C:\Users\regis\OneDri
+ve\Documents\pge5\Fut
+ure of Ai\assignement
+\code\scripts\run_spo
+tlight_analyses.py:35
+5: MatplotlibDeprecat
+ionWarning: The 
+'labels' parameter 
+of boxplot() has 
+been renamed 
+'tick_labels' since 
+Matplotlib 3.9; 
+support for the old 
+name will be dropped 
+in 3.11.
+  bp = 
+ax.boxplot(data, 
+labels=["Binary", 
+"Quadratic"],
+
+======================================================================
+SPOTLIGHT ANALYSES ÔÇö ML4H Paper Upgrade
+======================================================================
+
+Loading synthetic dataset (N=1000, seed=42)...
+   Ô£ô 1000 cases loaded
+
+1. Computing AUC-ROC and AUC-PR...
+   Binary: AUC-ROC=0.8036, AUC-PR=0.8325
+   Graded Linear: AUC-ROC=0.8542, AUC-PR=0.8984
+   Graded Quadratic: AUC-ROC=0.8471, AUC-PR=0.8948
+   Ô£ô Saved: C:\Users\regis\OneDrive\Documents\pge5\Future of Ai\assignement\code\results\figures\roc_pr_curves.png
+
+2. Running ╬▒ sensitivity analysis...
+   Ô£ô Saved: C:\Users\regis\OneDrive\Documents\pge5\Future of Ai\assignement\code\results\figures\alpha_sensitivity.png
+   Ô£ô Saved: alpha_sensitivity.csv
+
+3. Running confidence noise robustness test (50 trials)...
+   Ô£ô Saved: C:\Users\regis\OneDrive\Documents\pge5\Future of Ai\assignement\code\results\figures\noise_robustness.png
+   binary: ECE=0.193┬▒0.000, Brier=0.204┬▒0.000, F1=0.736┬▒0.000
+   quadratic: ECE=0.099┬▒0.007, Brier=0.159┬▒0.002, F1=0.751┬▒0.007
+
+4. Analyzing 15 manual cases...
+   Binary: Acc=0.733, F1=0.818
+   Linear: Acc=0.867, F1=0.909
+   Quadratic: Acc=0.8, F1=0.857
+
+5. Saving consolidated results...
+   Ô£ô Saved: spotlight_analyses.json
+
+======================================================================
+SPOTLIGHT ANALYSES COMPLETE
+======================================================================
+
+New figures in results/figures/:
+  ÔÇó roc_pr_curves.png
+  ÔÇó alpha_sensitivity.png
+  ÔÇó noise_robustness.png
+
+New tables in results/tables/:
+  ÔÇó alpha_sensitivity.csv
+
